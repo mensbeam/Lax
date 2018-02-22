@@ -129,4 +129,16 @@ abstract class XMLCommon {
         $base = $base ?? "";
         return \Sabre\Uri\resolve($base, $url);
     }
+
+    /** Resolves a URL contained in a DOM element's atrribute or text 
+     * 
+     * This automatically performs xml:base and HTML <base> resolution
+     * 
+     * Specifying the empty string for $attr results in the element content being used as a URL
+    */
+    protected function resolveNodeUrl(\DOMElement $node = null, string $attr = "", string $ns = ""): string {
+        $base = $node->baseURI;
+        $url = strlen($attr) ? $node->getAttributeNS($ns, $attr) : $this->trimText($node->textContent);
+        return $this->resolveURL($url, $base);
+    }
 }

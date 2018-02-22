@@ -40,17 +40,19 @@ trait XMLCommonPrimitives {
     protected function getLinkAtom() {
         // FIXME: Atom link fetching should ideally prefer links to text/html resources or the like over e.g. other-format newsfeeds, generic XML, images, etc
         $node = $this->fetchAtomRelations();
-        return $node->length ? $this->resolveURL($node->item(0)->getAttribute("href"), $node->item(0)->baseURI) : null;
+        return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
     }
 
     /** Primitive to fetch an RSS feed/entry Web-representation URL */
     protected function getLinkRss2() {
-        return $this->fetchText("./link");
+        $node = $this->fetchElement("./link");
+        return $node ? $this->resolveNodeUrl($node) : null;
     }
 
     /** Primitive to fetch an RDF feed/entry Web-representation URL */
     protected function getLinkRss1() {
-        return $this->fetchText("./rss1:link|./rss0:link");
+        $node = $this->fetchElement("./rss1:link|./rss0:link");
+        return $node ? $this->resolveNodeUrl($node) : null;
     }
 
     /** Primitive to fetch Atom feed/entry categories */
