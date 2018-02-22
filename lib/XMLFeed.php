@@ -64,7 +64,7 @@ class XMLFeed extends XMLCommon {
     /** General function to fetch the description of a feed */
     public function getSummary() {
         // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryAtom();
+        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryApple() ?? $this->getSummaryAtom();
     }
 
     /** General function to fetch the categories of a feed 
