@@ -32,7 +32,7 @@ trait XMLCommonPrimitives {
     }
 
     /** Primitive to fetch an Apple podcast/episdoe title */
-    protected function getTitleApple() {
+    protected function getTitlePod() {
         return $this->fetchText("./apple:title");
     }
 
@@ -107,9 +107,9 @@ trait XMLCommonPrimitives {
         return null;
     }
 
-    /** Primitive to fetch RSS feed/entry categories */
-    protected function getCategoriesApple(bool $grouped = false, bool $humanFriendly = true) {
-        $nodes = $this->fetchElements("./apple:category");
+    /** Primitive to fetch podcast/episode categories */
+    protected function getCategoriesPod(bool $grouped = false, bool $humanFriendly = true) {
+        $nodes = $this->fetchElements("./apple:category|./gplay:category");
         $out = [];
         foreach ($nodes as $node) {
             $cat = $this->trimText($node->getAttribute("text"));

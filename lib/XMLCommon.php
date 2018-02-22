@@ -16,17 +16,18 @@ abstract class XMLCommon {
     protected $base = "";
     
     const NS = [
-        'atom'  => "http://www.w3.org/2005/Atom",                   // Atom syndication format                  https://tools.ietf.org/html/rfc4287
-        'rss1'  => "http://purl.org/rss/1.0/",                      // RDF site summary 1.0                     http://purl.org/rss/1.0/spec
-        'rss0'  => "http://channel.netscape.com/rdf/simple/0.9/",   // RDF Site Summary 0.90                    http://www.rssboard.org/rss-0-9-0
-        'dc'    => "http://purl.org/dc/elements/1.1/",              // Dublin Core metadata                     http://purl.org/rss/1.0/modules/dc/
-        'sched' => "http://purl.org/rss/1.0/modules/syndication/",  // Syndication schedule extension           http://purl.org/rss/1.0/modules/syndication/
-        'enc'   => "http://purl.org/rss/1.0/modules/content/",      // Explicitly encoded content extension     http://purl.org/rss/1.0/modules/content/
-        'media' => "http://search.yahoo.com/mrss/",                 // Embedded media extension                 http://www.rssboard.org/media-rss
-        // RSS 2.0 does not have a namespace                        // Really Simple Syndication 2.0.11         http://www.rssboard.org/rss-specification
-        'rdf'   => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",   // Resource Description Framework
-        'xhtml' => "http://www.w3.org/1999/xhtml",                  // XHTML
-        'apple' => "http://www.itunes.com/DTDs/Podcast-1.0.dtd"     // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
+        'atom'  => "http://www.w3.org/2005/Atom",                       // Atom syndication format                  https://tools.ietf.org/html/rfc4287
+        'rss1'  => "http://purl.org/rss/1.0/",                          // RDF site summary 1.0                     http://purl.org/rss/1.0/spec
+        'rss0'  => "http://channel.netscape.com/rdf/simple/0.9/",       // RDF Site Summary 0.90                    http://www.rssboard.org/rss-0-9-0
+        'dc'    => "http://purl.org/dc/elements/1.1/",                  // Dublin Core metadata                     http://purl.org/rss/1.0/modules/dc/
+        'sched' => "http://purl.org/rss/1.0/modules/syndication/",      // Syndication schedule extension           http://purl.org/rss/1.0/modules/syndication/
+        'enc'   => "http://purl.org/rss/1.0/modules/content/",          // Explicitly encoded content extension     http://purl.org/rss/1.0/modules/content/
+        'media' => "http://search.yahoo.com/mrss/",                     // Embedded media extension                 http://www.rssboard.org/media-rss
+        // RSS 2.0 does not have a namespace                            // Really Simple Syndication 2.0.11         http://www.rssboard.org/rss-specification
+        'rdf'   => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",       // Resource Description Framework
+        'xhtml' => "http://www.w3.org/1999/xhtml",                      // XHTML
+        'apple' => "http://www.itunes.com/DTDs/Podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
+        'gplay' => "http://www.google.com/schemas/play-podcasts/1.0",   // Google Play podcasts                     https://support.google.com/googleplay/podcasts/answer/6260341
     ];
     
     /** Returns an XPath processor with various necessary namespace prefixes defined */

@@ -31,10 +31,8 @@ trait XMLFeedPrimitives {
         return $this->fetchText("./dc:description");
     }
 
-    /** Primitive to fetch an Apple podcast summary */
-    protected function getSummaryApple() {
-        return $this->fetchText("./apple:summary") ?? $this->fetchText("./apple:subtitle");
+    /** Primitive to fetch a podcast summary */
+    protected function getSummaryPod() {
+        return $this->fetchText("./apple:summary|./gplay:description") ?? $this->fetchText("./apple:subtitle");
     }
-
-
 }

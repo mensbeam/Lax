@@ -69,7 +69,7 @@ class XMLFeed extends XMLCommon {
     
     /** General function to fetch the feed title */
     public function getTitle() {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitleApple();
+        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
     }
 
     /** General function to fetch the feed's Web-representation URL */
@@ -80,7 +80,7 @@ class XMLFeed extends XMLCommon {
     /** General function to fetch the description of a feed */
     public function getSummary() {
         // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryApple() ?? $this->getSummaryAtom();
+        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom();
     }
 
     /** General function to fetch the categories of a feed 
@@ -90,7 +90,7 @@ class XMLFeed extends XMLCommon {
      * The $humanFriendly parameter only affects Atom categories
     */
     public function getCategories(bool $grouped = false, bool $humanFriendly = true) {
-        return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesApple($grouped, $humanFriendly);
+        return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesPod($grouped, $humanFriendly);
     }
 
     /** General function to fetch the feed identifier */
