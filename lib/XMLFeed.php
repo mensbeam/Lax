@@ -10,6 +10,8 @@ class XMLFeed extends XMLCommon {
     use XMLCommonPrimitives;
     use XMLFeedPrimitives;
     
+    public $type;
+    public $version;
     public $url;
     public $link;
     public $title;
@@ -32,11 +34,24 @@ class XMLFeed extends XMLCommon {
         $ns = $this->subject->namespaceURI;
         $name = $this->subject->localName;
         if (is_null($ns) && $name=="rss") {
-            $this->subject = $this->fetchElement("./channel[1]") ?? $this->subject;
+            $this->subject = $this->fetchElement("./channel") ?? $this->subject;
+            $this->type = "rss";
+            $this->version = $this->document->documentElement->getAttribute("version");
         } elseif ($ns==self::NS['rdf'] && $name=="RDF") {
-            $this->subject = $this->fetchElement("./rss1:channel|./rss0:channel") ?? $this->subject;
+            $this->type = "rdf";
+            $channel = $this->fetchElement("./rss1:channel|./rss0:channel");
+            if ($channel) {
+                $this->subject = $channel;
+                $this->version = ($channel->namespaceURI==self::NS['rss1']) ? "1.0" : "0.90";
+            } else {
+                 $element = $this->fetchElement("./rss1:item|./rss0:item|./rss1:image|./rss0:image");
+                 if ($element) {
+                     $this->version = ($element->namespaceURI==self::NS['rss1']) ? "1.0" : "0.90";
+                 }
+            }
         } elseif ($ns==self::NS['atom'] && $name=="feed") {
-            // nothing required for Atom
+            $this->type = "atom";
+            $this->version = "1.0";
         } else {
             throw new \Exception;
         }
