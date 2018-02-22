@@ -61,6 +61,7 @@ class XMLFeed extends XMLCommon {
 
     /** Parses the feed to extract sundry metadata */
     protected function parse() {
+        $this->id = $this->getId();
         $this->link = $this->getLink();
         $this->title = $this->getTitle() ?? $this->link;
         $this->summary = $this->getSummary();
@@ -90,5 +91,10 @@ class XMLFeed extends XMLCommon {
     */
     public function getCategories(bool $grouped = false, bool $humanFriendly = true) {
         return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesApple($grouped, $humanFriendly);
+    }
+
+    /** General function to fetch the feed identifier */
+    public function getId() {
+        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
     }
 }

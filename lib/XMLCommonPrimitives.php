@@ -121,4 +121,22 @@ trait XMLCommonPrimitives {
         return $grouped ? ['' => $out] : $out;
 
     }
+
+    /** Primitive to fetch an Atom feed/entry identifier */
+    protected function getIdAtom() {
+        return $this->fetchText("./atom:id");
+    }
+
+    /** Primitive to fetch an RSS feed/entry identifier 
+     * 
+     * Using RSS' <guid> for feed identifiers is non-standard, but harmless
+    */
+    protected function getIdRss2() {
+        return $this->fetchText("./guid");
+    }
+
+    /** Primitive to fetch a Dublin Core feed/entry identifier */
+    protected function getIdDC() {
+        return $this->fetchText("./dc:identifier");
+    }
 }
