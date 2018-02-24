@@ -35,4 +35,32 @@ trait XMLFeedPrimitives {
     protected function getSummaryPod() {
         return $this->fetchText("./apple:summary|./gplay:description") ?? $this->fetchText("./apple:subtitle");
     }
+
+    /** Primitive to fetch a collection of people associated with an RSS feed
+     * 
+     * For RSS 2.0 this includes both native metadata and Dublin Core
+     */
+    protected function getPeopleRss2() {
+        $nodes = $this->fetchElements("./managingEditor|./webMaster|./author|./dc:creator|./dc:contributor");
+        if (!$nodes->length) {
+            return null;
+        }
+        $out = new PersonCollection;
+        $roles = [
+            'managingEditor' => "editor",
+            'webMaster'      => "webmaster",
+            'author'         => "author",
+            'creator'        => "author",
+            'contributor'    => "contributor",
+        ];
+        foreach ($nodes as $node) {
+            $text = $this->trimText($node->textContent);
+            if (strlen($text)) {
+                $p = $this->parsePersonText($text);
+                $p->role = $roles[$node->localName];
+                $out[] = $p;
+            }
+        }
+        return $out;
+    }
 }

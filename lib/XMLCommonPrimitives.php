@@ -139,4 +139,26 @@ trait XMLCommonPrimitives {
     protected function getIdDC() {
         return $this->fetchText("./dc:identifier");
     }
+
+    /** Primitive to fetch a collection of people associated with a feed/entry via Dublin Core */
+    protected function getPeopleDC() {
+        $nodes = $this->fetchElements("./dc:creator|./dc:contributor");
+        if (!$nodes->length) {
+            return null;
+        }
+        $out = new PersonCollection;
+        $roles = [
+            'creator'        => "author",
+            'contributor'    => "contributor",
+        ];
+        foreach ($nodes as $node) {
+            $text = $this->trimText($node->textContent);
+            if (strlen($text)) {
+                $p = $this->parsePersonText($text);
+                $p->role = $roles[$node->localName];
+                $out[] = $p;
+            }
+        }
+        return $out;
+    }
 }

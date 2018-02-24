@@ -17,6 +17,8 @@ class XMLFeed extends XMLCommon {
     public $title;
     public $summary;
     public $categories;
+    public $people;
+    public $author;
 
     /** Returns a parsed feed */
     public function __construct(string $data, string $contentType = null, string $url = null) {
@@ -65,6 +67,8 @@ class XMLFeed extends XMLCommon {
         $this->link = $this->getLink();
         $this->title = $this->getTitle() ?? $this->link;
         $this->summary = $this->getSummary();
+        $this->people = $this->getPeople();
+        $this->author = $this->people->primary();
     }
     
     /** General function to fetch the feed title */
@@ -96,5 +100,10 @@ class XMLFeed extends XMLCommon {
     /** General function to fetch the feed identifier */
     public function getId() {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
+    }
+
+    /** General function to fetch a collection of people associated with a feed */
+    public function getPeople() {
+        return $this->getPeopleRss2() ?? new PersonCollection;
     }
 }
