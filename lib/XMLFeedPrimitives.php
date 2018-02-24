@@ -61,24 +61,16 @@ trait XMLFeedPrimitives {
 
     /** Primitive to fetch a collection of people associated with an Atom feed */
     protected function getPeopleAtom() {
-        $nodes = $this->fetchElements("././atom:author|./atom:contributor");
+        $nodes = $this->fetchElements("./atom:author|./atom:contributor");
         if (!$nodes->length) {
             return null;
         }
         $out = new PersonCollection;
         foreach ($nodes as $node) {
-            $p = new Person;
-            $p->mail = $this->fetchText("./atom:email", $node) ?? "";
-            $p->name = $this->fetchText("./atom:name", $node) ?? $p->mail;
-            if (!strlen($p->name)) {
-                continue;
+            $p = $this->parsePersonAtom($node);
+            if ($p) {
+                $out[] = $p;
             }
-            $url = $this->fetchElement("./atom:uri", $node);
-            if ($url) {
-                $p->url = $this->resolveNodeUrl($url);
-            }
-            $p->role = $node->localName;
-            $out[] = $p;
         }
         return $out;
     }

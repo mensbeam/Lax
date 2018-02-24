@@ -25,4 +25,32 @@ trait XMLEntryPrimitives {
         }
         return $out;
     }
+
+    /** Primitive to fetch a collection of people associated with an Atom entry */
+    protected function getPeopleAtom() {
+        $nodes = $this->fetchElements("./atom:author|./atom:contributor");
+        $out = new PersonCollection;
+        foreach ($nodes as $node) {
+            $p = $this->parsePersonAtom($node);
+            if ($p) {
+                $out[] = $p;
+            }
+        }
+        $primary = $out->primary();
+        // if the entry has no author, we retrieve the authors (and not contributors) from the entry's source element
+        if (!$primary || $primary->role != "author") {
+            $nodes = $this->fetchElements("./atom:source[1]/atom:author");
+            foreach ($nodes as $node) {
+                $p = $this->parsePersonAtom($node);
+                if ($p) {
+                    $out[] = $p;
+                }
+            }
+            // if there are still no people, return null
+            if (!$out->primary()) {
+                return null;
+            }
+        }
+        return $out;
+    }
 }

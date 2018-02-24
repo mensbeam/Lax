@@ -158,14 +158,14 @@ abstract class XMLCommon {
             return $out;
         } elseif (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
             if ($this->validateMail($match[1])) {
-                $out->name = $match[2];
+                $out->name = trim($match[2]);
                 $out->mail = $match[1];
             } else {
                 $out->name = $person;
             }
         } elseif (preg_match("/^((?:\S|\s(?!<))+) <([^>]+)>$/", $person, $match)) { // tests "Full Name <user@example.com>" form
             if ($this->validateMail($match[2])) {
-                $out->name = $match[1];
+                $out->name = trim($match[1]);
                 $out->mail = $match[2];
             } else {
                 $out->name = $person;
@@ -177,6 +177,21 @@ abstract class XMLCommon {
             $out->name = $person;
         }
         return $out;
+    }
+
+    protected function parsePersonAtom(\DOMNode $node) {
+        $p = new Person;
+        $p->mail = $this->fetchText("./atom:email", $node) ?? "";
+        $p->name = $this->fetchText("./atom:name", $node) ?? $p->mail;
+        if (!strlen($p->name)) {
+            return null;
+        }
+        $url = $this->fetchElement("./atom:uri", $node);
+        if ($url) {
+            $p->url = $this->resolveNodeUrl($url);
+        }
+        $p->role = $node->localName;
+        return $p;
     }
 
     /** Tests whether a string is a valid e-mail address
