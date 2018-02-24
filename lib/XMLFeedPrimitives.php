@@ -36,12 +36,9 @@ trait XMLFeedPrimitives {
         return $this->fetchText("./apple:summary|./gplay:description") ?? $this->fetchText("./apple:subtitle");
     }
 
-    /** Primitive to fetch a collection of people associated with an RSS feed
-     * 
-     * For RSS 2.0 this includes both native metadata and Dublin Core
-     */
+    /** Primitive to fetch a collection of people associated with an RSS feed */
     protected function getPeopleRss2() {
-        $nodes = $this->fetchElements("./managingEditor|./webMaster|./author|./dc:creator|./dc:contributor");
+        $nodes = $this->fetchElements("./managingEditor|./webMaster|./author");
         if (!$nodes->length) {
             return null;
         }
@@ -50,8 +47,6 @@ trait XMLFeedPrimitives {
             'managingEditor' => "editor",
             'webMaster'      => "webmaster",
             'author'         => "author",
-            'creator'        => "author",
-            'contributor'    => "contributor",
         ];
         foreach ($nodes as $node) {
             $text = $this->trimText($node->textContent);
@@ -60,6 +55,30 @@ trait XMLFeedPrimitives {
                 $p->role = $roles[$node->localName];
                 $out[] = $p;
             }
+        }
+        return $out;
+    }
+
+    /** Primitive to fetch a collection of people associated with an Atom feed */
+    protected function getPeopleAtom() {
+        $nodes = $this->fetchElements("././atom:author|./atom:contributor");
+        if (!$nodes->length) {
+            return null;
+        }
+        $out = new PersonCollection;
+        foreach ($nodes as $node) {
+            $p = new Person;
+            $p->mail = $this->fetchText("./atom:email", $node) ?? "";
+            $p->name = $this->fetchText("./atom:name", $node) ?? $p->mail;
+            if (!strlen($p->name)) {
+                continue;
+            }
+            $url = $this->fetchElement("./atom:uri", $node);
+            if ($url) {
+                $p->url = $this->resolveNodeUrl($url);
+            }
+            $p->role = $node->localName;
+            $out[] = $p;
         }
         return $out;
     }

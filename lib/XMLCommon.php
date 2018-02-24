@@ -26,7 +26,7 @@ abstract class XMLCommon {
         // RSS 2.0 does not have a namespace                            // Really Simple Syndication 2.0.11         http://www.rssboard.org/rss-specification
         'rdf'   => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",       // Resource Description Framework
         'xhtml' => "http://www.w3.org/1999/xhtml",                      // XHTML
-        'apple' => "http://www.itunes.com/DTDs/Podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
+        'apple' => "http://www.itunes.com/dtds/podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
         'gplay' => "http://www.google.com/schemas/play-podcasts/1.0",   // Google Play podcasts                     https://support.google.com/googleplay/podcasts/answer/6260341
     ];
     
@@ -58,26 +58,27 @@ abstract class XMLCommon {
     }
 
     /** Retrieves an element node based on an XPath query */
-    protected function fetchElement(string $query) {
-        $node = $this->xpath->query("(".$query.")[1]", $this->subject);
+    protected function fetchElement(string $query, \DOMNode $context = null) {
+        $context = $context ?? $this->subject;
+        $node = $this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
         return ($node->length) ? $node->item(0) : null;
     }
 
     /** Retrieves multiple element node based on an XPath query */
-    protected function fetchElements(string $query): \DOMNodeList {
-        return $this->xpath->query($query, $this->subject);
+    protected function fetchElements(string $query, \DOMNode $context = null): \DOMNodeList {
+        return $this->xpath->query($query, $context ?? $this->subject);
     }
 
     /** Retrieves the trimmed text content of a DOM element based on an XPath query  */
-    protected function fetchText(string $query) {
-        $node = $this->fetchElement($query);
+    protected function fetchText(string $query, \DOMNode $context = null) {
+        $node = $this->fetchElement($query, $context);
         return ($node) ? $this->trimText($node->textContent) : null;
     }
 
     /** Retrieves the trimmed text content of multiple DOM elements based on an XPath query  */
-    protected function fetchTextMulti(string $query) {
+    protected function fetchTextMulti(string $query, \DOMNode $context = null) {
         $out = [];
-        $nodes = $this->xpath->query($query, $this->subject);
+        $nodes = $this->xpath->query($query, $context ?? $this->subject);
         foreach ($nodes as $node) {
             $out[] = $this->trimText($node->item(0)->textContent);
         }

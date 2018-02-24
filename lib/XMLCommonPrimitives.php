@@ -161,4 +161,23 @@ trait XMLCommonPrimitives {
         }
         return $out;
     }
+
+    /** Primitive to fetch a collection of people associated with a podcast/episode 
+     * 
+     * The collection only ever contains the first author found: podcasts implicitly have only one author
+    */
+    protected function getPeoplePod() {
+        $name = $this->fetchText("./gplay:author|./apple:author") ?? "";
+        $mail = $this->fetchText("./gplay:email|./apple:email") ?? "";
+        if (!strlen($name)) {
+            return null;
+        }
+        $out = new PersonCollection;
+        $p = new Person;
+        $p->name = $name;
+        $p->mail = $mail;
+        $p->role = "author";
+        $out[] = $p;
+        return $out;
+    }
 }
