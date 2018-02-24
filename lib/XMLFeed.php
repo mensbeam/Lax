@@ -20,14 +20,14 @@ class XMLFeed extends XMLCommon {
     public $people;
     public $author;
 
-    /** Returns a parsed feed */
-    public function __construct(string $data, string $contentType = null, string $url = null) {
+    /** Constructs a parsed feed */
+    public function __construct(string $data, string $contentType = "", string $url = "") {
         $this->init($data, $contentType, $url);
         $this->parse();
     }
 
     /** Performs initialization of the instance */
-    protected function init(string $data, string $contentType = null, string $url = null) {
+    protected function init(string $data, string $contentType = "", string $url = "") {
         $this->document = new \DOMDocument();
         $this->document->loadXML($data, \LIBXML_BIGLINES | \LIBXML_COMPACT);
         $this->document->documentURI = $url;
