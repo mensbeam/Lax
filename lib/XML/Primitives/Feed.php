@@ -4,9 +4,11 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\XML\Primitives;
 
-trait XMLFeedPrimitives {
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+
+trait Feed {
 
     /** Primitive to fetch an Atom feed summary
      * 

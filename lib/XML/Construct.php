@@ -4,16 +4,17 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\XML;
 
-abstract class XMLCommon {
+use JKingWeb\Lax\Person\Person;
+
+abstract class Construct {
     /** @var \DOMDocument */
     public    $document;
     /** @var \DOMXPath */
     protected $xpath;
     /** @var \DOMElement */
     protected $subject;
-    protected $base = "";
     
     const NS = [
         'atom'  => "http://www.w3.org/2005/Atom",                       // Atom syndication format                  https://tools.ietf.org/html/rfc4287

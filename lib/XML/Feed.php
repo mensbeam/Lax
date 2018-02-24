@@ -4,11 +4,14 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\XML;
 
-class XMLFeed extends XMLCommon {
-    use XMLCommonPrimitives;
-    use XMLFeedPrimitives;
+use JKingWeb\Lax\Person\Person;
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+
+class Feed extends Construct {
+    use Primitives\Construct;
+    use Primitives\Feed;
     
     public $type;
     public $version;

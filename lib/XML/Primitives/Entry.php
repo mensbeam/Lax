@@ -4,9 +4,11 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\XML\Primitives;
 
-trait XMLEntryPrimitives {
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+
+trait Entry {
 
     /** Primitive to fetch a collection of people associated with an RSS entry */
     protected function getPeopleRss2() {

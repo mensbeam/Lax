@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\Person;
 
-class PersonCollection extends Collection {
+class Collection extends \JKingWeb\Lax\Collection {
     protected static $ranks = [
         'webmaster' => 10,
         'editor' => 20,
@@ -62,7 +62,7 @@ class PersonCollection extends Collection {
      * 
      * The returned collection is the original instance, modified
     */
-    public function merge(PersonCollection ...$coll): self {
+    public function merge(Collection ...$coll): self {
         foreach ($coll as $c) {
             foreach ($c as $p) {
                 $this[] = $p;
