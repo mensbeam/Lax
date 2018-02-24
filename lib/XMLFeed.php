@@ -65,26 +65,29 @@ class XMLFeed extends XMLCommon {
     protected function parse() {
         $this->id = $this->getId();
         $this->link = $this->getLink();
-        $this->title = $this->getTitle() ?? $this->link;
+        $this->title = $this->getTitle();
         $this->summary = $this->getSummary();
         $this->people = $this->getPeople();
         $this->author = $this->people->primary();
+        // do a second pass on missing data we'd rather fill in
+        $this->link = strlen($this->link) ? $this->link : $this->url;
+        $this->title = strlen($this->title) ? $this->title : $this->link;
     }
     
     /** General function to fetch the feed title */
-    public function getTitle() {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
+    public function getTitle(): string {
+        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
     }
 
     /** General function to fetch the feed's Web-representation URL */
-    public function getLink() {
-        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2();
+    public function getLink(): string {
+        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
     }
 
     /** General function to fetch the description of a feed */
-    public function getSummary() {
+    public function getSummary(): string {
         // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom();
+        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom() ?? "";
     }
 
     /** General function to fetch the categories of a feed 
@@ -93,13 +96,13 @@ class XMLFeed extends XMLCommon {
      * 
      * The $humanFriendly parameter only affects Atom categories
     */
-    public function getCategories(bool $grouped = false, bool $humanFriendly = true) {
-        return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesPod($grouped, $humanFriendly);
+    public function getCategories(bool $grouped = false, bool $humanFriendly = true): array {
+        return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesPod($grouped, $humanFriendly) ?? [];
     }
 
     /** General function to fetch the feed identifier */
-    public function getId() {
-        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
+    public function getId(): string {
+        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
     }
 
     /** General function to fetch a collection of people associated with a feed */
