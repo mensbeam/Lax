@@ -9,19 +9,10 @@ namespace JKingWeb\Lax\XML;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 
-class Feed extends Construct {
+class Feed extends \JKingWeb\Lax\Feed {
+    use Construct;
     use Primitives\Construct;
     use Primitives\Feed;
-    
-    public $type;
-    public $version;
-    public $url;
-    public $link;
-    public $title;
-    public $summary;
-    public $categories;
-    public $people;
-    public $author;
 
     /** Constructs a parsed feed */
     public function __construct(string $data, string $contentType = "", string $url = "") {
@@ -34,7 +25,7 @@ class Feed extends Construct {
         $this->document = new \DOMDocument();
         $this->document->loadXML($data, \LIBXML_BIGLINES | \LIBXML_COMPACT);
         $this->document->documentURI = $url;
-        $this->xpath = self::getXPathProcessor($this->document);
+        $this->xpath = new XPath($this->document);
         $this->subject = $this->document->documentElement;
         $ns = $this->subject->namespaceURI;
         $name = $this->subject->localName;
@@ -42,39 +33,25 @@ class Feed extends Construct {
             $this->subject = $this->fetchElement("./channel") ?? $this->subject;
             $this->type = "rss";
             $this->version = $this->document->documentElement->getAttribute("version");
-        } elseif ($ns==self::NS['rdf'] && $name=="RDF") {
+        } elseif ($ns==XPath::NS['rdf'] && $name=="RDF") {
             $this->type = "rdf";
             $channel = $this->fetchElement("./rss1:channel|./rss0:channel");
             if ($channel) {
                 $this->subject = $channel;
-                $this->version = ($channel->namespaceURI==self::NS['rss1']) ? "1.0" : "0.90";
+                $this->version = ($channel->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
             } else {
                  $element = $this->fetchElement("./rss1:item|./rss0:item|./rss1:image|./rss0:image");
                  if ($element) {
-                     $this->version = ($element->namespaceURI==self::NS['rss1']) ? "1.0" : "0.90";
+                     $this->version = ($element->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
                  }
             }
-        } elseif ($ns==self::NS['atom'] && $name=="feed") {
+        } elseif ($ns==XPath::NS['atom'] && $name=="feed") {
             $this->type = "atom";
             $this->version = "1.0";
         } else {
             throw new \Exception;
         }
         $this->url = $url;
-        
-    }
-
-    /** Parses the feed to extract sundry metadata */
-    protected function parse() {
-        $this->id = $this->getId();
-        $this->link = $this->getLink();
-        $this->title = $this->getTitle();
-        $this->summary = $this->getSummary();
-        $this->people = $this->getPeople();
-        $this->author = $this->people->primary();
-        // do a second pass on missing data we'd rather fill in
-        $this->link = strlen($this->link) ? $this->link : $this->url;
-        $this->title = strlen($this->title) ? $this->title : $this->link;
     }
     
     /** General function to fetch the feed title */
