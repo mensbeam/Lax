@@ -9,30 +9,14 @@ namespace JKingWeb\Lax\XML;
 use JKingWeb\Lax\Person\Person;
 
 trait Construct {
+    use \JKingWeb\Lax\Construct;
+
     /** @var \DOMDocument */
     public    $document;
     /** @var \DOMXPath */
     protected $xpath;
     /** @var \DOMElement */
     protected $subject;
-
-    /** Trims plain text and collapses whitespace */
-    protected function trimText(string $text): string {
-        return trim(preg_replace("<\s{2,}>s", " ", $text));
-    }
-
-    /** Takes an HTML string as input and returns a sanitized version of that string
-     * 
-     * The $outputHtml parameter, when false, outputs only the plain-text content of the sanitized HTML
-     */
-    protected function sanitizeString(string $markup, bool $outputHtml = true): string {
-        if (!preg_match("/<\S/", $markup)) {
-            // if the string does not appear to actually contain markup besides entities, we can skip most of the sanitization
-            return $outputHtml ? $markup : $this->trimText(html_entity_decode($markup, \ENT_QUOTES | \ENT_HTML5, "UTF-8"));
-        } else {
-            return "OOK!";
-        }
-    }
 
     /** Retrieves an element node based on an XPath query */
     protected function fetchElement(string $query, \DOMNode $context = null) {
@@ -103,12 +87,6 @@ trait Construct {
         return $this->xpath->query("./atom:link[@href][$cond]", $this->subject);
     }
 
-    /** Resolves a relative URL against a base URL */
-    protected function resolveUrl(string $url, string $base = null): string {
-        $base = $base ?? "";
-        return \Sabre\Uri\resolve($base, $url);
-    }
-
     /** Resolves a URL contained in a DOM element's atrribute or text 
      * 
      * This automatically performs xml:base and HTML <base> resolution
@@ -119,41 +97,6 @@ trait Construct {
         $base = $node->baseURI;
         $url = strlen($attr) ? $node->getAttributeNS($ns, $attr) : $this->trimText($node->textContent);
         return $this->resolveURL($url, $base);
-    }
-
-    /** Parses an RSS person-text and returns a Person object with a name, e-mail address, or both
-     * 
-     * The following forms will yield both a name and address:
-     *  
-     * - user@example.com (Full Name)
-     * - Full Name <user@example.com>
-     */
-    protected function parsePersonText(string $person): Person {
-        $person = $this->trimText($person);
-        $out = new Person;
-        if (!strlen($person)) {
-            return $out;
-        } elseif (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
-            if ($this->validateMail($match[1])) {
-                $out->name = trim($match[2]);
-                $out->mail = $match[1];
-            } else {
-                $out->name = $person;
-            }
-        } elseif (preg_match("/^((?:\S|\s(?!<))+) <([^>]+)>$/", $person, $match)) { // tests "Full Name <user@example.com>" form
-            if ($this->validateMail($match[2])) {
-                $out->name = trim($match[1]);
-                $out->mail = $match[2];
-            } else {
-                $out->name = $person;
-            }
-        } elseif ($this->validateMail($person)) {
-            $out->name = $person;
-            $out->mail = $person;
-        } else {
-            $out->name = $person;
-        }
-        return $out;
     }
 
     protected function parsePersonAtom(\DOMNode $node) {
@@ -169,27 +112,5 @@ trait Construct {
         }
         $p->role = $node->localName;
         return $p;
-    }
-
-    /** Tests whether a string is a valid e-mail address
-     * 
-     * Accepts IDN hosts and Unicode localparts
-     */
-    protected function validateMail(string $addr): bool {
-        $out = preg_match("/^(.+?)@([^@]+)$/", $addr, $match);
-        if (!$out) {
-            return false;
-        }
-        $local = $match[1];
-        $domain = $match[2];
-        // PHP's filter_var does not accept IDN hosts, so we have to perform an IDNA transformat first
-        $domain = idn_to_ascii($domain, \IDNA_NONTRANSITIONAL_TO_ASCII, \INTL_IDNA_VARIANT_UTS46); // settings for IDNA2008 algorithm (I think)
-        if ($domain===false) {
-            return false;
-        }
-        $addr = "$local@$domain";
-         // PHP 7.1 and above have the constant defined FIXME: Review if removing support for PHP 7.0
-        $flags = defined("\FILTER_FLAG_EMAIL_UNICODE") ?  \FILTER_FLAG_EMAIL_UNICODE : 0;
-        return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, $flags);
     }
 }

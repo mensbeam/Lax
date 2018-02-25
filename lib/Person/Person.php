@@ -11,6 +11,7 @@ class Person {
     public $mail = "";
     public $url  = "";
     public $role = "";
+    public $avatar = "";
 
     public function __toString() {
         return strlen($this->mail) ? $this->name."<".$this->mail.">" : $this->name;
