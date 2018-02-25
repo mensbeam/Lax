@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\XML\Primitives;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\XML\XPath;
 
 trait Entry {
 
@@ -54,5 +55,16 @@ trait Entry {
             }
         }
         return $out;
+    }
+
+    /** Primitive to fetch an RDF entry's canonical URL */
+    protected function getUrlRss1() {
+        // XPath doesn't seem to like the query we'd need for this, so it must be done the hard way.
+        $node = $this->subject;
+        if ($node->localName=="item" && ($node->namespaceURI==XPath::NS['rss1'] || $node->namespaceURI==XPath::NS['rss0']) && $node->hasAttributeNS(XPath::NS['rdf'], "about")) {
+            return $this->resolveNodeUrl($node, "about", XPath::NS['rdf']);
+        } else {
+            return null;
+        }
     }
 }

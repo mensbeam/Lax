@@ -22,6 +22,7 @@ class Feed extends \JKingWeb\Lax\Feed {
 
     /** Performs initialization of the instance */
     protected function init(string $data, string $contentType = "", string $url = "") {
+        $this->reqUrl = $url;
         $this->document = new \DOMDocument();
         $this->document->loadXML($data, \LIBXML_BIGLINES | \LIBXML_COMPACT);
         $this->document->documentURI = $url;
@@ -52,6 +53,14 @@ class Feed extends \JKingWeb\Lax\Feed {
             throw new \Exception;
         }
         $this->url = $url;
+    }
+    
+    /** General function to fetch the canonical feed URL
+     * 
+     * If the feed does not include a canonical URL, the request URL is returned instead
+     */
+    public function getUrl(): string {
+        return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod() ?? $this->reqUrl;
     }
     
     /** General function to fetch the feed title */

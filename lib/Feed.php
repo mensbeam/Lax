@@ -9,7 +9,9 @@ namespace JKingWeb\Lax;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 
-abstract class Feed {    
+abstract class Feed {
+    protected $reqUrl;
+
     public $type;
     public $version;
     public $url;
@@ -26,6 +28,7 @@ abstract class Feed {
     /** Parses the feed to extract sundry metadata */
     protected function parse() {
         $this->id = $this->getId();
+        $this->url = $this->getUrl();
         $this->link = $this->getLink();
         $this->title = $this->getTitle();
         $this->summary = $this->getSummary();
@@ -35,6 +38,9 @@ abstract class Feed {
         $this->link = strlen($this->link) ? $this->link : $this->url;
         $this->title = strlen($this->title) ? $this->title : $this->link;
     }
+    
+    /** General function to fetch the canonical feed URL */
+    abstract public function getUrl(): string;
     
     /** General function to fetch the feed title */
     abstract public function getTitle(): string;

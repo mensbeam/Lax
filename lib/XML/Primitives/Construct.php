@@ -183,4 +183,10 @@ trait Construct {
         $out[] = $p;
         return $out;
     }
+
+    /** Primitive to fetch an Atom feed or entry's canonical URL */
+    protected function getUrlAtom() {
+        $node = $this->fetchAtomRelations("self");
+        return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
+    }
 }

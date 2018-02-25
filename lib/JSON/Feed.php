@@ -12,21 +12,27 @@ use JKingWeb\Lax\Person\Collection as PersonCollection;
 class Feed extends \JKingWeb\Lax\Feed {
     use Construct;
 
-    protected $reqUrl;
-
     /** Constructs a parsed feed */
     public function __construct(string $data, string $contentType = "", string $url = "") {
-        $this->reqUrl = $url;
         $this->init($data, $contentType);
         $this->parse();
     }
 
     /** Performs initialization of the instance */
-    protected function init(string $data, string $contentType = "") {
+    protected function init(string $data, string $contentType = "", string $url = "") {
+        $this->reqUrl = $url;
         $this->json = json_decode($data);
         $this->url = $this->reqUrl;
         $this->type = "json";
         $this->version = $this->fetchMember("version", "str") ?? "";
+    }
+    
+    /** General function to fetch the canonical feed URL
+     * 
+     * If the feed does not include a canonical URL, the request URL is returned instead
+     */
+    public function getUrl(): string {
+        return $this->fetchUrl("feed_url") ?? $this->reqUrl;
     }
     
     /** General function to fetch the feed title */
@@ -57,8 +63,7 @@ class Feed extends \JKingWeb\Lax\Feed {
      * For JSON feeds this is always the feed URL specified in the feed
     */
     public function getId(): string {
-        //return $this->getUrl();
-        return "";
+        return $this->fetchUrl("feed_url") ?? "";
     }
 
     /** General function to fetch a collection of people associated with a feed */

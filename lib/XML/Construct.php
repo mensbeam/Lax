@@ -21,7 +21,10 @@ trait Construct {
     /** Retrieves an element node based on an XPath query */
     protected function fetchElement(string $query, \DOMNode $context = null) {
         $context = $context ?? $this->subject;
-        $node = $this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
+        $node = @$this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
+        if ($node===false) {
+            throw new \Exception("Invalid XPath query: $query");
+        }
         return ($node->length) ? $node->item(0) : null;
     }
 

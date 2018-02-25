@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\XML\Primitives;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\XML\XPath;
 
 trait Feed {
 
@@ -75,5 +76,30 @@ trait Feed {
             }
         }
         return $out;
+    }
+
+    /** Primitive to fetch an RDF feed's canonical URL */
+    protected function getUrlRss1() {
+        // XPath doesn't seem to like the query we'd need for this, so it must be done the hard way.
+        $node = $this->subject;
+        if ($node->hasAttributeNS(XPath::NS['rdf'], "about")) {
+            if (
+                ($node->localName=="channel" && ($node->namespaceURI==XPath::NS['rss1'] || $node->namespaceURI==XPath::NS['rss0'])) ||
+                ($node==$node->ownerDocument->documentElement && $node->localName=="RDF" && $node->namespaceURI==XPath::NS['rdf'])
+            ) {
+                return $this->resolveNodeUrl($node, "about", XPath::NS['rdf']);
+            }
+        }
+        return null;
+    }
+
+    /** Primitive to fetch an podcast's canonical URL */
+    protected function getUrlPod() {
+        $node =  $this->fetchElement("./apple:new-feed-url");
+        if ($node) {
+            return $this->resolveNodeUrl($node);
+        } else {
+            return null;
+        }
     }
 }
