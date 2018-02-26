@@ -98,7 +98,7 @@ trait Construct {
             return $out;
         }
         $tz = new \DateTimeZone("UTC");
-        foreach (Date::SUPPORTED_FORMATS as $format) {
+        foreach (Date::$supportedFormats as $format) {
             $out = Date::createFromFormat($format, $date, $tz);
             if ($out) {
                 break;
