@@ -21,6 +21,7 @@ abstract class Feed {
     public $categories;
     public $people;
     public $author;
+    public $dateModified;
 
     /** Constructs a parsed feed */
     abstract public function __construct(string $data, string $contentType = "", string $url = "");
@@ -34,6 +35,7 @@ abstract class Feed {
         $this->summary = $this->getSummary();
         $this->people = $this->getPeople();
         $this->author = $this->people->primary();
+        $this->dateModified = $this->getDateModified();
         // do a second pass on missing data we'd rather fill in
         $this->link = strlen($this->link) ? $this->link : $this->url;
         $this->title = strlen($this->title) ? $this->title : $this->link;
@@ -64,4 +66,7 @@ abstract class Feed {
 
     /** General function to fetch a collection of people associated with a feed */
     abstract public function getPeople(): PersonCollection;
+
+    /** General function to fetch the feed's modification date */
+    abstract public function getDateModified();
 }

@@ -117,4 +117,9 @@ class Feed extends \JKingWeb\Lax\Feed {
             return $out->merge(($this->getPeopleRss2() ?? new PersonCollection)->filterOutRole("author"));
         }
     }
+
+    /** General function to fetch the modification date of a feed */
+    public function getDateModified() {
+        return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
+    }
 }

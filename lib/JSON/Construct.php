@@ -46,8 +46,14 @@ trait Construct {
         }
     }
 
+    /** Returns an object member as a resolved URL */
     protected function fetchUrl(string $key, \stdClass $obj = null) {
         $url = $this->fetchMember($key, "str", $obj);
         return (!is_null($url)) ? $this->resolveUrl($url, $this->url) : $url;
+    }
+
+    /** Returns an object member as a parsed date */
+    protected function fetchDate(string $key, \stdClass $obj = null) {
+        return $this->parseDate($this->fetchMember($key, "str", $obj) ?? "");
     }
 }

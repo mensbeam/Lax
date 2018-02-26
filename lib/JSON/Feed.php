@@ -82,4 +82,12 @@ class Feed extends \JKingWeb\Lax\Feed {
             return $out;
         }
     }
+
+    /** General function to fetch the modification date of a feed 
+     * 
+     * JSON feeds themselves don't have dates, so this always returns null
+    */
+    public function getDateModified() {
+        return null;
+    }
 }

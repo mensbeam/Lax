@@ -10,6 +10,48 @@ use JKingWeb\Lax\Person\Person;
 
 trait Construct {
 
+    protected $dateFormats = [
+        "D, d M Y H:i:s O",
+        "D, d M Y H:i:sO",
+        "D, d M Y H:i:s P",
+        "D, d M Y H:i:sP",
+        "D, d M Y H:i:s T",
+        "D, d M Y H:i:s",
+        "D, d M y H:i:s O",
+        "D, d M y H:i:sO",
+        "D, d M y H:i:s P",
+        "D, d M y H:i:sP",
+        "D, d M y H:i:s T",
+        "D, d M y H:i:s",
+        "Y-m-d\TH:i:s O",
+        "Y-m-d\TH:i:sO",
+        "Y-m-d\TH:i:s P",
+        "Y-m-d\TH:i:sP",
+        "Y-m-d\TH:i:s T",
+        "Y-m-d\TH:i:s",
+        "Y-m-d H:i:s O",
+        "Y-m-d H:i:sO",
+        "Y-m-d H:i:s P",
+        "Y-m-d H:i:sP",
+        "Y-m-d H:i:s T",
+        "Y-m-d H:i:s\Z",
+        "Y-m-d H:i:s",
+        "Y-m-d\TH:i:s.u O",
+        "Y-m-d\TH:i:s.uO",
+        "Y-m-d\TH:i:s.u P",
+        "Y-m-d\TH:i:s.uP",
+        "Y-m-d\TH:i:s.u T",
+        "Y-m-d\TH:i:s.u\Z",
+        "Y-m-d\TH:i:s.u",
+        "Y-m-d H:i:s.u O",
+        "Y-m-d H:i:s.uO",
+        "Y-m-d H:i:s.u P",
+        "Y-m-d H:i:s.uP",
+        "Y-m-d H:i:s.u T",
+        "Y-m-d H:i:s.u\Z",
+        "Y-m-d H:i:s.u",
+    ];
+
     /** Trims plain text and collapses whitespace */
     protected function trimText(string $text): string {
         return trim(preg_replace("<\s{2,}>s", " ", $text));
@@ -89,5 +131,21 @@ trait Construct {
          // PHP 7.1 and above have the constant defined FIXME: Review if removing support for PHP 7.0
         $flags = defined("\FILTER_FLAG_EMAIL_UNICODE") ?  \FILTER_FLAG_EMAIL_UNICODE : 0;
         return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, $flags);
+    }
+
+    protected function parseDate(string $date) {
+        $out = null;
+        $date = $this->trimText($date);
+        if (!strlen($date)) {
+            return $out;
+        }
+        $tz = new \DateTimeZone("UTC");
+        foreach ($this->dateFormats as $format) {
+            $out = \DateTimeImmutable::createFromFormat($format, $date, $tz);
+            if ($out) {
+                break;
+            }
+        }
+        return $out ?: null;
     }
 }

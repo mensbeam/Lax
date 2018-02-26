@@ -93,7 +93,7 @@ trait Feed {
         return null;
     }
 
-    /** Primitive to fetch an podcast's canonical URL */
+    /** Primitive to fetch a podcast's canonical URL */
     protected function getUrlPod() {
         $node =  $this->fetchElement("./apple:new-feed-url");
         if ($node) {
@@ -101,5 +101,10 @@ trait Feed {
         } else {
             return null;
         }
+    }
+
+    /** Primitive to fetch the modification date of an RSS feed */
+    protected function getDateModifiedRss2() {
+        return $this->fetchDate("./lastBuildDate") ?? $this->fetchDate("./pubDate");
     }
 }

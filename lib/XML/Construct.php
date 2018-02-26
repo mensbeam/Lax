@@ -68,6 +68,11 @@ trait Construct {
         }
     }
 
+    /** Retrieves and parses a date from the content of a DOM element based on an XPath query  */
+    protected function fetchDate(string $query, \DOMNode $context = null) {
+        return $this->parseDate($this->fetchText($query, $context) ?? "");
+    }
+
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
      * 
      * Links without an href attribute are excluded.
@@ -102,6 +107,7 @@ trait Construct {
         return $this->resolveURL($url, $base);
     }
 
+    /** Populates a Person object according to the children of an Atom <author> element */
     protected function parsePersonAtom(\DOMNode $node) {
         $p = new Person;
         $p->mail = $this->fetchText("./atom:email", $node) ?? "";

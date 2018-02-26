@@ -67,4 +67,14 @@ trait Entry {
             return null;
         }
     }
+
+    /** Primitive to fetch the modification date of an RSS feed */
+    protected function getDateModifiedRss2() {
+        return $this->fetchDate("./pubDate");
+    }
+
+    /** Primitive to fetch the modification date of an Atom feed/entry */
+    protected function getDateCreatedAtom() {
+        return $this->fetchDate("./atom:published");
+    }
 }

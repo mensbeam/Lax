@@ -189,4 +189,14 @@ trait Construct {
         $node = $this->fetchAtomRelations("self");
         return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
     }
+
+    /** Primitive to fetch the modification date of an Atom feed/entry */
+    protected function getDateModifiedAtom() {
+        return $this->fetchDate("./atom:updated");
+    }
+
+    /** Primitive to fetch the modification date of an Atom feed/entry */
+    protected function getDateModifiedDC() {
+        return $this->fetchDate("./dc:date");
+    }
 }
