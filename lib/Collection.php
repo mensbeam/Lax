@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax;
 
-abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countable {
+abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonSerializable {
 
     protected $data = [];
 
@@ -14,6 +14,10 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
 
     public function getIterator(): \Traversable {
         return ($this->data instanceof \Traversable) ? $this->data : new \ArrayIterator((array) $this->data);
+    }
+
+    public function jsonSerialize() {
+        return $this->data;
     }
 
     public function count(): int {
@@ -38,5 +42,18 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
 
     public function offsetUnset($offset) {
         unset($this->data[$offset]);
+    }
+
+    /** Merges one or more other collections' items into this one 
+     * 
+     * The returned collection is the original instance, modified
+    */
+    public function merge(Collection ...$coll): self {
+        foreach ($coll as $c) {
+            foreach ($c as $p) {
+                $this[] = $p;
+            }
+        }
+        return $this;
     }
 }

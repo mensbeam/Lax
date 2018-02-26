@@ -57,17 +57,4 @@ class Collection extends \JKingWeb\Lax\Collection {
         }
         return $out;
     }
-
-    /** Merges one or more other collections' items into this one 
-     * 
-     * The returned collection is the original instance, modified
-    */
-    public function merge(Collection ...$coll): self {
-        foreach ($coll as $c) {
-            foreach ($c as $p) {
-                $this[] = $p;
-            }
-        }
-        return $this;
-    }
 }
