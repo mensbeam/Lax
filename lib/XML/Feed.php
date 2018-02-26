@@ -31,17 +31,17 @@ class Feed extends \JKingWeb\Lax\Feed {
         $ns = $this->subject->namespaceURI;
         $name = $this->subject->localName;
         if (is_null($ns) && $name=="rss") {
-            $this->subject = $this->fetchElement("./channel") ?? $this->subject;
+            $this->subject = $this->fetchElement("channel") ?? $this->subject;
             $this->type = "rss";
             $this->version = $this->document->documentElement->getAttribute("version");
         } elseif ($ns==XPath::NS['rdf'] && $name=="RDF") {
             $this->type = "rdf";
-            $channel = $this->fetchElement("./rss1:channel|./rss0:channel");
+            $channel = $this->fetchElement("rss1:channel|rss0:channel");
             if ($channel) {
                 $this->subject = $channel;
                 $this->version = ($channel->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
             } else {
-                 $element = $this->fetchElement("./rss1:item|./rss0:item|./rss1:image|./rss0:image");
+                 $element = $this->fetchElement("rss1:item|rss0:item|rss1:image|rss0:image");
                  if ($element) {
                      $this->version = ($element->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
                  }

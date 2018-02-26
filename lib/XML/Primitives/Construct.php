@@ -16,27 +16,27 @@ trait Construct {
      * This fetches the title in plain text rather than HTML, even if HTML is provided in the feed/entry
      */
     protected function getTitleAtom() {
-        return $this->fetchTextAtom("./atom:title");
+        return $this->fetchTextAtom("atom:title");
     }
 
     /** Primitive to fetch an RSS feed/entry title */
     protected function getTitleRss2() {
-        return $this->fetchText("./title");
+        return $this->fetchText("title");
     }
 
     /** Primitive to fetch an RDF feed/entry title */
     protected function getTitleRss1() {
-        return $this->fetchText("./rss1:title|./rss0:title");
+        return $this->fetchText("rss1:title|rss0:title");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry title */
     protected function getTitleDC() {
-        return $this->fetchText("./dc:title");
+        return $this->fetchText("dc:title");
     }
 
     /** Primitive to fetch an Apple podcast/episdoe title */
     protected function getTitlePod() {
-        return $this->fetchText("./apple:title");
+        return $this->fetchText("apple:title");
     }
 
     /** Primitive to fetch an Atom feed/entry Web-representation URL */
@@ -48,19 +48,19 @@ trait Construct {
 
     /** Primitive to fetch an RSS feed/entry Web-representation URL */
     protected function getLinkRss2() {
-        $node = $this->fetchElement("./link");
+        $node = $this->fetchElement("link");
         return $node ? $this->resolveNodeUrl($node) : null;
     }
 
     /** Primitive to fetch an RDF feed/entry Web-representation URL */
     protected function getLinkRss1() {
-        $node = $this->fetchElement("./rss1:link|./rss0:link");
+        $node = $this->fetchElement("rss1:link|rss0:link");
         return $node ? $this->resolveNodeUrl($node) : null;
     }
 
     /** Primitive to fetch Atom feed/entry categories */
     protected function getCategoriesAtom(bool $grouped = false, bool $humanFriendly = true) {
-        $nodes = $this->fetchElements("./atom:category[@term]");
+        $nodes = $this->fetchElements("atom:category[@term]");
         $out = [];
         foreach ($nodes as $node) {
             $scheme = $node->getAttribute("scheme");
@@ -78,7 +78,7 @@ trait Construct {
     /** Primitive to fetch RSS feed/entry categories */
     protected function getCategoriesRss2(bool $grouped = false, bool $humanFriendly = true) {
         if ($grouped) {
-            $nodes = $this->fetchElements("./category");
+            $nodes = $this->fetchElements("category");
             $out = [];
             foreach ($nodes as $node) {
                 $domain = $node->getAttribute("domain");
@@ -92,7 +92,7 @@ trait Construct {
             }
             return $out ? $out : null;
         } else {
-            $out = $this->fetchTextMulti("./category");
+            $out = $this->fetchTextMulti("category");
             return $out ? array_keys(array_flip($out)) : null;
         }
     }
@@ -102,7 +102,7 @@ trait Construct {
      * Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation
     */
     protected function getCategoriesDC(bool $grouped = false, bool $humanFriendly = true) {
-        $out = $this->fetchTextMulti("./dc:subject");
+        $out = $this->fetchTextMulti("dc:subject");
         if ($out) {
             $out = array_keys(array_flip($out));
             return $grouped ? ['' => $out] : $out;
@@ -112,7 +112,7 @@ trait Construct {
 
     /** Primitive to fetch podcast/episode categories */
     protected function getCategoriesPod(bool $grouped = false, bool $humanFriendly = true) {
-        $nodes = $this->fetchElements("./apple:category|./gplay:category");
+        $nodes = $this->fetchElements("apple:category|gplay:category");
         $out = [];
         foreach ($nodes as $node) {
             $cat = $this->trimText($node->getAttribute("text"));
@@ -127,7 +127,7 @@ trait Construct {
 
     /** Primitive to fetch an Atom feed/entry identifier */
     protected function getIdAtom() {
-        return $this->fetchText("./atom:id");
+        return $this->fetchText("atom:id");
     }
 
     /** Primitive to fetch an RSS feed/entry identifier 
@@ -135,17 +135,17 @@ trait Construct {
      * Using RSS' <guid> for feed identifiers is non-standard, but harmless
     */
     protected function getIdRss2() {
-        return $this->fetchText("./guid");
+        return $this->fetchText("guid");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry identifier */
     protected function getIdDC() {
-        return $this->fetchText("./dc:identifier");
+        return $this->fetchText("dc:identifier");
     }
 
     /** Primitive to fetch a collection of people associated with a feed/entry via Dublin Core */
     protected function getPeopleDC() {
-        $nodes = $this->fetchElements("./dc:creator|./dc:contributor");
+        $nodes = $this->fetchElements("dc:creator|dc:contributor");
         if (!$nodes->length) {
             return null;
         }
@@ -170,8 +170,8 @@ trait Construct {
      * The collection only ever contains the first author found: podcasts implicitly have only one author
     */
     protected function getPeoplePod() {
-        $name = $this->fetchText("./gplay:author|./apple:author") ?? "";
-        $mail = $this->fetchText("./gplay:email|./apple:email") ?? "";
+        $name = $this->fetchText("gplay:author|apple:author") ?? "";
+        $mail = $this->fetchText("gplay:email|apple:email") ?? "";
         if (!strlen($name)) {
             return null;
         }
@@ -192,11 +192,11 @@ trait Construct {
 
     /** Primitive to fetch the modification date of an Atom feed/entry */
     protected function getDateModifiedAtom() {
-        return $this->fetchDate("./atom:updated");
+        return $this->fetchDate("atom:updated");
     }
 
     /** Primitive to fetch the modification date of an Atom feed/entry */
     protected function getDateModifiedDC() {
-        return $this->fetchDate("./dc:date");
+        return $this->fetchDate("dc:date");
     }
 }

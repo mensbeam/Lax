@@ -92,7 +92,7 @@ trait Construct {
         } else {
             $cond = "@rel='$rel'";
         }
-        return $this->xpath->query("./atom:link[@href][$cond]", $this->subject);
+        return $this->xpath->query("atom:link[@href][$cond]", $this->subject);
     }
 
     /** Resolves a URL contained in a DOM element's atrribute or text 
@@ -110,12 +110,12 @@ trait Construct {
     /** Populates a Person object according to the children of an Atom <author> element */
     protected function parsePersonAtom(\DOMNode $node) {
         $p = new Person;
-        $p->mail = $this->fetchText("./atom:email", $node) ?? "";
-        $p->name = $this->fetchText("./atom:name", $node) ?? $p->mail;
+        $p->mail = $this->fetchText("atom:email", $node) ?? "";
+        $p->name = $this->fetchText("atom:name", $node) ?? $p->mail;
         if (!strlen($p->name)) {
             return null;
         }
-        $url = $this->fetchElement("./atom:uri", $node);
+        $url = $this->fetchElement("atom:uri", $node);
         if ($url) {
             $p->url = $this->resolveNodeUrl($url);
         }

@@ -13,7 +13,7 @@ trait Entry {
 
     /** Primitive to fetch a collection of people associated with an RSS entry */
     protected function getPeopleRss2() {
-        $nodes = $this->fetchElements("./author");
+        $nodes = $this->fetchElements("author");
         if (!$nodes->length) {
             return null;
         }
@@ -31,7 +31,7 @@ trait Entry {
 
     /** Primitive to fetch a collection of people associated with an Atom entry */
     protected function getPeopleAtom() {
-        $nodes = $this->fetchElements("./atom:author|./atom:contributor");
+        $nodes = $this->fetchElements("atom:author|atom:contributor");
         $out = new PersonCollection;
         foreach ($nodes as $node) {
             $p = $this->parsePersonAtom($node);
@@ -42,7 +42,7 @@ trait Entry {
         $primary = $out->primary();
         // if the entry has no author, we retrieve the authors (and not contributors) from the entry's source element
         if (!$primary || $primary->role != "author") {
-            $nodes = $this->fetchElements("./atom:source[1]/atom:author");
+            $nodes = $this->fetchElements("atom:source[1]/atom:author");
             foreach ($nodes as $node) {
                 $p = $this->parsePersonAtom($node);
                 if ($p) {
@@ -70,11 +70,11 @@ trait Entry {
 
     /** Primitive to fetch the modification date of an RSS feed */
     protected function getDateModifiedRss2() {
-        return $this->fetchDate("./pubDate");
+        return $this->fetchDate("pubDate");
     }
 
     /** Primitive to fetch the modification date of an Atom feed/entry */
     protected function getDateCreatedAtom() {
-        return $this->fetchDate("./atom:published");
+        return $this->fetchDate("atom:published");
     }
 }
