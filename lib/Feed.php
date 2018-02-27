@@ -39,6 +39,8 @@ abstract class Feed {
         // do a second pass on missing data we'd rather fill in
         $this->link = strlen($this->link) ? $this->link : $this->url;
         $this->title = strlen($this->title) ? $this->title : $this->link;
+        // do extra stuff just to test it
+        $this->categories = $this->getCategories();
     }
     
     /** General function to fetch the canonical feed URL */
@@ -59,7 +61,7 @@ abstract class Feed {
      * 
      * The $humanFriendly parameter only affects Atom categories
     */
-    abstract public function getCategories(bool $grouped = false, bool $humanFriendly = true): array;
+    abstract public function getCategories(): array;
 
     /** General function to fetch the feed identifier */
     abstract public function getId(): string;

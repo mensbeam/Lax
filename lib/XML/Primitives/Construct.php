@@ -8,6 +8,8 @@ namespace JKingWeb\Lax\XML\Primitives;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Category;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 trait Construct {
 
@@ -59,70 +61,61 @@ trait Construct {
     }
 
     /** Primitive to fetch Atom feed/entry categories */
-    protected function getCategoriesAtom(bool $grouped = false, bool $humanFriendly = true) {
-        $nodes = $this->fetchElements("atom:category[@term]");
-        $out = [];
-        foreach ($nodes as $node) {
-            $scheme = $node->getAttribute("scheme");
-            $cat = ($humanFriendly && $node->hasAttribute("label")) ? $node->getAttribute("label") : $node->getAttribute("term");
-            if (!$out[$scheme]) {
-                $out[$scheme] = [];
-            }
-            if (!in_array($cat, $out[$scheme])) {
-                $out[$scheme][] = $cat;
+    protected function getCategoriesAtom() {
+        $out = new CategoryCollection;
+        foreach ($this->fetchElements("atom:category[@term]") ?? [] as $node) {
+            $c = new Category;
+            $c->domain = $this->trimText($node->getAttribute("scheme"));
+            $c->label = $this->trimText($node->getAttribute("label"));
+            $c->name = $this->trimText($node->getAttribute("term"));
+            if (strlen($c->name)) {
+                $out[] = $c;
             }
         }
-        return $out ? $out : null;
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch RSS feed/entry categories */
-    protected function getCategoriesRss2(bool $grouped = false, bool $humanFriendly = true) {
-        if ($grouped) {
-            $nodes = $this->fetchElements("category");
-            $out = [];
-            foreach ($nodes as $node) {
-                $domain = $node->getAttribute("domain");
-                $cat = $this->trimText($node->textContent);
-                if (!$out[$domain]) {
-                    $out[$domain] = [];
-                }
-                if (!in_array($cat, $out[$domain])) {
-                    $out[$domain][] = $cat;
-                }
+    protected function getCategoriesRss2() {
+        $out = new CategoryCollection;
+        foreach ($this->fetchElements("category") ?? [] as $node) {
+            $c = new Category;
+            $c->domain = $this->trimText($node->getAttribute("domain"));
+            $c->name = $this->trimText($node->textContent);
+            if (strlen($c->name)) {
+                $out[] = $c;
             }
-            return $out ? $out : null;
-        } else {
-            $out = $this->fetchTextMulti("category");
-            return $out ? array_keys(array_flip($out)) : null;
         }
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch Dublin Core feed/entry categories
      * 
      * Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation
     */
-    protected function getCategoriesDC(bool $grouped = false, bool $humanFriendly = true) {
-        $out = $this->fetchTextMulti("dc:subject");
-        if ($out) {
-            $out = array_keys(array_flip($out));
-            return $grouped ? ['' => $out] : $out;
+    protected function getCategoriesDC() {
+        $out = new CategoryCollection;
+        foreach ($this->fetchTextMulti("dc:subject") ?? [] as $text) {
+            if (strlen($ctext)) {
+                $c = new Category;
+                $c->name = $text;
+                $out[] = $c;
+            }
         }
-        return null;
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch podcast/episode categories */
-    protected function getCategoriesPod(bool $grouped = false, bool $humanFriendly = true) {
-        $nodes = $this->fetchElements("apple:category|gplay:category");
-        $out = [];
-        foreach ($nodes as $node) {
-            $cat = $this->trimText($node->getAttribute("text"));
-            if (strlen($cat)) {
-                $out[] = $cat;
+    protected function getCategoriesPod() {
+        $out = new CategoryCollection;
+        foreach ($this->fetchElements("apple:category|gplay:category") ?? [] as $node) {
+            $c = new Category;
+            $c->name = $this->trimText($node->getAttribute("text"));
+            if (strlen($c->name)) {
+                $out[] = $c;
             }
         }
-        $out = array_keys(array_flip($out));
-        return $grouped ? ['' => $out] : $out;
-
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch an Atom feed/entry identifier */

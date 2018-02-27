@@ -85,8 +85,8 @@ class Feed extends \JKingWeb\Lax\Feed {
      * 
      * The $humanFriendly parameter only affects Atom categories
     */
-    public function getCategories(bool $grouped = false, bool $humanFriendly = true): array {
-        return $this->getCategoriesAtom($grouped, $humanFriendly) ?? $this->getCategoriesRss2($grouped, $humanFriendly) ?? $this->getCategoriesDC($grouped, $humanFriendly) ?? $this->getCategoriesPod($grouped, $humanFriendly) ?? [];
+    public function getCategories(): array {
+        return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? [];
     }
 
     /** General function to fetch the feed identifier */

@@ -37,24 +37,12 @@ class Collection extends \JKingWeb\Lax\Collection {
     }
 
     /** Returns a collection filtered to include only the specified roles */
-    public function filterRole(string ...$role): self {
-        $out = new static;
-        foreach ($this as $p) {
-            if (in_array($p->role, $role)) {
-                $out[] = $p;
-            }
-        }
-        return $out;
+    public function filterForRole(string ...$role): self {
+        return $this->filter($role, "role", true);
     }
 
     /** Returns a collection filtered to exclude the specified roles */
     public function filterOutRole(string ...$role): self {
-        $out = new static;
-        foreach ($this as $p) {
-            if (!in_array($p->role, $role)) {
-                $out[] = $p;
-            }
-        }
-        return $out;
+        return $this->filter($role, "role", false);
     }
 }

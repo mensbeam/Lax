@@ -10,8 +10,6 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
 
     protected $data = [];
 
-    abstract public function primary();
-
     public function getIterator(): \Traversable {
         return ($this->data instanceof \Traversable) ? $this->data : new \ArrayIterator((array) $this->data);
     }
@@ -55,5 +53,23 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
             }
         }
         return $this;
+    }
+
+    /** Returns a collection filtered along a given axis which includes or excludes only the specified terms 
+     * 
+     * $terms is the list of values to include or exclude in the result
+     * 
+     * $axis is the property of each collection member which value is to be checked against the terms 
+     * 
+     * $inclusive specified whether the terms are to included in (true) or excluded from (false) the result
+    */
+    protected function filter(array $terms, string $axis, bool $inclusive): self {
+        $out = new static;
+        foreach ($this as $item) {
+            if (in_array($p->$axis, $terms)==$inclusive) {
+                $out[] = $item;
+            }
+        }
+        return $out;
     }
 }

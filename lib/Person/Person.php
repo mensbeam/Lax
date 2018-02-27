@@ -14,6 +14,6 @@ class Person {
     public $avatar = "";
 
     public function __toString() {
-        return strlen($this->mail) ? $this->name."<".$this->mail.">" : $this->name;
+        return strlen(strlen((string) $this->mail)) ? $this->name."<".$this->mail.">" : $this->name;
     }
 }
