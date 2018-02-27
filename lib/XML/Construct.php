@@ -84,7 +84,7 @@ trait Construct {
         if ($rel=="" || $rel=="alternate" || $rel=="http://www.iana.org/assignments/relation/alternate") {
             $cond = "not(@rel) or @rel='' or @rel='alternate' or @rel='http://www.iana.org/assignments/relation/alternate'";
         } elseif (strpos($rel, ":")===false) {
-            // FIXME: Checking only for a colon in a link relation is a hack that does not strictly follow IRI rules, but it's adequate for our needs    
+            // FIXME: Checking only for a colon in a link relation is a hack that does not strictly follow IRI rules, but it's adequate for our needs
             $cond = "@rel='$rel' or @rel='http://www.iana.org/assignments/relation/$rel'";
         } elseif (strlen($rel) > 41 && strpos($rel, "http://www.iana.org/assignments/relation/")===0) {
             $rel = substr($rel, 41);

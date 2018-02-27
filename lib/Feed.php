@@ -42,10 +42,10 @@ abstract class Feed {
         // do extra stuff just to test it
         $this->categories = $this->getCategories();
     }
-    
+
     /** General function to fetch the canonical feed URL */
     abstract public function getUrl(): string;
-    
+
     /** General function to fetch the feed title */
     abstract public function getTitle(): string;
 
@@ -55,12 +55,7 @@ abstract class Feed {
     /** General function to fetch the description of a feed */
     abstract public function getSummary(): string;
 
-    /** General function to fetch the categories of a feed 
-     * 
-     * If the $grouped parameter is true, and array of arrays will be returned, keyed by taxonomy/scheme
-     * 
-     * The $humanFriendly parameter only affects Atom categories
-    */
+    /** General function to fetch the categories of a feed */
     abstract public function getCategories(): CategoryCollection;
 
     /** General function to fetch the feed identifier */

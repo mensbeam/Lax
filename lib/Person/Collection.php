@@ -13,7 +13,7 @@ class Collection extends \JKingWeb\Lax\Collection {
         'contributor' => 30,
         'author' => 40,
     ];
-    
+
     /** Returns the primary person of the collection
      * 
      * The primary is the first member of the highest-weight role

@@ -37,7 +37,7 @@ trait Construct {
     /** Parses an RSS person-text and returns a Person object with a name, e-mail address, or both
      * 
      * The following forms will yield both a name and address:
-     *  
+     * 
      * - user@example.com (Full Name)
      * - Full Name <user@example.com>
      */

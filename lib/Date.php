@@ -92,7 +92,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             return $this->format("Y-m-d\TH:i:sP");
         }
     }
-    
+
     public function jsonSerialize() {
         return $this->__toString();
     }

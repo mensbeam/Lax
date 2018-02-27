@@ -6,7 +6,7 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\XML;
 
-class XPath extends \DOMXpath {    
+class XPath extends \DOMXpath {
     const NS = [
         'atom'  => "http://www.w3.org/2005/Atom",                       // Atom syndication format                  https://tools.ietf.org/html/rfc4287
         'rss1'  => "http://purl.org/rss/1.0/",                          // RDF site summary 1.0                     http://purl.org/rss/1.0/spec
@@ -21,7 +21,7 @@ class XPath extends \DOMXpath {
         'apple' => "http://www.itunes.com/dtds/podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
         'gplay' => "http://www.google.com/schemas/play-podcasts/1.0",   // Google Play podcasts                     https://support.google.com/googleplay/podcasts/answer/6260341
     ];
-    
+
     /** Returns an XPath processor with various necessary namespace prefixes defined */
     public function __construct(\DOMDocument $doc) {
         parent::__construct($doc);

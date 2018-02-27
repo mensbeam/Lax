@@ -27,7 +27,7 @@ class Feed extends \JKingWeb\Lax\Feed {
         $this->type = "json";
         $this->version = $this->fetchMember("version", "str") ?? "";
     }
-    
+
     /** General function to fetch the canonical feed URL
      * 
      * If the feed does not include a canonical URL, the request URL is returned instead
@@ -35,7 +35,7 @@ class Feed extends \JKingWeb\Lax\Feed {
     public function getUrl(): string {
         return $this->fetchUrl("feed_url") ?? $this->reqUrl;
     }
-    
+
     /** General function to fetch the feed title */
     public function getTitle(): string {
         return $this->fetchMember("title", "str") ?? "";

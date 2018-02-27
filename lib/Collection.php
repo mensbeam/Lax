@@ -10,26 +10,32 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
 
     protected $data = [];
 
+    /** Implementation for IteratorAggreagate */
     public function getIterator(): \Traversable {
         return ($this->data instanceof \Traversable) ? $this->data : new \ArrayIterator((array) $this->data);
     }
 
+    /** Implementation for JsonSerializable */
     public function jsonSerialize() {
         return $this->data;
     }
 
+    /** Implementation for Countable */
     public function count(): int {
         return count($this->data);
     }
 
+    /** Implementation for ArrayAccess */
     public function offsetExists($offset): bool {
         return isset($this->data[$offset]);
     }
 
+    /** Implementation for ArrayAccess */
     public function offsetGet($offset) {
         return $this->data[$offset];
     }
 
+    /** Implementation for ArrayAccess */
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             $this->data[] = $value;
@@ -38,6 +44,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
         }
     }
 
+    /** Implementation for ArrayAccess */
     public function offsetUnset($offset) {
         unset($this->data[$offset]);
     }

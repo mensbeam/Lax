@@ -13,7 +13,7 @@ class Collection extends \JKingWeb\Lax\Collection {
         'contributor' => 30,
         'author' => 40,
     ];
-    
+
     /** Returns the collection formatted as an array of strings
      * 
      * The $humanFriendly parameter controls whether or not an effort is made to return human-friendly category names. Only Atom categories have this distinction
