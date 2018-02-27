@@ -8,6 +8,7 @@ namespace JKingWeb\Lax\JSON;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 class Feed extends \JKingWeb\Lax\Feed {
     use Construct;
@@ -52,10 +53,10 @@ class Feed extends \JKingWeb\Lax\Feed {
 
     /** General function to fetch the categories of a feed 
      * 
-     * JSON Feed does not have categories at the feed level, so this always returns an empty array
+     * JSON Feed does not have categories at the feed level, so this always returns an empty collection
     */
-    public function getCategories(bool $grouped = false, bool $humanFriendly = true): array {
-        return [];
+    public function getCategories(): CategoryCollection {
+        return new CategoryCollection;
     }
 
     /** General function to fetch the feed identifier 

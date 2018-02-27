@@ -6,8 +6,8 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\XML;
 
-use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 class Feed extends \JKingWeb\Lax\Feed {
     use Construct;
@@ -85,8 +85,8 @@ class Feed extends \JKingWeb\Lax\Feed {
      * 
      * The $humanFriendly parameter only affects Atom categories
     */
-    public function getCategories(): array {
-        return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? [];
+    public function getCategories(): CategoryCollection {
+        return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
     }
 
     /** General function to fetch the feed identifier */

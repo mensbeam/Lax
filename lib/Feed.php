@@ -6,8 +6,8 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax;
 
-use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 abstract class Feed {
     protected $reqUrl;
@@ -61,7 +61,7 @@ abstract class Feed {
      * 
      * The $humanFriendly parameter only affects Atom categories
     */
-    abstract public function getCategories(): array;
+    abstract public function getCategories(): CategoryCollection;
 
     /** General function to fetch the feed identifier */
     abstract public function getId(): string;
