@@ -13,7 +13,7 @@ trait Construct {
     use \JKingWeb\Lax\Construct;
 
     /** @var object */
-    public    $json;
+    protected $json;
 
     /** Returns an object member if the member exists and is of the expected type
      * 

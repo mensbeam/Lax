@@ -12,6 +12,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 class Feed extends \JKingWeb\Lax\Feed {
     use Construct;
+    use Primitives\Construct;
 
     /** Constructs a parsed feed */
     public function __construct(string $data, string $contentType = "", string $url = "") {
@@ -69,19 +70,7 @@ class Feed extends \JKingWeb\Lax\Feed {
 
     /** General function to fetch a collection of people associated with a feed */
     public function getPeople(): PersonCollection {
-        $out = new PersonCollection;
-        $author = $this->fetchMember("author", "object");
-        if (!isset($author)) {
-            return $out;
-        } else {
-            $p = new Person;
-            $p->name = $this->fetchMember("name", "str", $author) ?? "";
-            $p->url = $this->fetchUrl("url", $author) ?? "";
-            $p->avatar = $this->fetchUrl("avatar", $author) ?? "";
-            $p->role = "author";
-            $out[] = $p;
-            return $out;
-        }
+        return $this->getPeopleV1() ?? new PersonCollection;
     }
 
     /** General function to fetch the modification date of a feed 
@@ -90,5 +79,21 @@ class Feed extends \JKingWeb\Lax\Feed {
     */
     public function getDateModified() {
         return null;
+    }
+
+    /** General function to fetch the entries of a feed */
+    public function getEntries(): array {
+        $out = [];
+        foreach ($this->fetchMember("items", "array") ?? [] as $data) {
+            $entry = new Entry($data, $this);
+            if (!strlen($entry->id)) {
+                // entries without IDs must be skipped, per spec
+                continue;
+            } else {
+                $out[] = $entry;
+                break;
+            }
+        }
+        return $out;
     }
 }

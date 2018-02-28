@@ -122,4 +122,11 @@ class Feed extends \JKingWeb\Lax\Feed {
     public function getDateModified() {
         return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
+
+    /** General function to fetch the entries of a feed */
+    public function getEntries(): array {
+        $out = [];
+        // do stuff
+        return $out;
+    }
 }
