@@ -39,43 +39,9 @@ trait Feed {
         return $this->fetchText("apple:summary|gplay:description") ?? $this->fetchText("apple:subtitle");
     }
 
-    /** Primitive to fetch a collection of people associated with an RSS feed */
-    protected function getPeopleRss2() {
-        $nodes = $this->fetchElements("managingEditor|webMaster|author");
-        if (!$nodes->length) {
-            return null;
-        }
-        $out = new PersonCollection;
-        $roles = [
-            'managingEditor' => "editor",
-            'webMaster'      => "webmaster",
-            'author'         => "author",
-        ];
-        foreach ($nodes as $node) {
-            $text = $this->trimText($node->textContent);
-            if (strlen($text)) {
-                $p = $this->parsePersonText($text);
-                $p->role = $roles[$node->localName];
-                $out[] = $p;
-            }
-        }
-        return $out;
-    }
-
-    /** Primitive to fetch a collection of people associated with an Atom feed */
-    protected function getPeopleAtom() {
-        $nodes = $this->fetchElements("atom:author|atom:contributor");
-        if (!$nodes->length) {
-            return null;
-        }
-        $out = new PersonCollection;
-        foreach ($nodes as $node) {
-            $p = $this->parsePersonAtom($node);
-            if ($p) {
-                $out[] = $p;
-            }
-        }
-        return $out;
+    /** Primitive to fetch a collection of authors associated with an Atom feed */
+    protected function getAuthorsAtom() {
+        return $this->fetchPeopleAtom("atom:author", "author");
     }
 
     /** Primitive to fetch an RDF feed's canonical URL */

@@ -34,41 +34,6 @@ trait Construct {
         return \Sabre\Uri\resolve($base, $url);
     }
 
-    /** Parses an RSS person-text and returns a Person object with a name, e-mail address, or both
-     * 
-     * The following forms will yield both a name and address:
-     * 
-     * - user@example.com (Full Name)
-     * - Full Name <user@example.com>
-     */
-    protected function parsePersonText(string $person): Person {
-        $person = $this->trimText($person);
-        $out = new Person;
-        if (!strlen($person)) {
-            return $out;
-        } elseif (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
-            if ($this->validateMail($match[1])) {
-                $out->name = trim($match[2]);
-                $out->mail = $match[1];
-            } else {
-                $out->name = $person;
-            }
-        } elseif (preg_match("/^((?:\S|\s(?!<))+) <([^>]+)>$/", $person, $match)) { // tests "Full Name <user@example.com>" form
-            if ($this->validateMail($match[2])) {
-                $out->name = trim($match[1]);
-                $out->mail = $match[2];
-            } else {
-                $out->name = $person;
-            }
-        } elseif ($this->validateMail($person)) {
-            $out->name = $person;
-            $out->mail = $person;
-        } else {
-            $out->name = $person;
-        }
-        return $out;
-    }
-
     /** Tests whether a string is a valid e-mail address
      * 
      * Accepts IDN hosts and (with PHP 7.1 and above) Unicode localparts

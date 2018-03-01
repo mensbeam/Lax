@@ -11,50 +11,12 @@ use JKingWeb\Lax\XML\XPath;
 
 trait Entry {
 
-    /** Primitive to fetch a collection of people associated with an RSS entry */
-    protected function getPeopleRss2() {
-        $nodes = $this->fetchElements("author");
-        if (!$nodes->length) {
-            return null;
-        }
-        $out = new PersonCollection;
-        foreach ($nodes as $node) {
-            $text = $this->trimText($node->textContent);
-            if (strlen($text)) {
-                $p = $this->parsePersonText($text);
-                $p->role = $node->localName;
-                $out[] = $p;
-            }
-        }
-        return $out;
-    }
-
-    /** Primitive to fetch a collection of people associated with an Atom entry */
-    protected function getPeopleAtom() {
-        $nodes = $this->fetchElements("atom:author|atom:contributor");
-        $out = new PersonCollection;
-        foreach ($nodes as $node) {
-            $p = $this->parsePersonAtom($node);
-            if ($p) {
-                $out[] = $p;
-            }
-        }
-        $primary = $out->primary();
-        // if the entry has no author, we retrieve the authors (and not contributors) from the entry's source element
-        if (!$primary || $primary->role != "author") {
-            $nodes = $this->fetchElements("atom:source[1]/atom:author");
-            foreach ($nodes as $node) {
-                $p = $this->parsePersonAtom($node);
-                if ($p) {
-                    $out[] = $p;
-                }
-            }
-            // if there are still no people, return null
-            if (!$out->primary()) {
-                return null;
-            }
-        }
-        return $out;
+    /** Primitive to fetch a collection of authors associated with an Atom entry 
+     * 
+     * This differs from feeds in that an entry's <source> element (which possibly contains metadata for the source feed) is checked for authors if the entry itself has none
+    */
+    protected function getAuthorsAtom() {
+        return $this->fetchPeopleAtom("atom:author", "author") ?? $this->fetchPeopleAtom("atom:source[1]/atom:author", "author");
     }
 
     /** Primitive to fetch an RDF entry's canonical URL */
@@ -71,10 +33,5 @@ trait Entry {
     /** Primitive to fetch the modification date of an RSS feed */
     protected function getDateModifiedRss2() {
         return $this->fetchDate("pubDate");
-    }
-
-    /** Primitive to fetch the modification date of an Atom feed/entry */
-    protected function getDateCreatedAtom() {
-        return $this->fetchDate("atom:published");
     }
 }

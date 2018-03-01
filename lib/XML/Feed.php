@@ -94,28 +94,13 @@ class Feed extends \JKingWeb\Lax\Feed {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
     }
 
-    /** General function to fetch a collection of people associated with a feed */
+    /** General function to fetch a collection of all people associated with a feed */
     public function getPeople(): PersonCollection {
-        $out = $this->getPeopleAtom() ?? $this->getPeopleDC() ?? $this->getPeoplePod();
-        if (!$out) {
-            // if no Atom, Dublin Core, or podcast people were found, return any available RSS people
-            return $this->getPeopleRss2() ?? new PersonCollection;
-        } elseif ($out->primary()->role != "author") {
-            // if none of the people found are an author (i.e. there are only contributors), add any available Podcast authors first
-            $more = $this->getPeoplePod();
-            if (!$more) {
-                // if no podcast author was found, add any available RSS people
-                $more = $this->getPeopleRss2() ?? new PersonCollection;
-            } else {
-                // otherwise add only non-author RSS people to the podcast people
-                $more = $more->merge(($this->getPeopleRss2() ?? new PersonCollection)->filterOutRole("author"));
-            }
-            // and finally add any additional people found to the contributor list
-            return $out->merge($more);
-        } else {
-            // if the search for Atom, DC and postcast people -did- find an author, add only non-author RSS people (i.e. editors and webmasters)
-            return $out->merge(($this->getPeopleRss2() ?? new PersonCollection)->filterOutRole("author"));
-        }
+        $authors = $this->getAuthorsAtom() ?? $this->getAuthorsDC() ?? $this->getAuthorsPod() ?? $this->getAuthorsRss2() ?? new PersonCollection;
+        $contributors = $this->getContributorsAtom() ?? $this->getContributorsDC() ?? new PersonCollection;
+        $editors = $this->getEditorsRss2() ?? new PersonCollection;
+        $webmasters = $this->getWebmastersPod() ?? $this->getWebmastersRss2() ?? new PersonCollection;
+        return $authors->merge($contributors, $editors, $webmasters);
     }
 
     /** General function to fetch the modification date of a feed */

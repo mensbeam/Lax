@@ -136,45 +136,69 @@ trait Construct {
         return $this->fetchText("dc:identifier");
     }
 
-    /** Primitive to fetch a collection of people associated with a feed/entry via Dublin Core */
-    protected function getPeopleDC() {
-        $nodes = $this->fetchElements("dc:creator|dc:contributor");
-        if (!$nodes->length) {
-            return null;
-        }
-        $out = new PersonCollection;
-        $roles = [
-            'creator'        => "author",
-            'contributor'    => "contributor",
-        ];
-        foreach ($nodes as $node) {
-            $text = $this->trimText($node->textContent);
-            if (strlen($text)) {
-                $p = $this->parsePersonText($text);
-                $p->role = $roles[$node->localName];
-                $out[] = $p;
-            }
-        }
-        return $out;
+    /** Primitive to fetch a collection of authors associated with a feed/entry via Dublin Core */
+    protected function getAuthorsDC() {
+        return $this->fetchPeople("dc:creator", "author");
     }
 
-    /** Primitive to fetch a collection of people associated with a podcast/episode 
+    /** Primitive to fetch a collection of contributors associated with a feed/entry via Dublin Core */
+    protected function getContributorsDC() {
+        return $this->fetchPeople("dc:ccontributor", "contributor");
+    }
+
+    /** Primitive to fetch a collection of authors associated with an RSS feed/entry */
+    protected function getAuthorsRss2() {
+        return $this->fetchPeople("author", "author");
+    }
+
+    /** Primitive to fetch a collection of editors associated with an RSS feed/entry */
+    protected function getEditorsRss2() {
+        return $this->fetchPeople("managingEditor", "editor");
+    }
+
+    /** Primitive to fetch a collection of authors associated with an RSS feed/entry */
+    protected function getWebmastersRss2() {
+        return $this->fetchPeople("webMaster", "webMaster");
+    }
+
+    /** Primitive to fetch a collection of authors associated with an Atom feed */
+    protected function getContributorsAtom() {
+        return $this->fetchPeopleAtom("atom:author", "author");
+    }
+
+    /** Primitive to fetch a collection of authors associated with a podcast/episode 
      * 
      * The collection only ever contains the first author found: podcasts implicitly have only one author
     */
-    protected function getPeoplePod() {
-        $name = $this->fetchText("gplay:author|apple:author") ?? "";
-        $mail = $this->fetchText("gplay:email|apple:email") ?? "";
-        if (!strlen($name)) {
-            return null;
-        }
+    protected function getAuthorsPod() {
         $out = new PersonCollection;
         $p = new Person;
-        $p->name = $name;
-        $p->mail = $mail;
+        $p->name = $this->fetchText("gplay:author|apple:author") ?? "";
+        $p->mail = $this->fetchText("gplay:email|apple:email") ?? "";
         $p->role = "author";
-        $out[] = $p;
-        return $out;
+        if (strlen($p->name)) {
+            $out[] = $p;
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Primitive to fetch a collection of webmasters associated with a podcast 
+     * 
+     * The collection only ever contains the first webmaster found: podcasts implicitly have only one webmaster
+    */
+    protected function getWebmastersPod() {
+        $out = new PersonCollection;
+        $node = $this->fetchElement("gplay:owner|apple:owner");
+        if ($node) {
+            $p = new Person;
+            $p->name = $this->fetchText("gplay:author|apple:author", $node) ?? "";
+            $p->mail = $this->fetchText("gplay:email|apple:email", $node) ?? "";
+            $p->role = "webmaster";
+            if (strlen($p->name)) {
+                $out[] = $p;
+            }
+        }
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch an Atom feed or entry's canonical URL */
@@ -191,5 +215,10 @@ trait Construct {
     /** Primitive to fetch the modification date of an Atom feed/entry */
     protected function getDateModifiedDC() {
         return $this->fetchDate("dc:date");
+    }
+
+    /** Primitive to fetch the modification date of an Atom entry */
+    protected function getDateCreatedAtom() {
+        return $this->fetchDate("atom:published");
     }
 }

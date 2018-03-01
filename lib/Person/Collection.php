@@ -27,9 +27,9 @@ class Collection extends \JKingWeb\Lax\Collection {
         foreach ($this as $p) {
             if (!$out) {
                 $out = $p;
-            } elseif (!isset(static::ranks[$p->role])) {
+            } elseif (!isset(static::$ranks[$p->role])) {
                 continue;
-            } elseif (static::ranks[$p->role] > static::ranks[$out->role]) {
+            } elseif (static::$ranks[$p->role] > static::$ranks[$out->role]) {
                 $out = $p;
             }
         }

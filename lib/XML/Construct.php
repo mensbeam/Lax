@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\XML;
 
 use JKingWeb\Lax\Person\Person;
+use JKingWeb\Lax\Person\Collection as PersonCollection;
 
 trait Construct {
     use \JKingWeb\Lax\Construct;
@@ -95,6 +96,69 @@ trait Construct {
         return $this->xpath->query("atom:link[@href][$cond]", $this->subject);
     }
 
+    /** Finds and parses RSS person-texts and returns a collection of person objects
+     * 
+     * Each can have a name, e-mail address, or both
+     * 
+     * The following forms will yield both a name and address:
+     * 
+     * - user@example.com (Full Name)
+     * - Full Name <user@example.com>
+     */
+    protected function fetchPeople(string $query, string $role) {
+        $people = $this->fetchTextMulti($query) ?? [];
+        $out = new PersonCollection;
+        foreach ($people as $person) {
+            if (!strlen($person)) {
+                continue;
+            }
+            $p = new Person;
+            if (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
+                if ($this->validateMail($match[1])) {
+                    $p->name = trim($match[2]);
+                    $p->mail = $match[1];
+                } else {
+                    $p->name = $person;
+                }
+            } elseif (preg_match("/^((?:\S|\s(?!<))+) <([^>]+)>$/", $person, $match)) { // tests "Full Name <user@example.com>" form
+                if ($this->validateMail($match[2])) {
+                    $p->name = trim($match[1]);
+                    $p->mail = $match[2];
+                } else {
+                    $p->name = $person;
+                }
+            } elseif ($this->validateMail($person)) {
+                $p->name = $person;
+                $p->mail = $person;
+            } else {
+                $p->name = $person;
+            }
+            $p->role = $role;
+            $out[] = $p;
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Finds and parses Atom person-constructs, and returns a collection of Person objects */
+    protected function fetchPeopleAtom(string $query, string $role) {
+        $nodes = $this->fetchElements($query);
+        $out = new PersonCollection;
+        foreach ($nodes as $node) {
+            $p = new Person;
+            $p->mail = $this->fetchText("atom:email", $node) ?? "";
+            $p->name = $this->fetchText("atom:name", $node) ?? $p->mail;
+            $url = $this->fetchElement("atom:uri", $node);
+            if ($url) {
+                $p->url = $this->resolveNodeUrl($url);
+            }
+            $p->role = $role;
+            if (strlen($p->name)) {
+                $out[] = $p;
+            }
+        }
+        return count($out) ? $out : null;
+    }
+
     /** Resolves a URL contained in a DOM element's atrribute or text 
      * 
      * This automatically performs xml:base and HTML <base> resolution
@@ -105,21 +169,5 @@ trait Construct {
         $base = $node->baseURI;
         $url = strlen($attr) ? $node->getAttributeNS($ns, $attr) : $this->trimText($node->textContent);
         return $this->resolveURL($url, $base);
-    }
-
-    /** Populates a Person object according to the children of an Atom <author> element */
-    protected function parsePersonAtom(\DOMNode $node) {
-        $p = new Person;
-        $p->mail = $this->fetchText("atom:email", $node) ?? "";
-        $p->name = $this->fetchText("atom:name", $node) ?? $p->mail;
-        if (!strlen($p->name)) {
-            return null;
-        }
-        $url = $this->fetchElement("atom:uri", $node);
-        if ($url) {
-            $p->url = $this->resolveNodeUrl($url);
-        }
-        $p->role = $node->localName;
-        return $p;
     }
 }
