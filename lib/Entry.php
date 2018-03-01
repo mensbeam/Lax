@@ -21,9 +21,6 @@ abstract class Entry {
     public $author;
     public $dateModified;
 
-    /** Constructs a parsed feed */
-    abstract public function __construct($data, Feed $feed);
-
     /** Parses the feed to extract sundry metadata */
     protected function parse() {
         $this->id = $this->getId();

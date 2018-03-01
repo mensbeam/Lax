@@ -10,6 +10,7 @@ use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\XML\Entry as FeedEntry;
 
 trait Construct {
 
@@ -161,9 +162,9 @@ trait Construct {
         return $this->fetchPeople("webMaster", "webMaster");
     }
 
-    /** Primitive to fetch a collection of authors associated with an Atom feed */
+    /** Primitive to fetch a collection of contributors associated with an Atom feed */
     protected function getContributorsAtom() {
-        return $this->fetchPeopleAtom("atom:author", "author");
+        return $this->fetchPeopleAtom("atom:contributor", "contributor");
     }
 
     /** Primitive to fetch a collection of authors associated with a podcast/episode 
@@ -220,5 +221,32 @@ trait Construct {
     /** Primitive to fetch the modification date of an Atom entry */
     protected function getDateCreatedAtom() {
         return $this->fetchDate("atom:published");
+    }
+
+    /** Primitive to fetch the list of entries in an Atom feed */
+    protected function getEntriesAtom() {
+        $out = [];
+        foreach ($this->fetchElements("atom:entry") ?? [] as $node) {
+            $out[] = new FeedEntry($node, $this, $this->xpath);
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Primitive to fetch the list of entries in an RDF feed */
+    protected function getEntriesRss1() {
+        $out = [];
+        foreach ($this->fetchElements("rss1:item|rss0:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss1:item|rss0:item") ?? [] as $node) {
+            $out[] = new FeedEntry($node, $this, $this->xpath);
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Primitive to fetch the list of entries in an RSS feed */
+    protected function getEntriesRss2() {
+        $out = [];
+        foreach ($this->fetchElements("item") ?? [] as $node) {
+            $out[] = new FeedEntry($node, $this, $this->xpath);
+        }
+        return count($out) ? $out : null;
     }
 }

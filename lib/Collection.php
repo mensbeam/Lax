@@ -73,7 +73,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
     protected function filter(array $terms, string $axis, bool $inclusive): self {
         $out = new static;
         foreach ($this as $item) {
-            if (in_array($p->$axis, $terms)==$inclusive) {
+            if (in_array($item->$axis, $terms)==$inclusive) {
                 $out[] = $item;
             }
         }

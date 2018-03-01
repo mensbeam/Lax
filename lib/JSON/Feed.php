@@ -91,7 +91,6 @@ class Feed extends \JKingWeb\Lax\Feed {
                 continue;
             } else {
                 $out[] = $entry;
-                break;
             }
         }
         return $out;

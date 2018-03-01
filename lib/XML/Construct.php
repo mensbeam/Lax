@@ -45,7 +45,7 @@ trait Construct {
         $out = [];
         $nodes = $this->xpath->query($query, $context ?? $this->subject);
         foreach ($nodes as $node) {
-            $out[] = $this->trimText($node->item(0)->textContent);
+            $out[] = $this->trimText($node->textContent);
         }
         return ($out) ? $out : null;
     }

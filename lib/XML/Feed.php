@@ -79,12 +79,7 @@ class Feed extends \JKingWeb\Lax\Feed {
         return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom() ?? "";
     }
 
-    /** General function to fetch the categories of a feed 
-     * 
-     * If the $grouped parameter is true, and array of arrays will be returned, keyed by taxonomy/scheme
-     * 
-     * The $humanFriendly parameter only affects Atom categories
-    */
+    /** General function to fetch the categories of a feed */
     public function getCategories(): CategoryCollection {
         return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
     }
@@ -110,8 +105,6 @@ class Feed extends \JKingWeb\Lax\Feed {
 
     /** General function to fetch the entries of a feed */
     public function getEntries(): array {
-        $out = [];
-        // do stuff
-        return $out;
+        return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
     }
 }
