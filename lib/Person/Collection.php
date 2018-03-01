@@ -8,10 +8,10 @@ namespace JKingWeb\Lax\Person;
 
 class Collection extends \JKingWeb\Lax\Collection {
     protected static $ranks = [
+        'contributor' => -10,
         'webmaster' => 10,
         'editor' => 20,
-        'contributor' => 30,
-        'author' => 40,
+        'author' => 30,
     ];
 
     /** Returns the primary person of the collection
@@ -25,7 +25,9 @@ class Collection extends \JKingWeb\Lax\Collection {
     public function primary() {
         $out = null;
         foreach ($this as $p) {
-            if (!$out) {
+            if (static::$ranks[$p->role] < 0) {
+                continue;
+            } elseif (!$out) {
                 $out = $p;
             } elseif (!isset(static::$ranks[$p->role])) {
                 continue;
