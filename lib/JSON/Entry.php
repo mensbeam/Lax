@@ -52,4 +52,14 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getPeople(): PersonCollection {
         return $this->getPeopleV1() ?? new PersonCollection;
     }
+
+    /** General function to fetch the modification date of an entry */
+    public function getDateModified() {
+        return $this->fetchDate("date_modified");
+    }
+
+    /** General function to fetch the entry title */
+    public function getTitle(): string {
+        return $this->fetchMember("title", "str") ?? "";
+    }
 }

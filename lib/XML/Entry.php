@@ -27,31 +27,12 @@ class Entry extends \JKingWeb\Lax\Entry {
         $this->feed = $feed;
     }
     
-    /** General function to fetch the canonical entry URL
-     * 
-     * If the entry does not include a canonical URL, the request URL is returned instead
-     */
-    public function getUrl(): string {
-        return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod() ?? $this->reqUrl;
-    }
-    
     /** General function to fetch the entry title */
     public function getTitle(): string {
         return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
     }
 
-    /** General function to fetch the entry's Web-representation URL */
-    public function getLink(): string {
-        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
-    }
-
-    /** General function to fetch the description of a entry */
-    public function getSummary(): string {
-        // unlike most other data, Atom is not preferred, because Atom doesn't really have entry summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom() ?? "";
-    }
-
-    /** General function to fetch the categories of a entry */
+    /** General function to fetch the categories of an entry */
     public function getCategories(): CategoryCollection {
         return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
     }
@@ -68,7 +49,7 @@ class Entry extends \JKingWeb\Lax\Entry {
         return $authors->merge($contributors);
     }
 
-    /** General function to fetch the modification date of a entry */
+    /** General function to fetch the modification date of an entry */
     public function getDateModified() {
         return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
