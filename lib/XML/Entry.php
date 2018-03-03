@@ -53,4 +53,9 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getDateModified() {
         return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
+
+    /** General function to fetch the creation date of an entry */
+    public function getDateCreated() {
+        return $this->getDateModifiedAtom();
+    }
 }

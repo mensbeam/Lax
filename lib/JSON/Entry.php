@@ -33,7 +33,7 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getCategories(): CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchMember("tags", "array") ?? [] as $tag) {
-            $tag = $this->trimText($tag);
+            $tag = $this->trimText((string) $tag);
             if (strlen($tag)) {
                 $c = new Category;
                 $c->name = $tag;
@@ -56,6 +56,11 @@ class Entry extends \JKingWeb\Lax\Entry {
     /** General function to fetch the modification date of an entry */
     public function getDateModified() {
         return $this->fetchDate("date_modified");
+    }
+
+    /** General function to fetch the creation date of an entry */
+    public function getDateCreated() {
+        return $this->fetchDate("date_published");
     }
 
     /** General function to fetch the entry title */

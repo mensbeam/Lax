@@ -20,6 +20,7 @@ abstract class Entry {
     public $people;
     public $author;
     public $dateModified;
+    public $dateCreated;
 
     /** Parses the feed to extract sundry metadata */
     protected function parse() {
@@ -28,6 +29,7 @@ abstract class Entry {
         $this->people = $this->getPeople();
         $this->author = $this->people->primary() ?? $this->feed->author;
         $this->dateModified = $this->getDateModified();
+        $this->dateCreated = $this->getDateCreated();
         // do a second pass on missing data we'd rather fill in
         $this->title = strlen($this->title) ? $this->title : $this->link;
         // do extra stuff just to test it
@@ -48,4 +50,7 @@ abstract class Entry {
 
     /** General function to fetch the entry's modification date */
     abstract public function getDateModified();
+
+    /** General function to fetch the entry's creation date */
+    abstract public function getDateCreated();
 }
