@@ -67,4 +67,9 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getTitle(): string {
         return $this->fetchMember("title", "str") ?? "";
     }
+
+    /** General function to fetch the entry's Web-representation URL */
+    public function getLink(): string {
+        return $this->fetchUrl("url") ?? "";
+    }
 }

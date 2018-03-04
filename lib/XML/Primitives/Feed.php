@@ -61,12 +61,7 @@ trait Feed {
 
     /** Primitive to fetch a podcast's canonical URL */
     protected function getUrlPod() {
-        $node =  $this->fetchElement("apple:new-feed-url");
-        if ($node) {
-            return $this->resolveNodeUrl($node);
-        } else {
-            return null;
-        }
+        return $this->fetchUrl("apple:new-feed-url");
     }
 
     /** Primitive to fetch the modification date of an RSS feed */

@@ -25,6 +25,7 @@ abstract class Entry {
     /** Parses the feed to extract sundry metadata */
     protected function parse() {
         $this->id = $this->getId();
+        $this->link = $this->getLink();
         $this->title = $this->getTitle();
         $this->people = $this->getPeople();
         $this->author = $this->people->primary() ?? $this->feed->author;
@@ -53,4 +54,7 @@ abstract class Entry {
 
     /** General function to fetch the entry's creation date */
     abstract public function getDateCreated();
+
+    /** General function to fetch the Web URL of the entry */
+    abstract public function getLink(): string;
 }

@@ -51,14 +51,12 @@ trait Construct {
 
     /** Primitive to fetch an RSS feed/entry Web-representation URL */
     protected function getLinkRss2() {
-        $node = $this->fetchElement("link");
-        return $node ? $this->resolveNodeUrl($node) : null;
+        return $this->fetchUrl("link") ?? $this->fetchUrl("guid[not(@isPermalink='false')]");
     }
 
     /** Primitive to fetch an RDF feed/entry Web-representation URL */
     protected function getLinkRss1() {
-        $node = $this->fetchElement("rss1:link|rss0:link");
-        return $node ? $this->resolveNodeUrl($node) : null;
+        return $this->fetchUrl("rss1:link|rss0:link");
     }
 
     /** Primitive to fetch Atom feed/entry categories */

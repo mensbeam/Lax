@@ -21,7 +21,6 @@ trait Construct {
 
     /** Retrieves an element node based on an XPath query */
     protected function fetchElement(string $query, \DOMNode $context = null) {
-        $context = $context ?? $this->subject;
         $node = @$this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
         if ($node===false) {
             throw new \Exception("Invalid XPath query: $query");
@@ -147,10 +146,7 @@ trait Construct {
             $p = new Person;
             $p->mail = $this->fetchText("atom:email", $node) ?? "";
             $p->name = $this->fetchText("atom:name", $node) ?? $p->mail;
-            $url = $this->fetchElement("atom:uri", $node);
-            if ($url) {
-                $p->url = $this->resolveNodeUrl($url);
-            }
+            $p->url = $this->fetchUrl("atom:uri", $node);
             $p->role = $role;
             if (strlen($p->name)) {
                 $out[] = $p;
@@ -168,6 +164,18 @@ trait Construct {
     protected function resolveNodeUrl(\DOMElement $node = null, string $attr = "", string $ns = null): string {
         $base = $node->baseURI;
         $url = strlen($attr) ? $node->getAttributeNS($ns, $attr) : $this->trimText($node->textContent);
-        return $this->resolveURL($url, $base);
+        return $this->resolveUrl($url, $base);
+    }
+
+    protected function fetchUrl(string $query, \DOMElement $context = null, string $attr = "", string $ns = null) {
+        $nodes = $this->fetchElements($query, $context);
+        foreach ($nodes as $node) {
+            $url = strlen($attr) ? $node->getAttributeNS($ns, $attr) : $this->trimText($node->textContent);
+            $url = $this->trimText($node->textContent);
+            if (strlen($url)) {
+                return $this->resolveUrl($url, $node->baseURI);
+            }
+        }
+        return null;
     }
 }

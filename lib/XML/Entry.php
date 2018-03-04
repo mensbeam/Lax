@@ -58,4 +58,9 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getDateCreated() {
         return $this->getDateModifiedAtom();
     }
+
+    /** General function to fetch the Web URL of the entry */
+    public function getLink(): string {
+        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
+    }
 }
