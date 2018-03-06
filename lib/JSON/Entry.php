@@ -72,4 +72,9 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getLink(): string {
         return $this->fetchUrl("url") ?? "";
     }
+
+    /** General function to fetch the URL of a article related to the entry */
+    public function getRelatedLink(): string {
+        return $this->fetchUrl("external_url") ?? "";
+    }
 }

@@ -13,7 +13,7 @@ abstract class Entry {
     protected $feed;
 
     public $link;
-    public $externalLink;
+    public $relatedLink;
     public $title;
     public $summary;
     public $categories;
@@ -26,6 +26,7 @@ abstract class Entry {
     protected function parse() {
         $this->id = $this->getId();
         $this->link = $this->getLink();
+        $this->relatedLink = $this->getRelatedLink();
         $this->title = $this->getTitle();
         $this->people = $this->getPeople();
         $this->author = $this->people->primary() ?? $this->feed->author;
@@ -57,4 +58,7 @@ abstract class Entry {
 
     /** General function to fetch the Web URL of the entry */
     abstract public function getLink(): string;
+
+    /** General function to fetch the URL of a article related to the entry */
+    abstract public function getRelatedLink(): string;
 }

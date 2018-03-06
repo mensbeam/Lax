@@ -233,7 +233,7 @@ trait Construct {
     /** Primitive to fetch the list of entries in an RDF feed */
     protected function getEntriesRss1() {
         $out = [];
-        foreach ($this->fetchElements("rss1:item|rss0:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss1:item|rss0:item") ?? [] as $node) {
+        foreach ($this->fetchElements("rss1:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss1:item") ?? $this->fetchElements("rss0:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss0:item") ?? [] as $node) {
             $out[] = new FeedEntry($node, $this, $this->xpath);
         }
         return count($out) ? $out : null;
@@ -246,5 +246,12 @@ trait Construct {
             $out[] = new FeedEntry($node, $this, $this->xpath);
         }
         return count($out) ? $out : null;
+    }
+
+    /** Primitive to fetch the URL of a article related to the entry */
+    protected function getRelatedLinkAtom() {
+        // FIXME: Atom link fetching should ideally prefer links to text/html resources or the like over e.g. other-format newsfeeds, generic XML, images, etc
+        $node = $this->fetchAtomRelations("related");
+        return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
     }
 }

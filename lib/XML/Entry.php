@@ -63,4 +63,12 @@ class Entry extends \JKingWeb\Lax\Entry {
     public function getLink(): string {
         return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
     }
+
+    /** General function to fetch the URL of a article related to the entry
+     * 
+     * This is only reliable with Atom feeds
+     */
+    public function getRelatedLink(): string {
+        return $this->getRelatedLinkAtom() ?? "";
+    }
 }
