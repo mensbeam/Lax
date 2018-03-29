@@ -37,6 +37,8 @@ class Sanitizer {
         "aria-disabled",
         "aria-label",
         "role",
+        // For compatibility with XHTML
+        "xmlns",
     ];
     public $tagPurge = [
         "basefont",     // arbitrary styling
@@ -173,4 +175,64 @@ class Sanitizer {
         'video'      => ["src", "crossorigin", "poster", "preload", "autoplay", "playsinline", "loop", "muted", "controls", "width", "height"],
         'wbr'        => [],
     ];
+
+    public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
+        $ns = [
+            'html' => "http://www.w3.org/1999/xhtml",
+            'svg'  => "http://www.w3.org/2000/svg",
+            'math' => "http://www.w3.org/1998/Math/MathML",
+        ];
+        // ready an XPath processor and register the XHTML, SVG, and MathML namespaces
+        $path = new \DOMXPath($doc);
+        foreach ($ns as $prefix => $url) {
+            $path->registerNamespace($prefix, $url);
+        }
+        // compile the blacklist
+        // this involves first formatting each blacklisted element as an XPath query
+        // then appending namespace-aware equivalents for each (usually the HTML
+        // namespace, the exceptions being "svg" and "math")
+        $blacklist = array_map(function($v) {
+            return "//$v";
+        }, $this->tagPurge);
+        $blacklist = array_merge(array_map(function($v) use ($ns) {
+            if (isset($ns[$v])) {
+                return "//$v:$v";
+            } else {
+                return "//html:$v";
+            }
+        }, $this->tagPurge), $blacklist);
+        $blacklist = implode("|", $blacklist);
+        // delete any blacklisted elements found
+        foreach ($path->query($blacklist) as $node) {
+            $node->parentNode->removeChild($node);
+        }
+        // compile the inverse of the whitelist
+        $whitelist = array_keys($this->tagKeep);
+        $blacklist = array_map(function($v) {
+            return "name()='$v'";
+        }, $whitelist);
+        $blacklist = array_merge(array_filter(array_map(function($v) use ($ns) {
+            if (isset($ns[$v])) {
+                return "name()='$v:$v'";
+            } else {
+                return "name()='html:$v'";
+            }
+        }, $whitelist)), $blacklist);
+        $blacklist = implode(" or ", $blacklist);
+        $blacklist = "//*[not($blacklist)]";
+        // delete any blacklisted elements found
+        foreach ($path->query($blacklist) as $node) {
+            if ($node->hasChildNodes()) {
+                $f = $doc->createDocumentFragment();
+                foreach ($node->childNodes as $child) {
+                    $f->appendChild($child);
+                }
+                $node->parentNode->insertBefore($f, $node);
+                $node->parentNode->removeChild($node);
+            }
+            
+        }
+        // return the result
+        return $doc;
+    }
 }
