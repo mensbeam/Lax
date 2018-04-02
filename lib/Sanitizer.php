@@ -7,6 +7,12 @@ declare(strict_types=1);
 namespace JKingWeb\Lax;
 
 class Sanitizer {
+    public $namespaces = [
+        'http://www.w3.org/1999/xhtml'       => "html",
+        'http://www.w3.org/2000/svg'         => "svg",
+        'http://www.w3.org/1998/Math/MathML' => "math",
+    ];
+
     public $attrKeep = [
         "accesskey",
         "align",
@@ -41,196 +47,175 @@ class Sanitizer {
         "xmlns",
     ];
     public $tagPurge = [
-        "basefont",     // arbitrary styling
-        "button",       // form element
-        "canvas",       // only useful to script
-        "datalist",     // form element
-        "dialog",       // expected to hold only form elements
-        "embed",        // inherently unsafe
-        "fieldset",     // expected to hold only form elements
-        "frame",        // frames
-        "frameset",     // frames
-        "input",        // form element
-        "isindex",      // form element
-        "label",        // form element
-        "legend",       // form element
-        "link",         // typically used to embed stylesheets
-        "math",         // embedded MathML is too complicated and esoteric to support at this time
-        "meter",        // form element
-        "optgroup",     // form element
-        "option",       // form element
-        "output",       // form element
-        "param",        // always associated with programmatic objects
-        "progress",     // form element
-        "script",       // inherently unsafe
-        "select",       // form element
-        "slot",         // only useful to scripts (I think)
-        "style",        // arbitrary styling; potentially unsafe
-        "svg",          // embedded SVG is too complicated and esoteric to support at this time
-        "template",     // only useful to scripts
-        "textarea",     // form element
+        "html:basefont",     // arbitrary styling
+        "html:button",       // form element
+        "html:canvas",       // only useful to script
+        "html:datalist",     // form element
+        "html:dialog",       // expected to hold only form elements
+        "html:embed",        // inherently unsafe
+        "html:fieldset",     // expected to hold only form elements
+        "html:frame",        // frames
+        "html:frameset",     // frames
+        "html:input",        // form element
+        "html:isindex",      // form element
+        "html:label",        // form element
+        "html:legend",       // form element
+        "html:link",         // typically used to embed stylesheets
+        "html:math",         // embedded MathML is too complicated and esoteric to support at this time
+        "math:math",         // embedded MathML is too complicated and esoteric to support at this time
+        "html:meter",        // form element
+        "html:optgroup",     // form element
+        "html:option",       // form element
+        "html:output",       // form element
+        "html:param",        // always associated with programmatic objects
+        "html:progress",     // form element
+        "html:script",       // inherently unsafe
+        "html:select",       // form element
+        "html:slot",         // only useful to scripts (I think)
+        "html:style",        // arbitrary styling; potentially unsafe
+        "html:svg",          // embedded SVG is too complicated and esoteric to support at this time
+        "svg:svg",           // embedded SVG is too complicated and esoteric to support at this time
+        "html:template",     // only useful to scripts
+        "html:textarea",     // form element
     ];
     public $tagStrip = [
-        "applet",       // inherently unsafe
-        "blink",        // especially annoying styling
-        "font",         // arbitrary styling
-        "form",         // form element
-        "marquee",      // especially annoying styling
-        "noframes",     // ensure frame fallback content is actually displayed
-        "object",       // usually unsafe
+        "html:applet",       // inherently unsafe
+        "html:blink",        // especially annoying styling
+        "html:font",         // arbitrary styling
+        "html:form",         // form element
+        "html:marquee",      // especially annoying styling
+        "html:noframes",     // ensure frame fallback content is actually displayed
+        "html:object",       // usually unsafe
     ];
     public $tagKeep = [
-        'a'          => ["href", "download", "hreflang", "type"], // "target", "ping", "rel", "referrerpolicy"
-        'abbr'       => [],
-        'acronym'    => [],
-        'address'    => [],
-        'area'       => ["alt", "coords", "shape", "href", "target", "download"], // "ping", "rel", "referrerpolicy"
-        'article'    => [],
-        'aside'      => [],
-        'audio'      => ["src", "crossorigin", "preload", "loop", "muted", "controls"], // "autoplay"
-        'b'          => [],
-        'base'       => ["href"], // "target"
-        'bdi'        => [],
-        'bdo'        => [],
-        'big'        => [],
-        'blockquote' => ["cite"],
-        'body'       => [], // "onafterprint", "onbeforeprint", "onbeforeunload", "onhashchange", "onlanguagechange", "onmessage", "onmessageerror", "onoffline", "ononline", "onpagehide", "onpageshow", "onpopstate", "onrejectionhandled", "onstorage", "onunhandledrejection", "onunload"
-        'br'         => [],
-        'caption'    => [],
-        'center'     => [],
-        'cite'       => [],
-        'code'       => [],
-        'col'        => ["span"],
-        'colgroup'   => ["span"],
-        'data'       => ["value"],
-        'dd'         => [],
-        'del'        => ["cite", "datetime"],
-        'details'    => ["open"],
-        'dfn'        => [],
-        'dir'        => [],
-        'div'        => [],
-        'dl'         => [],
-        'dt'         => [],
-        'em'         => [],
-        'figcaption' => [],
-        'figure'     => [],
-        'footer'     => [],
-        'h1'         => [],
-        'h2'         => [],
-        'h3'         => [],
-        'h4'         => [],
-        'h5'         => [],
-        'h6'         => [],
-        'head'       => [],
-        'header'     => [],
-        'hgroup'     => [],
-        'hr'         => [],
-        'html'       => [], // "manifest"
-        'i'          => [],
-        'iframe'     => ["src", "srcdoc", "name", "sandbox", "allowfullscreen", "allowpaymentrequest", "allowusermedia", "width", "height", "referrerpolicy"],
-        'img'        => ["alt", "src", "srcset", "crossorigin", "usemap", "ismap", "width", "height", "decoding", "referrerpolicy"],
-        'ins'        => ["cite", "datetime"],
-        'kbd'        => [],
-        'li'         => ["value"],
-        'main'       => [],
-        'map'        => ["name"],
-        'mark'       => [],
-        'menu'       => [],
-        'meta'       => ["name", "http-equiv", "content", "charset"],
-        'nav'        => [],
-        'noscript'   => [],
-        'ol'         => ["reversed", "start", "type"],
-        'p'          => [],
-        'picture'    => [],
-        'pre'        => [],
-        'q'          => ["cite"],
-        'rp'         => [],
-        'rt'         => [],
-        'ruby'       => [],
-        's'          => [],
-        'samp'       => [],
-        'section'    => [],
-        'small'      => [],
-        'source'     => ["src", "type srcset", "sizes", "media"],
-        'span'       => [],
-        'strike'     => [],
-        'strong'     => [],
-        'sub'        => [],
-        'summary'    => [],
-        'sup'        => [],
-        'table'      => [],
-        'tbody'      => [],
-        'td'         => ["colspan", "rowspan", "headers"],
-        'tfoot'      => [],
-        'th'         => ["colspan", "rowspan", "headers", "scope", "abbr"],
-        'thead'      => [],
-        'time'       => ["datetime"],
-        'title'      => [],
-        'tr'         => [],
-        'track'      => ["default", "kind", "label", "src", "srclang"],
-        'tt'         => [],
-        'u'          => [],
-        'ul'         => [],
-        'var'        => [],
-        'video'      => ["src", "crossorigin", "poster", "preload", "autoplay", "playsinline", "loop", "muted", "controls", "width", "height"],
-        'wbr'        => [],
+        'html:a'          => ["href", "download", "hreflang", "type"], // "target", "ping", "rel", "referrerpolicy"
+        'html:abbr'       => [],
+        'html:acronym'    => [],
+        'html:address'    => [],
+        'html:area'       => ["alt", "coords", "shape", "href", "target", "download"], // "ping", "rel", "referrerpolicy"
+        'html:article'    => [],
+        'html:aside'      => [],
+        'html:audio'      => ["src", "crossorigin", "preload", "loop", "muted", "controls"], // "autoplay"
+        'html:b'          => [],
+        'html:base'       => ["href"], // "target"
+        'html:bdi'        => [],
+        'html:bdo'        => [],
+        'html:big'        => [],
+        'html:blockquote' => ["cite"],
+        'html:body'       => [], // "onafterprint", "onbeforeprint", "onbeforeunload", "onhashchange", "onlanguagechange", "onmessage", "onmessageerror", "onoffline", "ononline", "onpagehide", "onpageshow", "onpopstate", "onrejectionhandled", "onstorage", "onunhandledrejection", "onunload"
+        'html:br'         => [],
+        'html:caption'    => [],
+        'html:center'     => [],
+        'html:cite'       => [],
+        'html:code'       => [],
+        'html:col'        => ["span"],
+        'html:colgroup'   => ["span"],
+        'html:data'       => ["value"],
+        'html:dd'         => [],
+        'html:del'        => ["cite", "datetime"],
+        'html:details'    => ["open"],
+        'html:dfn'        => [],
+        'html:dir'        => [],
+        'html:div'        => [],
+        'html:dl'         => [],
+        'html:dt'         => [],
+        'html:em'         => [],
+        'html:figcaption' => [],
+        'html:figure'     => [],
+        'html:footer'     => [],
+        'html:h1'         => [],
+        'html:h2'         => [],
+        'html:h3'         => [],
+        'html:h4'         => [],
+        'html:h5'         => [],
+        'html:h6'         => [],
+        'html:head'       => [],
+        'html:header'     => [],
+        'html:hgroup'     => [],
+        'html:hr'         => [],
+        'html:html'       => [], // "manifest"
+        'html:i'          => [],
+        'html:iframe'     => ["src", "srcdoc", "name", "sandbox", "allowfullscreen", "allowpaymentrequest", "allowusermedia", "width", "height", "referrerpolicy"],
+        'html:img'        => ["alt", "src", "srcset", "crossorigin", "usemap", "ismap", "width", "height", "decoding", "referrerpolicy"],
+        'html:ins'        => ["cite", "datetime"],
+        'html:kbd'        => [],
+        'html:li'         => ["value"],
+        'html:main'       => [],
+        'html:map'        => ["name"],
+        'html:mark'       => [],
+        'html:menu'       => [],
+        'html:meta'       => ["name", "http-equiv", "content", "charset"],
+        'html:nav'        => [],
+        'html:noscript'   => [],
+        'html:ol'         => ["reversed", "start", "type"],
+        'html:p'          => [],
+        'html:picture'    => [],
+        'html:pre'        => [],
+        'html:q'          => ["cite"],
+        'html:rp'         => [],
+        'html:rt'         => [],
+        'html:ruby'       => [],
+        'html:s'          => [],
+        'html:samp'       => [],
+        'html:section'    => [],
+        'html:small'      => [],
+        'html:source'     => ["src", "type srcset", "sizes", "media"],
+        'html:span'       => [],
+        'html:strike'     => [],
+        'html:strong'     => [],
+        'html:sub'        => [],
+        'html:summary'    => [],
+        'html:sup'        => [],
+        'html:table'      => [],
+        'html:tbody'      => [],
+        'html:td'         => ["colspan", "rowspan", "headers"],
+        'html:tfoot'      => [],
+        'html:th'         => ["colspan", "rowspan", "headers", "scope", "abbr"],
+        'html:thead'      => [],
+        'html:time'       => ["datetime"],
+        'html:title'      => [],
+        'html:tr'         => [],
+        'html:track'      => ["default", "kind", "label", "src", "srclang"],
+        'html:tt'         => [],
+        'html:u'          => [],
+        'html:ul'         => [],
+        'html:var'        => [],
+        'html:video'      => ["src", "crossorigin", "poster", "preload", "autoplay", "playsinline", "loop", "muted", "controls", "width", "height"],
+        'html:wbr'        => [],
     ];
 
     public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
-        $ns = [
-            'html' => "http://www.w3.org/1999/xhtml",
-            'svg'  => "http://www.w3.org/2000/svg",
-            'math' => "http://www.w3.org/1998/Math/MathML",
-        ];
-        // ready an XPath processor and register the XHTML, SVG, and MathML namespaces
-        $path = new \DOMXPath($doc);
-        foreach ($ns as $prefix => $url) {
-            $path->registerNamespace($prefix, $url);
-        }
-        // compile the blacklist
-        // this involves first formatting each blacklisted element as an XPath query
-        // then appending namespace-aware equivalents for each (usually the HTML
-        // namespace, the exceptions being "svg" and "math")
-        $blacklist = array_map(function($v) {
-            return "//$v";
-        }, $this->tagPurge);
-        $blacklist = array_merge(array_map(function($v) use ($ns) {
-            if (isset($ns[$v])) {
-                return "//$v:$v";
+        echo $doc->saveHTML();
+        // determine if the document is non-XML HTML
+        $isHtml = ($doc->documentElement->tagName=="html" && $doc->documentElement->namespaceURI=="");
+        // loop through each element in the document
+        foreach ((new \DOMXPath($doc))->query("//*") as $node) {
+            // resolve a qualified name for the element
+            if (($isHtml && $node->namespaceURI=="") || $node->namespaceURI=="http://www.w3.org/1999/xhtml") {
+                $qName = "html:".$node->tagName;
+            } elseif ($node->namespaceURI=="") {
+                $qName = $node->tagName;
+            } elseif (isset($this->namespaces[$node->namespaceURI])) {
+                $qName = $this->namespaces[$node->namespaceURI].":".$node->tagName;
             } else {
-                return "//html:$v";
+                $qName = $node->namespaceURI.":".$node->tagName;
             }
-        }, $this->tagPurge), $blacklist);
-        $blacklist = implode("|", $blacklist);
-        // delete any blacklisted elements found
-        foreach ($path->query($blacklist) as $node) {
-            $node->parentNode->removeChild($node);
-        }
-        // compile the inverse of the whitelist
-        $whitelist = array_keys($this->tagKeep);
-        $blacklist = array_map(function($v) {
-            return "name()='$v'";
-        }, $whitelist);
-        $blacklist = array_merge(array_filter(array_map(function($v) use ($ns) {
-            if (isset($ns[$v])) {
-                return "name()='$v:$v'";
-            } else {
-                return "name()='html:$v'";
-            }
-        }, $whitelist)), $blacklist);
-        $blacklist = implode(" or ", $blacklist);
-        $blacklist = "//*[not($blacklist)]";
-        // delete any blacklisted elements found
-        foreach ($path->query($blacklist) as $node) {
-            if ($node->hasChildNodes()) {
-                $f = $doc->createDocumentFragment();
-                foreach ($node->childNodes as $child) {
-                    $f->appendChild($child);
-                }
-                $node->parentNode->insertBefore($f, $node);
+            if (in_array($qName, $this->tagPurge)) {
+                // if the element is in the purge list, delete it from the document along with its children
                 $node->parentNode->removeChild($node);
+            } elseif (in_array($qName, $this->tagStrip) || !isset($this->tagKeep[$qName])) {
+                // if the element is in the strip list or not in the keep list, delete it from the document while putting its children in its place
+                if ($node->hasChildNodes()) {
+                    $f = $doc->createDocumentFragment();
+                    do {
+                        $f->appendChild($node->firstChild);
+                    } while ($node->hasChildNodes());
+                    $node->parentNode->insertBefore($f, $node);
+                }
+                $node->parentNode->removeChild($node);
+            } else {
+                // if the element is in the keep list, do nothing (for now)
             }
-            
         }
         // return the result
         return $doc;
