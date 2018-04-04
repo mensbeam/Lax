@@ -95,7 +95,7 @@ class Sanitizer {
         'html:area'       => ["alt", "coords", "shape", "href", "target", "download"], // "ping", "rel", "referrerpolicy"
         'html:article'    => [],
         'html:aside'      => [],
-        'html:audio'      => ["src", "crossorigin", "preload", "loop", "muted", "controls"], // "autoplay"
+        'html:audio'      => ["src", "crossorigin", "loop", "muted"], // "autoplay", "controls", "preload"
         'html:b'          => [],
         'html:base'       => ["href"], // "target"
         'html:bdi'        => [],
@@ -135,8 +135,8 @@ class Sanitizer {
         'html:hr'         => [],
         'html:html'       => [], // "manifest"
         'html:i'          => [],
-        'html:iframe'     => ["src", "srcdoc", "name", "sandbox", "allowfullscreen", "allowpaymentrequest", "allowusermedia", "width", "height", "referrerpolicy"],
-        'html:img'        => ["alt", "src", "srcset", "crossorigin", "usemap", "ismap", "width", "height", "decoding", "referrerpolicy"],
+        'html:iframe'     => ["src", "srcdoc", "width", "height"], // "name", "sandbox", "allowfullscreen", "allowpaymentrequest", "allowusermedia", "referrerpolicy"
+        'html:img'        => ["alt", "src", "srcset", "usemap", "ismap", "width", "height"], // "crossorigin", "decoding", "referrerpolicy"
         'html:ins'        => ["cite", "datetime"],
         'html:kbd'        => [],
         'html:li'         => ["value"],
@@ -159,7 +159,7 @@ class Sanitizer {
         'html:samp'       => [],
         'html:section'    => [],
         'html:small'      => [],
-        'html:source'     => ["src", "type srcset", "sizes", "media"],
+        'html:source'     => ["src", "type", "srcset", "sizes", "media"],
         'html:span'       => [],
         'html:strike'     => [],
         'html:strong'     => [],
@@ -180,12 +180,11 @@ class Sanitizer {
         'html:u'          => [],
         'html:ul'         => [],
         'html:var'        => [],
-        'html:video'      => ["src", "crossorigin", "poster", "preload", "autoplay", "playsinline", "loop", "muted", "controls", "width", "height"],
+        'html:video'      => ["src", "crossorigin", "poster", "loop", "width", "height"], // "preload", "autoplay", "controls", "playsinline", "muted"
         'html:wbr'        => [],
     ];
 
     public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
-        echo $doc->saveHTML();
         // determine if the document is non-XML HTML
         $isHtml = ($doc->documentElement->tagName=="html" && $doc->documentElement->namespaceURI=="");
         // loop through each element in the document
@@ -214,7 +213,15 @@ class Sanitizer {
                 }
                 $node->parentNode->removeChild($node);
             } else {
-                // if the element is in the keep list, do nothing (for now)
+                // if the element is in the keep list, clean up its attributes
+                foreach (iterator_to_array($node->attributes) as $attr) { // we use an array 
+                    if (!in_array($attr->name, $this->attrKeep) && !(isset($this->tagKeep[$qName]) && in_array($attr->name, $this->tagKeep[$qName]))) {
+                        // if the attribute is not allowed globally or for the element, remove it
+                        $attr->ownerElement->removeAttributeNode($attr);
+                    } else {
+                        // otherwise normalize it if it's a URL
+                    }
+                }
             }
         }
         // return the result
