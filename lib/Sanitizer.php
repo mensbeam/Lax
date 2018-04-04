@@ -46,8 +46,15 @@ class Sanitizer {
         // For compatibility with XHTML
         "xmlns",
     ];
+    public $attrUrl = [
+        "href",
+        "src",
+        "cite",
+        "poster",
+    ];
     public $tagPurge = [
         "html:basefont",     // arbitrary styling
+        "html:bgsound",      // audio outside the reader's control
         "html:button",       // form element
         "html:canvas",       // only useful to script
         "html:datalist",     // form element
@@ -58,12 +65,16 @@ class Sanitizer {
         "html:frameset",     // frames
         "html:input",        // form element
         "html:isindex",      // form element
+        "html:keygen",       // form element
         "html:label",        // form element
         "html:legend",       // form element
         "html:link",         // typically used to embed stylesheets
         "html:math",         // embedded MathML is too complicated and esoteric to support at this time
         "math:math",         // embedded MathML is too complicated and esoteric to support at this time
+        "html:menuitem",     // form element
         "html:meter",        // form element
+        "html:nextid",       // obsolete and obscure
+        "html:nobr",         // potentially reader-hostile
         "html:optgroup",     // form element
         "html:option",       // form element
         "html:output",       // form element
@@ -72,6 +83,7 @@ class Sanitizer {
         "html:script",       // inherently unsafe
         "html:select",       // form element
         "html:slot",         // only useful to scripts (I think)
+        "html:spacer",       // obsolete styling
         "html:style",        // arbitrary styling; potentially unsafe
         "html:svg",          // embedded SVG is too complicated and esoteric to support at this time
         "svg:svg",           // embedded SVG is too complicated and esoteric to support at this time
@@ -84,11 +96,12 @@ class Sanitizer {
         "html:font",         // arbitrary styling
         "html:form",         // form element
         "html:marquee",      // especially annoying styling
+        "html:noembed",      // ensure embed fallback content is actually displayed
         "html:noframes",     // ensure frame fallback content is actually displayed
         "html:object",       // usually unsafe
     ];
     public $tagKeep = [
-        'html:a'          => ["href", "download", "hreflang", "type"], // "target", "ping", "rel", "referrerpolicy"
+        'html:a'          => ["href", "download", "hreflang", "type", "coords", "shape"], // "target", "ping", "rel", "referrerpolicy"
         'html:abbr'       => [],
         'html:acronym'    => [],
         'html:address'    => [],
@@ -140,6 +153,7 @@ class Sanitizer {
         'html:ins'        => ["cite", "datetime"],
         'html:kbd'        => [],
         'html:li'         => ["value"],
+        'html:listing'    => [],
         'html:main'       => [],
         'html:map'        => ["name"],
         'html:mark'       => [],
@@ -150,10 +164,13 @@ class Sanitizer {
         'html:ol'         => ["reversed", "start", "type"],
         'html:p'          => [],
         'html:picture'    => [],
+        'html:plaintext'  => [],
         'html:pre'        => [],
         'html:q'          => ["cite"],
+        'html:rb'         => [],
         'html:rp'         => [],
         'html:rt'         => [],
+        'html:rtc'        => [],
         'html:ruby'       => [],
         'html:s'          => [],
         'html:samp'       => [],
@@ -166,11 +183,11 @@ class Sanitizer {
         'html:sub'        => [],
         'html:summary'    => [],
         'html:sup'        => [],
-        'html:table'      => [],
+        'html:table'      => ["summary"],
         'html:tbody'      => [],
-        'html:td'         => ["colspan", "rowspan", "headers"],
+        'html:td'         => ["colspan", "rowspan", "headers", "scope", "abbr", "axis"],
         'html:tfoot'      => [],
-        'html:th'         => ["colspan", "rowspan", "headers", "scope", "abbr"],
+        'html:th'         => ["colspan", "rowspan", "headers", "scope", "abbr", "axis"],
         'html:thead'      => [],
         'html:time'       => ["datetime"],
         'html:title'      => [],
@@ -178,10 +195,11 @@ class Sanitizer {
         'html:track'      => ["default", "kind", "label", "src", "srclang"],
         'html:tt'         => [],
         'html:u'          => [],
-        'html:ul'         => [],
+        'html:ul'         => ["type"],
         'html:var'        => [],
         'html:video'      => ["src", "crossorigin", "poster", "loop", "width", "height"], // "preload", "autoplay", "controls", "playsinline", "muted"
         'html:wbr'        => [],
+        'html:xmp'        => [],
     ];
 
     public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
