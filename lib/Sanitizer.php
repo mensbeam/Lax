@@ -7,52 +7,14 @@ declare(strict_types=1);
 namespace JKingWeb\Lax;
 
 class Sanitizer {
+    /** @var string[] An array of namespace URIs (the keys) and prefixes (the values). The prefixes are used in the element and attribute lists that follow */
     public $namespaces = [
         'http://www.w3.org/1999/xhtml'       => "html",
         'http://www.w3.org/2000/svg'         => "svg",
         'http://www.w3.org/1998/Math/MathML' => "math",
     ];
-
-    public $attrKeep = [
-        "accesskey",
-        "align",
-        //"autocapitalize",     // not useful for static content
-        //"contenteditable",    // not useful for static content
-        "class",
-        "dir", 
-        //"draggable",          // not useful for static content
-        "hidden", 
-        //"inputmode",          // not useful for static content
-        //"is",                 // only used with custom elements
-        "id",
-        "itemid", 
-        "itemprop", 
-        "itemref", 
-        "itemscope", 
-        "itemtype", 
-        "lang", 
-        //"nonce",              // only used via scripts (I think)
-        //"slot",               // only used via scripts (I think)
-        //"spellcheck",         // not useful for static content
-        //"style",              // arbitrary styling; potentially unsafe
-        "tabindex",
-        "title", 
-        "translate",
-        // WAI-ARIA
-        "aria-describedby",
-        "aria-disabled",
-        "aria-label",
-        "role",
-        // For compatibility with XHTML
-        "xmlns",
-    ];
-    public $attrUrl = [
-        "href",
-        "src",
-        "cite",
-        "poster",
-    ];
-    public $tagPurge = [
+    /** @var string[] An array of elements to completely remove from the document, such as <script>. This should be used rather than the strip list below for empty elements, since XHTML documents can include content in usually empty elements */
+    public $elemPurge = [
         "html:basefont",     // arbitrary styling
         "html:bgsound",      // audio outside the reader's control
         "html:button",       // form element
@@ -90,7 +52,8 @@ class Sanitizer {
         "html:template",     // only useful to scripts
         "html:textarea",     // form element
     ];
-    public $tagStrip = [
+    /** @var string[] An array of elements to remove from the document while leaving their contents behind, such as <font>. This should not be used for empty elements such as <img> as XHTML documents can include content in such elements */
+    public $elemStrip = [
         "html:applet",       // inherently unsafe
         "html:blink",        // especially annoying styling
         "html:font",         // arbitrary styling
@@ -100,7 +63,8 @@ class Sanitizer {
         "html:noframes",     // ensure frame fallback content is actually displayed
         "html:object",       // usually unsafe
     ];
-    public $tagKeep = [
+    /** @var array[] An array of elements which are allowed (the keys) and their allowed attributes (the values) */
+    public $elemKeep = [
         'html:a'          => ["href", "download", "hreflang", "type", "coords", "shape"], // "target", "ping", "rel", "referrerpolicy"
         'html:abbr'       => [],
         'html:acronym'    => [],
@@ -201,7 +165,55 @@ class Sanitizer {
         'html:wbr'        => [],
         'html:xmp'        => [],
     ];
+    /** @var string[] An array of attribute names which are allowed on any element */
+    public $attrKeep = [
+        "accesskey",
+        "align",
+        //"autocapitalize",     // not useful for static content
+        //"contenteditable",    // not useful for static content
+        "class",
+        "dir", 
+        //"draggable",          // not useful for static content
+        "hidden", 
+        //"inputmode",          // not useful for static content
+        //"is",                 // only used with custom elements
+        "id",
+        "itemid", 
+        "itemprop", 
+        "itemref", 
+        "itemscope", 
+        "itemtype", 
+        "lang", 
+        //"nonce",              // only used via scripts (I think)
+        //"slot",               // only used via scripts (I think)
+        //"spellcheck",         // not useful for static content
+        //"style",              // arbitrary styling; potentially unsafe
+        "tabindex",
+        "title", 
+        "translate",
+        // WAI-ARIA
+        "aria-describedby",
+        "aria-disabled",
+        "aria-label",
+        "role",
+        // For compatibility with XHTML
+        "xmlns",
+    ];
+    /** @var string[] An array of attribute names whose content is a URL */
+    public $attrUrl = [
+        "href",
+        "src",
+        "cite",
+        "poster",
+    ];
 
+    /** 
+     * Sanitizes a DOMDocument object, returning the same document, modified
+     * 
+     * The document may be an HTML document or or any partial XHTML tree, possibly mixed with other XML vocabularies
+     * 
+     * The document's documentURI is assumed to already be set
+     */
     public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
         // determine if the document is non-XML HTML
         $isHtml = ($doc->documentElement->tagName=="html" && $doc->documentElement->namespaceURI=="");
@@ -217,10 +229,10 @@ class Sanitizer {
             } else {
                 $qName = $node->namespaceURI.":".$node->tagName;
             }
-            if (in_array($qName, $this->tagPurge)) {
+            if (in_array($qName, $this->elemPurge)) {
                 // if the element is in the purge list, delete it from the document along with its children
                 $node->parentNode->removeChild($node);
-            } elseif (in_array($qName, $this->tagStrip) || !isset($this->tagKeep[$qName])) {
+            } elseif (in_array($qName, $this->elemStrip) || !isset($this->elemKeep[$qName])) {
                 // if the element is in the strip list or not in the keep list, delete it from the document while putting its children in its place
                 if ($node->hasChildNodes()) {
                     $f = $doc->createDocumentFragment();
@@ -233,7 +245,7 @@ class Sanitizer {
             } else {
                 // if the element is in the keep list, clean up its attributes
                 foreach (iterator_to_array($node->attributes) as $attr) { // we use an array 
-                    if (!in_array($attr->name, $this->attrKeep) && !(isset($this->tagKeep[$qName]) && in_array($attr->name, $this->tagKeep[$qName]))) {
+                    if (!in_array($attr->name, $this->attrKeep) && !(isset($this->elemKeep[$qName]) && in_array($attr->name, $this->elemKeep[$qName]))) {
                         // if the attribute is not allowed globally or for the element, remove it
                         $attr->ownerElement->removeAttributeNode($attr);
                     } else {
