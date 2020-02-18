@@ -4,16 +4,15 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\XML\Primitives;
+namespace JKingWeb\Lax\Parser\XML\Primitives;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\XML\Entry as FeedEntry;
+use JKingWeb\Lax\Parser\XML\Entry as FeedEntry;
 
 trait Construct {
-
     /** Primitive to fetch an Atom feed/entry title
      * 
      * This fetches the title in plain text rather than HTML, even if HTML is provided in the feed/entry
@@ -95,7 +94,7 @@ trait Construct {
     protected function getCategoriesDC() {
         $out = new CategoryCollection;
         foreach ($this->fetchTextMulti("dc:subject") ?? [] as $text) {
-            if (strlen($ctext)) {
+            if (strlen($text)) {
                 $c = new Category;
                 $c->name = $text;
                 $out[] = $c;

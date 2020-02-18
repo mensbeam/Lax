@@ -4,13 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\XML\Primitives;
+namespace JKingWeb\Lax\Parser\XML\Primitives;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\XML\XPath;
+use JKingWeb\Lax\Parser\XML\XPath;
 
 trait Entry {
-
     /** Primitive to fetch a collection of authors associated with an Atom entry 
      * 
      * This differs from feeds in that an entry's <source> element (which possibly contains metadata for the source feed) is checked for authors if the entry itself has none

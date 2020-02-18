@@ -4,13 +4,13 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\XML;
+namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 
 trait Construct {
-    use \JKingWeb\Lax\Construct;
+    use \JKingWeb\Lax\Parser\Construct;
 
     /** @var \DOMDocument */
     public    $document;

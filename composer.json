@@ -13,7 +13,7 @@
 
     ],
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "ext-json": "*",
         "ext-dom": "*",
         "ext-intl": "*",
@@ -23,5 +23,8 @@
         "psr-4": {
             "JKingWeb\\Lax\\": "lib/"
         }
+    },
+    "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.3"
     }
 }

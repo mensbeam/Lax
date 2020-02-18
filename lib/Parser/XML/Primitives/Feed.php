@@ -4,13 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\XML\Primitives;
+namespace JKingWeb\Lax\Parser\XML\Primitives;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\XML\XPath;
+use JKingWeb\Lax\Parser\XML\XPath;
 
 trait Feed {
-
     /** Primitive to fetch an Atom feed summary
      * 
      * Atom does not have a 'description' element like the RSSes, but it does have 'subtitle', which fills roughly the same function

@@ -27,7 +27,7 @@ class Collection extends \JKingWeb\Lax\Collection {
                 // if the category is blank or already in the output, skip it
                 continue;
             } else {
-                $out[] = text;
+                $out[] = $text;
             }
         }
         return $out;
@@ -35,11 +35,11 @@ class Collection extends \JKingWeb\Lax\Collection {
 
     /** Returns a collection filtered to include only the specified category domains */
     public function filterForDomain(string ...$domain): self {
-        return $this->filter($role, "domain", true);
+        return $this->filter($domain, "domain", true);
     }
 
     /** Returns a collection filtered to exclude the specified category domains */
     public function filterOutDomain(string ...$domain): self {
-        return $this->filter($role, "domain", false);
+        return $this->filter($domain, "domain", false);
     }
 }

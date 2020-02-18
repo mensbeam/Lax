@@ -1,3 +1,2 @@
-vendor
-samples
-test.php
+/vendor
+/vendor-bin/*/vendor

@@ -4,9 +4,8 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace JKingWeb\Lax\Parser;
 
-use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Date;
 
 trait Construct {

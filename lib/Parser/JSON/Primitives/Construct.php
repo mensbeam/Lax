@@ -4,14 +4,13 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\JSON\Primitives;
+namespace JKingWeb\Lax\Parser\JSON\Primitives;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 trait Construct {
-
     /** Primitive function to fetch the author from v1 JSON feeds */
     protected function getPeopleV1() {
         $author = $this->fetchMember("author", "object");

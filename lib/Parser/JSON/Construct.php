@@ -4,13 +4,10 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\JSON;
-
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
+namespace JKingWeb\Lax\Parser\JSON;
 
 trait Construct {
-    use \JKingWeb\Lax\Construct;
+    use \JKingWeb\Lax\Parser\Construct;
 
     /** @var object */
     protected $json;

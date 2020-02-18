@@ -4,22 +4,22 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\JSON;
+namespace JKingWeb\Lax\Parser\JSON;
 
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Category\Category;
 
-class Entry extends \JKingWeb\Lax\Entry {
+class Entry implements \JKingWeb\Lax\Parser\Entry {
     use Construct;
     use Primitives\Construct;
 
     protected $url;
 
     /** Constructs a parsed feed */
-    public function __construct($data, \JKingWeb\Lax\Feed $feed) {
+    public function __construct($data, \JKingWeb\Lax\Parser\Feed $feed) {
         $this->init($data, $feed);
-        $this->parse();
     }
 
     /** Performs initialization of the instance */
@@ -27,6 +27,24 @@ class Entry extends \JKingWeb\Lax\Entry {
         $this->feed = $feed;
         $this->json = $data;
         $this->url = $feed->url;
+    }
+
+    /** Parses the feed to extract sundry metadata */
+    protected function parse(\stdClass $data, \JKingWeb\Lax\Feed $feed): \JKingWeb\Lax\Entry {
+        $entry = new \JKingWeb\Lax\Entry;
+        $entry->id = $this->getId();
+        $entry->link = $this->getLink();
+        $entry->relatedLink = $this->getRelatedLink();
+        $entry->title = $this->getTitle();
+        $entry->people = $this->getPeople();
+        $entry->author = $this->people->primary() ?? $this->feed->author;
+        $entry->dateModified = $this->getDateModified();
+        $entry->dateCreated = $this->getDateCreated();
+        // do a second pass on missing data we'd rather fill in
+        $entry->title = strlen($this->title) ? $this->title : $this->link;
+        // do extra stuff just to test it
+        $entry->categories = $this->getCategories();
+        return $entry; 
     }
 
     /** General function to fetch the categories of an entry */

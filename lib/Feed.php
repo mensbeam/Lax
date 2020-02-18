@@ -6,12 +6,7 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-
-abstract class Feed {
-    protected $reqUrl;
-
+class Feed {
     public $type;
     public $version;
     public $url;
@@ -24,51 +19,11 @@ abstract class Feed {
     public $dateModified;
     public $entries;
 
-    /** Constructs a parsed feed */
-    abstract public function __construct(string $data, string $contentType = "", string $url = "");
-
-    /** Parses the feed to extract sundry metadata */
-    protected function parse() {
-        $this->id = $this->getId();
-        $this->url = $this->getUrl();
-        $this->link = $this->getLink();
-        $this->title = $this->getTitle();
-        $this->summary = $this->getSummary();
-        $this->people = $this->getPeople();
-        $this->author = $this->people->primary();
-        $this->dateModified = $this->getDateModified();
-        $this->entries = $this->getEntries();
-        // do a second pass on missing data we'd rather fill in
-        $this->link = strlen($this->link) ? $this->link : $this->url;
-        $this->title = strlen($this->title) ? $this->title : $this->link;
-        // do extra stuff just to test it
-        $this->categories = $this->getCategories();
+    private function __construct() {
     }
 
-    /** General function to fetch the canonical feed URL */
-    abstract public function getUrl(): string;
-
-    /** General function to fetch the feed title */
-    abstract public function getTitle(): string;
-
-    /** General function to fetch the feed's Web-representation URL */
-    abstract public function getLink(): string;
-
-    /** General function to fetch the description of a feed */
-    abstract public function getSummary(): string;
-
-    /** General function to fetch the categories of a feed */
-    abstract public function getCategories(): CategoryCollection;
-
-    /** General function to fetch the feed identifier */
-    abstract public function getId(): string;
-
-    /** General function to fetch a collection of people associated with a feed */
-    abstract public function getPeople(): PersonCollection;
-
-    /** General function to fetch the feed's modification date */
-    abstract public function getDateModified();
-
-    /** General function to fetch the feed's modification date */
-    abstract public function getEntries() : array;
+    public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
+        $out = new self;
+        return $out;
+    }
 }

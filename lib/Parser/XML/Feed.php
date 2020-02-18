@@ -4,12 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\XML;
+namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
-class Feed extends \JKingWeb\Lax\Feed {
+class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
     use Primitives\Construct;
     use Primitives\Feed;
@@ -17,7 +17,6 @@ class Feed extends \JKingWeb\Lax\Feed {
     /** Constructs a parsed feed */
     public function __construct(string $data, string $contentType = "", string $url = "") {
         $this->init($data, $contentType, $url);
-        $this->parse();
     }
 
     /** Performs initialization of the instance */
@@ -53,6 +52,25 @@ class Feed extends \JKingWeb\Lax\Feed {
             throw new \Exception;
         }
         $this->url = $url;
+    }
+
+    /** Parses the feed to extract sundry metadata */
+    public function parse(\JKingWeb\Lax\Feed $feed): \JKingWeb\Lax\Feed {
+        $feed->id = $this->getId();
+        $feed->url = $this->getUrl();
+        $feed->link = $this->getLink();
+        $feed->title = $this->getTitle();
+        $feed->summary = $this->getSummary();
+        $feed->people = $this->getPeople();
+        $feed->author = $this->people->primary();
+        $feed->dateModified = $this->getDateModified();
+        $feed->entries = $this->getEntries();
+        // do a second pass on missing data we'd rather fill in
+        $feed->link = strlen($this->link) ? $this->link : $this->url;
+        $feed->title = strlen($this->title) ? $this->title : $this->link;
+        // do extra stuff just to test it
+        $feed->categories = $this->getCategories();
+        return $feed;
     }
     
     /** General function to fetch the canonical feed URL
