@@ -4,21 +4,26 @@ Main specifications:
     RDF Site Summary 0.90   http://www.rssboard.org/rss-0-9-0
     RSS 2.0.11              http://www.rssboard.org/rss-specification
     JSON Feed v1            https://jsonfeed.org/version/1
+    JSON Feed v1.1          https://jsonfeed.org/version/1.1
+    h-feed                  http://microformats.org/wiki/h-feed
 
-Common extensions:
+Common XML extensions:
     Dublin Core             http://web.resource.org/rss/1.0/modules/dc/ (see also http://dublincore.org/documents/dces/ )
     Encoded content         http://web.resource.org/rss/1.0/modules/content/ (updated syntax only)
     Syndication schedule    http://web.resource.org/rss/1.0/modules/syndication/
     Google podcast          https://support.google.com/googleplay/podcasts/answer/6260341
     Apple podcast           https://help.apple.com/itc/podcasts_connect/#/itcb54353390
 
-Other extensions:
+Other XML extensions:
     RDF RSS enclosures      https://foz.home.xs4all.nl/mod_enclosure.html
     Other RDF RSS modules   https://web.archive.org/web/20071201195657/http://web.resource.org/rss/1.0/modules/proposed.html
     Raw Voice               https://web.archive.org/web/20170331023439/http://www.rawvoice.com/services/tools-and-resources/rawvoice-rss-2-0-module-xmlns-namespace-rss2/
     Comment API             https://web.archive.org/web/20081004031716/http://wellformedweb.org/story/9
     Comment Feed            http://sellsbrothers.com/12548
     Atom threads            https://web.archive.org/web/20081115230920/http://www.snellspace.com/wp/?p=194
+
+JSON Feed extensions:
+    Cast                    http://help.tryca.st/cast-jsonfeed-support/#cast-json-feed-extension
 
 Related reading:
     https://web.archive.org/web/20100111072733/http://rsscloud.org:80/walkthrough.html
