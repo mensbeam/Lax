@@ -9,27 +9,56 @@ namespace JKingWeb\Lax\Parser\JSON;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Parser\Exception;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
     use Primitives\Construct;
 
-    /** Constructs a parsed feed */
+    const MIME_TYPES = [
+        "application/json",         // generic JSON
+        "application/feed+json",    // JSON Feed-specific type
+        "text/json",                // obsolete type for JSON
+    ];
+
+    const VERSIONS = [
+        'https://jsonfeed.org/version/1'   => "1",
+        'https://jsonfeed.org/version/1.1' => "1.1",
+    ];
+
+    protected $data;
+    protected $contentType;
+    protected $url;
+
+    /** Constructs a feed parser without actually doing anything */
     public function __construct(string $data, string $contentType = "", string $url = "") {
-        $this->init($data, $contentType);
+        $this->data = $data;
+        $this->contentType = $contentType;
+        $this->url = $url;
     }
 
-    /** Performs initialization of the instance */
-    protected function init(string $data, string $contentType = "", string $url = "") {
-        $this->reqUrl = $url;
-        $this->json = json_decode($data);
-        $this->url = $this->reqUrl;
-        $this->type = "json";
-        $this->version = $this->fetchMember("version", "str") ?? "";
+    /** Performs format-specific preparation and validation */
+    protected function init(): void {
+        $type = preg_replace("/[\s;,].*/", "", trim(strtolower($this->contentType)));
+        if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
+            throw new Exception("notJSONType");
+        }
+        $data = @json_decode($this->data, false, 20);
+        if (!is_object($data)) {
+            throw new Exception("notJSON");
+        } elseif (!isset($data->version) || !preg_match("<^https://jsonfeed\.org/version/(\d+(?:\.\d+)?)$>", $data->version, $match)) {
+            throw new Exception("notJSONFeed");
+        } elseif (version_compare($match[1], "1.0", "<") || version_compare($match[1], "2", ">=")) {
+            throw new Exception("unsupportedJSONFeedVersion");
+        }
+        $this->data = $data;
+        $this->version = $match[1];
     }
 
     /** Parses the feed to extract sundry metadata */
     public function parse(\JKingWeb\Lax\Feed $feed): \JKingWeb\Lax\Feed {
+        $this->init();
+        return $feed;
         $feed->id = $this->getId();
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();

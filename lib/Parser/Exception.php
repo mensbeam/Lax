@@ -8,5 +8,5 @@ namespace JKingWeb\Lax\Parser;
 
 use JKingWeb\Lax\Exception as BaseException;
 
-abstract class Exception extends BaseException {
+class Exception extends BaseException {
 }

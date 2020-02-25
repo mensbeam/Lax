@@ -6,7 +6,9 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\TestCase\JSON;
 
-use JKingWeb\Lax\Parser\JSON\Feed;
+use JKingWeb\Lax\Parser\Exception;
+use JKingWeb\Lax\Feed;
+use JKingWeb\Lax\Parser\JSON\Feed as Parser;
 
 /** @covers JKingWeb\Lax\Parser\JSON\Feed<extended> */
 class TestJSON extends \PHPUnit\Framework\TestCase {
@@ -17,9 +19,11 @@ class TestJSON extends \PHPUnit\Framework\TestCase {
         } elseif (!is_string($input)) {
             throw new \Exception("Test input is invalid");
         }
+        $f = new Feed;
+        $p = new Parser($input, $type);
         if ($output instanceof \Exception) {
             $this->expectExceptionObject($output);
-            new Feed($input, $type);
+            $p->parse($f);
         } else {
             $this->assertTrue(false);
         }
@@ -29,8 +33,7 @@ class TestJSON extends \PHPUnit\Framework\TestCase {
         foreach (new \GlobIterator(__DIR__."/*.json", \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::KEY_AS_FILENAME) as $file => $path) {
             foreach (json_decode(file_get_contents($path), true) as $index => $test) {
                 if (isset($test['exception'])) {
-                    $class = "\JKingWeb\Lax\Parser\Exception" . $test['exception'][0];
-                    $test['output'] = new $class($test['exception'][1] ?? "");
+                    $test['output'] = new Exception((string) $test['exception']);
                 }
                 yield "$file #$index: {$test['description']}" => [
                     $test['input'],

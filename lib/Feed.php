@@ -19,9 +19,6 @@ class Feed {
     public $dateModified;
     public $entries;
 
-    private function __construct() {
-    }
-
     public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
         $out = new self;
         return $out;
