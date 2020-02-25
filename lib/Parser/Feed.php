@@ -8,32 +8,34 @@ namespace JKingWeb\Lax\Parser;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Text;
 
 interface Feed {
     /** General function to fetch the canonical feed URL */
-    public function getUrl(): string;
+    public function getUrl(): ?string;
 
     /** General function to fetch the feed title */
-    public function getTitle(): string;
+    public function getTitle(): ?Text;
 
     /** General function to fetch the feed's Web-representation URL */
-    public function getLink(): string;
+    public function getLink(): ?string;
 
     /** General function to fetch the description of a feed */
-    public function getSummary(): string;
+    public function getSummary(): ?Text;
 
     /** General function to fetch the categories of a feed */
-    public function getCategories(): CategoryCollection;
+    public function getCategories(): ?CategoryCollection;
 
     /** General function to fetch the feed identifier */
-    public function getId(): string;
+    public function getId(): ?string;
 
     /** General function to fetch a collection of people associated with a feed */
-    public function getPeople(): PersonCollection;
+    public function getPeople(): ?PersonCollection;
 
     /** General function to fetch the feed's modification date */
-    public function getDateModified();
+    public function getDateModified(): ?Date;
 
     /** General function to fetch the feed's modification date */
-    public function getEntries() : array;
+    public function getEntries() : ?array;
 }

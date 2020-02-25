@@ -8,6 +8,8 @@ namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Text;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
@@ -82,7 +84,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
     
     /** General function to fetch the feed title */
-    public function getTitle(): string {
+    public function getTitle(): ?Text {
         return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
     }
 
@@ -92,7 +94,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch the description of a feed */
-    public function getSummary(): string {
+    public function getSummary(): ?Text {
         // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
         return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom() ?? "";
     }
@@ -117,7 +119,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch the modification date of a feed */
-    public function getDateModified() {
+    public function getDateModified(): ?Date {
         return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
 

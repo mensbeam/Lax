@@ -1,0 +1,81 @@
+[
+    {
+        "description": "Minimal example 1",
+        "input": {
+            "version": "https://jsonfeed.org/version/1"
+        },
+        "output": {
+            "type": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Minimal example 2",
+        "input": {
+            "version": "https://jsonfeed.org/version/1.1"
+        },
+        "output": {
+            "type": "json",
+            "version": "1.1"
+        }
+    },
+    {
+        "description": "Correct type of member",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "title": "Example title"
+        },
+        "output": {
+            "type": "json",
+            "version": "1",
+            "title": "Example title"
+        }
+    },
+    {
+        "description": "Incorrect type of member",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "title": 1001001
+        },
+        "output": {
+            "type": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "URL -> ID equivalence",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "title": "Example title",
+            "feed_url": "http://example.com/"
+        },
+        "output": {
+            "type": "json",
+            "version": "1",
+            "title": "Example title",
+            "id": "http://example.com/",
+            "url": "http://example.com/"
+        }
+    },
+    {
+        "description": "Basic example",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "title": "Example title",
+            "feed_url": "http://example.com/",
+            "home_page_url": "http://example.net/",
+            "description": "Example description",
+            "user_comment": "Example comment",
+            "next_url": "http://example.com/next"
+        },
+        "output": {
+            "type": "json",
+            "version": "1",
+            "title": "Example title",
+            "id": "http://example.com/",
+            "url": "http://example.com/",
+            "link": "http://example.net/",
+            "summary": "Example description"
+        }
+    }
+]

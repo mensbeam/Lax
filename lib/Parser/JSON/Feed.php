@@ -6,10 +6,13 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\JSON;
 
+use JKingWeb\Lax\Feed as FeedStruct;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Parser\Exception;
+use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Date;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
@@ -38,7 +41,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** Performs format-specific preparation and validation */
-    protected function init(): void {
+    protected function init(FeedStruct $feed): FeedStruct {
         $type = preg_replace("/[\s;,].*/", "", trim(strtolower($this->contentType)));
         if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
             throw new Exception("notJSONType");
@@ -48,24 +51,26 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
             throw new Exception("notJSON");
         } elseif (!isset($data->version) || !preg_match("<^https://jsonfeed\.org/version/(\d+(?:\.\d+)?)$>", $data->version, $match)) {
             throw new Exception("notJSONFeed");
-        } elseif (version_compare($match[1], "1.0", "<") || version_compare($match[1], "2", ">=")) {
+        } elseif (version_compare($match[1], "1", "<") || version_compare($match[1], "2", ">=")) {
             throw new Exception("unsupportedJSONFeedVersion");
         }
         $this->data = $data;
         $this->version = $match[1];
+        $feed->type = "json";
+        $feed->version = $this->version;
+        return $feed;
     }
 
     /** Parses the feed to extract sundry metadata */
-    public function parse(\JKingWeb\Lax\Feed $feed): \JKingWeb\Lax\Feed {
-        $this->init();
-        return $feed;
+    public function parse(FeedStruct $feed): FeedStruct {
+        $feed = $this->init($feed);
+        $feed->title = $this->getTitle();
         $feed->id = $this->getId();
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
-        $feed->title = $this->getTitle();
         $feed->summary = $this->getSummary();
+        return $feed;
         $feed->people = $this->getPeople();
-        $feed->author = $this->people->primary();
         $feed->dateModified = $this->getDateModified();
         $feed->entries = $this->getEntries();
         // do a second pass on missing data we'd rather fill in
@@ -80,51 +85,51 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
      * 
      * If the feed does not include a canonical URL, the request URL is returned instead
      */
-    public function getUrl(): string {
-        return $this->fetchUrl("feed_url") ?? $this->reqUrl;
+    public function getUrl(): ?string {
+        return $this->fetchUrl("feed_url");
     }
 
     /** General function to fetch the feed title */
-    public function getTitle(): string {
-        return $this->fetchMember("title", "str") ?? "";
+    public function getTitle(): ?Text {
+        return $this->fetchText("title");
     }
 
     /** General function to fetch the feed's Web-representation URL */
-    public function getLink(): string {
-        return $this->fetchUrl("home_page_url") ?? "";
+    public function getLink(): ?string {
+        return $this->fetchUrl("home_page_url");
     }
 
     /** General function to fetch the description of a feed */
-    public function getSummary(): string {
-        return $this->fetchMember("description", "str") ?? "";
+    public function getSummary(): ?Text {
+        return $this->fetchText("description");
     }
 
     /** General function to fetch the categories of a feed 
      * 
-     * JSON Feed does not have categories at the feed level, so this always returns an empty collection
+     * JSON Feed does not have categories at the feed level, so this always returns null
     */
-    public function getCategories(): CategoryCollection {
-        return new CategoryCollection;
+    public function getCategories(): ?CategoryCollection {
+        return null;
     }
 
     /** General function to fetch the feed identifier 
      * 
      * For JSON feeds this is always the feed URL specified in the feed
     */
-    public function getId(): string {
-        return $this->fetchUrl("feed_url") ?? "";
+    public function getId(): ?string {
+        return $this->fetchUrl("feed_url");
     }
 
     /** General function to fetch a collection of people associated with a feed */
-    public function getPeople(): PersonCollection {
-        return $this->getPeopleV1() ?? new PersonCollection;
+    public function getPeople(): ?PersonCollection {
+        return $this->getPeopleV1();
     }
 
     /** General function to fetch the modification date of a feed 
      * 
      * JSON feeds themselves don't have dates, so this always returns null
     */
-    public function getDateModified() {
+    public function getDateModified(): ?Date {
         return null;
     }
 

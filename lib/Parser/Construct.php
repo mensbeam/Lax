@@ -55,7 +55,7 @@ trait Construct {
         return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, $flags);
     }
 
-    protected function parseDate(string $date) {
+    protected function parseDate(string $date): ?Date {
         $out = null;
         $date = $this->trimText($date);
         if (!strlen($date)) {
