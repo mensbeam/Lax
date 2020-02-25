@@ -11,26 +11,26 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 
 interface Entry {
     /** General function to fetch the entry title */
-    abstract public function getTitle(): string;
+    public function getTitle(): string;
 
     /** General function to fetch the categories of an entry */
-    abstract public function getCategories(): CategoryCollection;
+    public function getCategories(): CategoryCollection;
 
     /** General function to fetch the entry identifier */
-    abstract public function getId(): string;
+    public function getId(): string;
 
     /** General function to fetch a collection of people associated with an entry */
-    abstract public function getPeople(): PersonCollection;
+    public function getPeople(): PersonCollection;
 
     /** General function to fetch the entry's modification date */
-    abstract public function getDateModified();
+    public function getDateModified();
 
     /** General function to fetch the entry's creation date */
-    abstract public function getDateCreated();
+    public function getDateCreated();
 
     /** General function to fetch the Web URL of the entry */
-    abstract public function getLink(): string;
+    public function getLink(): string;
 
     /** General function to fetch the URL of a article related to the entry */
-    abstract public function getRelatedLink(): string;
+    public function getRelatedLink(): string;
 }
