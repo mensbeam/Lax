@@ -56,7 +56,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         }
         $this->data = $data;
         $this->version = $match[1];
-        $feed->type = "json";
+        $feed->format = "json";
         $feed->version = $this->version;
         return $feed;
     }
@@ -69,6 +69,8 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
         $feed->summary = $this->getSummary();
+        $feed->icon = $this->getIcon();
+        $feed->image = $this->getImage();
         return $feed;
         $feed->people = $this->getPeople();
         $feed->dateModified = $this->getDateModified();
@@ -131,6 +133,14 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     */
     public function getDateModified(): ?Date {
         return null;
+    }
+
+    public function getIcon(): ?string {
+        return $this->fetchUrl("favicon");
+    }
+
+    public function getImage(): ?string {
+        return $this->fetchUrl("icon");
     }
 
     /** General function to fetch the entries of a feed */
