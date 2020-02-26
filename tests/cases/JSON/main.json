@@ -58,6 +58,124 @@
         }
     },
     {
+        "description": "Single author",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "author": {"name": "John Doe", "url": "http://example.org/", "avatar": "http://example.org/avatar"}
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "people": [
+                {
+                    "role": "author",
+                    "name": "John Doe",
+                    "url": "http://example.org/",
+                    "avatar": "http://example.org/avatar"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Multiple authors",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [
+                {"name": "John Doe", "url": "http://example.org/", "avatar": "http://example.org/avatar"},
+                {"name": "Jane Doe", "url": "http://example.net/", "avatar": "http://example.net/avatar"}
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "people": [
+                {
+                    "role": "author",
+                    "name": "John Doe",
+                    "url": "http://example.org/",
+                    "avatar": "http://example.org/avatar"
+                },
+                {
+                    "role": "author",
+                    "name": "Jane Doe",
+                    "url": "http://example.net/",
+                    "avatar": "http://example.net/avatar"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Fallback author",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [
+                {"name": "John Doe", "url": "http://example.org/", "avatar": "http://example.org/avatar"},
+                {"name": "Jane Doe", "url": "http://example.net/", "avatar": "http://example.net/avatar"}
+            ],
+            "author": {"name": "John Smith", "url": "http://example.biz/", "avatar": "http://example.biz/avatar"}
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "people": [
+                {
+                    "role": "author",
+                    "name": "John Doe",
+                    "url": "http://example.org/",
+                    "avatar": "http://example.org/avatar"
+                },
+                {
+                    "role": "author",
+                    "name": "Jane Doe",
+                    "url": "http://example.net/",
+                    "avatar": "http://example.net/avatar"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Empty author",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "author": {}
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Empty authors",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [{}]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Empty authors with fallback",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [{}],
+            "author": {"name": "John Doe", "url": "http://example.org/", "avatar": "http://example.org/avatar"}
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "people": [
+                {
+                    "role": "author",
+                    "name": "John Doe",
+                    "url": "http://example.org/",
+                    "avatar": "http://example.org/avatar"
+                }
+            ]
+        }
+    },
+    {
         "description": "Basic example",
         "input": {
             "version": "https://jsonfeed.org/version/1",
@@ -79,7 +197,7 @@
             "link": "http://example.net/",
             "summary": "Example description",
             "icon": "http://example.com/icon",
-            "image": "http://example.com/image",
+            "image": "http://example.com/image"
         }
     }
 ]

@@ -21,7 +21,7 @@ class Feed {
      * 
      * The format is largely advisory, but may be used when converting between formats
      */
-    public $type;
+    public $format;
     /** @var string $version The format version of the news feed
      * 
      * The version is largely advisory, but may be used when converting between formats

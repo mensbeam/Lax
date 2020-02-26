@@ -7,13 +7,23 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\Person;
 
 class Person {
-    public $name = "";
-    public $mail = "";
-    public $url  = "";
-    public $role = "";
-    public $avatar = "";
+    public $name = null;
+    public $mail = null;
+    public $url  = null;
+    public $role = null;
+    public $avatar = null;
 
     public function __toString() {
-        return strlen(strlen((string) $this->mail)) ? $this->name."<".$this->mail.">" : $this->name;
+        $name = strlen((string) $this->name) > 0;
+        $mail = strlen((string) $this->mail) > 0;
+        if ($name && $mail) {
+            return "{$this->name} <{$this->mail}>";
+        } elseif ($name) {
+            return $this->name;
+        } elseif ($mail) {
+            return $this->mail;
+        } else {
+            return "";
+        }
     }
 }

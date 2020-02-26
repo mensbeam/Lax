@@ -8,6 +8,8 @@ namespace JKingWeb\Lax\Parser\JSON;
 
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Person\Person;
 
 trait Construct {
     use \JKingWeb\Lax\Parser\Construct;
@@ -30,7 +32,7 @@ trait Construct {
         }
     }
 
-    /** Returns an object member as a resolved URL */
+    /** Returns an object member as a resolved and normalized URL */
     protected function fetchUrl(string $key, \stdClass $obj = null): ?string {
         $url = $this->fetchMember($key, "str", $obj);
         return (!is_null($url)) ? $this->resolveUrl($url, $this->url) : null;
@@ -41,10 +43,55 @@ trait Construct {
         return $this->parseDate($this->fetchMember($key, "str", $obj) ?? "");
     }
 
+    /** Returns a plain-text string object member wrapped in a Text object */
     protected function fetchText(string $key, \stdClass $obj = null): ?Text {
         $t = $this->fetchMember($key, "str", $obj);
         if (!is_null($t)) {
             return new Text($t);
+        }
+        return null;
+    }
+
+    /** Retrieves the collection of authors as provided by version 1.1 of JSON Feed */
+    protected function getAuthorsV1(): ?PersonCollection {
+        $arr = $this->fetchMember("authors", "array");
+        if (!is_null($arr)) {
+            $out = new PersonCollection;
+            foreach ($arr as $o) {
+                if (is_object($o) && $p = $this->parseAuthor($o)) {
+                    $out[] = $p;
+                }
+            }
+            return sizeof($out) ? $out : null;
+        }
+        return null;
+    }
+
+    /** Retrieves a collection containing a single author as provided by Version 1 of JSON Feed */
+    protected function getAuthorV1(): ?PersonCollection {
+        $o = $this->fetchMember("author", "object");
+        if ($o) {
+            $p = $this->parseAuthor($o);
+            if ($p) {
+                $out = new PersonCollection;
+                $out[] = $p;
+                return $out;
+            }
+        }
+        return null;
+    }
+
+    protected function parseAuthor(\stdClass $o): ?Person {
+        $p = new Person;
+        $p->name = $this->fetchMember("name", "str", $o);
+        $p->url = $this->fetchUrl("url", $o);
+        $p->avatar = $this->fetchUrl("avatar", $o);
+        if (array_filter((array) $p, function($v) {
+            return !is_null($v);
+        })) {
+            // if any keys are set the person is valid
+            $p->role = "author";
+            return $p;
         }
         return null;
     }

@@ -16,7 +16,6 @@ use JKingWeb\Lax\Date;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
-    use Primitives\Construct;
 
     const MIME_TYPES = [
         "application/json",         // generic JSON
@@ -71,8 +70,8 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         $feed->summary = $this->getSummary();
         $feed->icon = $this->getIcon();
         $feed->image = $this->getImage();
-        return $feed;
         $feed->people = $this->getPeople();
+        return $feed;
         $feed->dateModified = $this->getDateModified();
         $feed->entries = $this->getEntries();
         // do a second pass on missing data we'd rather fill in
@@ -124,7 +123,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
 
     /** General function to fetch a collection of people associated with a feed */
     public function getPeople(): ?PersonCollection {
-        return $this->getPeopleV1();
+        return $this->getAuthorsV1() ?? $this->getAuthorV1();
     }
 
     /** General function to fetch the modification date of a feed 

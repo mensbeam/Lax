@@ -10,7 +10,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
 
     protected $data = [];
 
-    /** Implementation for IteratorAggreagate */
+    /** Implementation for IteratorAggregate */
     public function getIterator(): \Traversable {
         return ($this->data instanceof \Traversable) ? $this->data : new \ArrayIterator((array) $this->data);
     }
@@ -73,7 +73,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
     protected function filter(array $terms, string $axis, bool $inclusive): self {
         $out = new static;
         foreach ($this as $item) {
-            if (in_array($item->$axis, $terms)==$inclusive) {
+            if (in_array($item->$axis, $terms) == $inclusive) {
                 $out[] = $item;
             }
         }

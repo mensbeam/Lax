@@ -13,7 +13,6 @@ use JKingWeb\Lax\Category\Category;
 
 class Entry implements \JKingWeb\Lax\Parser\Entry {
     use Construct;
-    use Primitives\Construct;
 
     protected $url;
 
