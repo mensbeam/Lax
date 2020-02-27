@@ -6,6 +6,9 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax;
 
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+
 /** Represents a news feed, in arbitrary format
  * 
  * All properties may be null.
@@ -60,6 +63,11 @@ class Feed {
     /** @var \JKingWeb\Lax\Metadata $meta A collection of metadata not contained in the feed itself, usually from HTTP */
     public $meta;
 
+    public function __construct() {
+        $this->people = new PersonCollection;
+        $this->categories = new CategoryCollection;
+    }
+    
     /** Parses a string to produce a Feed object
      * 
      * Most users will probably rather want the Feed::fetch() method

@@ -49,7 +49,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
         "D, d M y H:i:s",
     ];
 
-    protected static function create(\DateTimeInterface $temp) : self {
+    protected static function create(\DateTimeInterface $temp): self {
         if (version_compare(\PHP_VERSION, "7.1", ">=")) {
             return (new self)->setTimestamp($temp->getTimestamp())->setTimezone($temp->getTimezone())->setTime((int) $temp->format("H"), (int) $temp->format("i"), (int) $temp->format("s"), (int) $temp->format("u"));
         } else {
@@ -61,28 +61,19 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
         parent::__construct($time, $timezone);
     }
 
-    public static function createFromFormat($format , $time, $timezone = null) {
+    public static function createFromFormat($format, $time, $timezone = null): ?self {
         $temp = parent::createFromFormat("!".$format, $time, $timezone);
-        if (!$temp) {
-            return $temp;
-        }
-        return static::create($temp);
+        return $temp ? static::create($temp) : null;
     }
 
     public static function createFromMutable($datetime) {
         $temp = parent::createFromMutable($datetime);
-        if (!$temp) {
-            return $temp;
-        }
-        return static::create($temp);
+        return $temp ? static::create($temp) : null;
     }
 
     public static function createFromImmutable($datetime) {
         $temp = \DateTime::createFromImmutable($datetime);
-        if (!$temp) {
-            return $temp;
-        }
-        return static::create($temp);
+        return $temp ? static::create($temp) : null;
     }
 
     public function __toString() {

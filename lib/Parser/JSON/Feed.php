@@ -122,8 +122,8 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch a collection of people associated with a feed */
-    public function getPeople(): ?PersonCollection {
-        return $this->getAuthorsV1() ?? $this->getAuthorV1();
+    public function getPeople(): PersonCollection {
+        return $this->getAuthorsV1() ?? $this->getAuthorV1() ?? new PersonCollection;
     }
 
     /** General function to fetch the modification date of a feed 
