@@ -29,20 +29,5 @@
         "description": "Not a JSON feed 3",
         "input": {"version": "https://jsonfeed.org/version/"},
         "exception": "notJSONFeed"
-    },
-    {
-        "description": "Unknown version 1",
-        "input": {"version": "https://jsonfeed.org/version/2"},
-        "exception": "unsupportedJSONFeedVersion"
-    },
-    {
-        "description": "Unknown version 2",
-        "input": {"version": "https://jsonfeed.org/version/11"},
-        "exception": "unsupportedJSONFeedVersion"
-    },
-    {
-        "description": "Unknown version 3",
-        "input": {"version": "https://jsonfeed.org/version/0.1"},
-        "exception": "unsupportedJSONFeedVersion"
     }
 ]

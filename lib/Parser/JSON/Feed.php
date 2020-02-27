@@ -50,8 +50,6 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
             throw new Exception("notJSON");
         } elseif (!isset($data->version) || !preg_match("<^https://jsonfeed\.org/version/(\d+(?:\.\d+)?)$>", $data->version, $match)) {
             throw new Exception("notJSONFeed");
-        } elseif (version_compare($match[1], "1", "<") || version_compare($match[1], "2", ">=")) {
-            throw new Exception("unsupportedJSONFeedVersion");
         }
         $this->data = $data;
         $this->version = $match[1];
