@@ -58,7 +58,7 @@ class Feed {
     /** @var \JKingWeb\Lax\Person\Collection $people A list of people (e.g. authors, contributors) associated with the news feed as a whole */
     public $people;
     /** @var \JKingWeb\Lax\Entry[] $entries An array of the news feed's entries */
-    public $entries;
+    public $entries = [];
 
     /** @var \JKingWeb\Lax\Metadata $meta A collection of metadata not contained in the feed itself, usually from HTTP */
     public $meta;
@@ -66,6 +66,7 @@ class Feed {
     public function __construct() {
         $this->people = new PersonCollection;
         $this->categories = new CategoryCollection;
+        $this->meta = new Metadata;
     }
     
     /** Parses a string to produce a Feed object

@@ -8,6 +8,8 @@ namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Text;
 
 class Entry implements \JKingWeb\Lax\Parser\Entry {
     use Construct;
@@ -45,7 +47,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
     
     /** General function to fetch the entry title */
-    public function getTitle(): string {
+    public function getTitle(): ?Text {
         return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
     }
 
@@ -55,7 +57,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     /** General function to fetch the entry identifier */
-    public function getId(): string {
+    public function getId(): ?string {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
     }
 
@@ -67,17 +69,17 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     /** General function to fetch the modification date of an entry */
-    public function getDateModified() {
+    public function getDateModified(): ?Date {
         return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
 
     /** General function to fetch the creation date of an entry */
-    public function getDateCreated() {
+    public function getDateCreated(): ?Date {
         return $this->getDateModifiedAtom();
     }
 
     /** General function to fetch the Web URL of the entry */
-    public function getLink(): string {
+    public function getLink(): ?string {
         return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
     }
 
@@ -85,7 +87,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
      * 
      * This is only reliable with Atom feeds
      */
-    public function getRelatedLink(): string {
+    public function getRelatedLink(): ?string {
         return $this->getRelatedLinkAtom() ?? "";
     }
 }

@@ -12,6 +12,9 @@ class Text {
     public $xhtml;
     public $loose;
 
+    public $htmlBase;
+    public $xhtmlBase;
+
     public function __construct(string $data = null, string $type = "plain") {
         assert(in_array($type, ["plain", "html", "xhtml", "loose"]), new \InvalidArgumentException);
         $this->$type = $data;

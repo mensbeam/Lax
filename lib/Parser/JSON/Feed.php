@@ -6,13 +6,14 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\JSON;
 
+use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Feed as FeedStruct;
-use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Parser\Exception;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Parser\JSON\Entry as EntryParser;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
@@ -59,74 +60,55 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** Parses the feed to extract sundry metadata */
-    public function parse(FeedStruct $feed): FeedStruct {
-        $feed = $this->init($feed);
+    public function parse(FeedStruct $feed = null): FeedStruct {
+        $feed = $this->init($feed ?? new FeedStruct);
         $feed->title = $this->getTitle();
         $feed->id = $this->getId();
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
         $feed->summary = $this->getSummary();
+        $feed->dateModified = $this->getDateModified();
         $feed->icon = $this->getIcon();
         $feed->image = $this->getImage();
         $feed->people = $this->getPeople();
-        return $feed;
-        $feed->dateModified = $this->getDateModified();
-        $feed->entries = $this->getEntries();
-        // do a second pass on missing data we'd rather fill in
-        $feed->link = strlen($this->link) ? $this->link : $this->url;
-        $feed->title = strlen($this->title) ? $this->title : $this->link;
-        // do extra stuff just to test it
         $feed->categories = $this->getCategories();
+        $feed->entries = $this->getEntries($feed);
         return $feed;
     }
 
-    /** General function to fetch the canonical feed URL
-     * 
-     * If the feed does not include a canonical URL, the request URL is returned instead
-     */
     public function getUrl(): ?string {
         return $this->fetchUrl("feed_url");
     }
 
-    /** General function to fetch the feed title */
     public function getTitle(): ?Text {
         return $this->fetchText("title");
     }
 
-    /** General function to fetch the feed's Web-representation URL */
     public function getLink(): ?string {
         return $this->fetchUrl("home_page_url");
     }
 
-    /** General function to fetch the description of a feed */
     public function getSummary(): ?Text {
         return $this->fetchText("description");
     }
 
-    /** General function to fetch the categories of a feed 
-     * 
-     * JSON Feed does not have categories at the feed level, so this always returns null
+    /** JSON Feed does not have categories at the feed level, so this always returns and empty collection
     */
-    public function getCategories(): ?CategoryCollection {
-        return null;
+    public function getCategories(): CategoryCollection {
+        return new CategoryCollection;
     }
 
-    /** General function to fetch the feed identifier 
-     * 
-     * For JSON feeds this is always the feed URL specified in the feed
+    /** For JSON feeds this is always the feed URL specified in the feed
     */
     public function getId(): ?string {
         return $this->fetchUrl("feed_url");
     }
 
-    /** General function to fetch a collection of people associated with a feed */
     public function getPeople(): PersonCollection {
         return $this->getAuthorsV1() ?? $this->getAuthorV1() ?? new PersonCollection;
     }
 
-    /** General function to fetch the modification date of a feed 
-     * 
-     * JSON feeds themselves don't have dates, so this always returns null
+    /** JSON feeds themselves don't have dates, so this always returns null
     */
     public function getDateModified(): ?Date {
         return null;
@@ -140,12 +122,12 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         return $this->fetchUrl("icon");
     }
 
-    /** General function to fetch the entries of a feed */
-    public function getEntries(): array {
+    public function getEntries(FeedStruct $feed = null): array {
         $out = [];
+        $feed = $feed ?? new FeedStruct;
         foreach ($this->fetchMember("items", "array") ?? [] as $data) {
-            $entry = new Entry($data, $this);
-            if (!strlen($entry->id)) {
+            $entry = (new EntryParser($data, $feed))->parse();
+            if (!strlen((string) $entry->id)) {
                 // entries without IDs must be skipped, per spec
                 continue;
             } else {

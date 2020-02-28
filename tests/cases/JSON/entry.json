@@ -1,0 +1,175 @@
+[
+    {
+        "description": "Minimal entry",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Invalid entry 1 (no ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Invalid entry 2 (null ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": null,
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Invalid entry 3 (boolean ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": true,
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Invalid entry 4 (array ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": ["1"],
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Invalid entry 5 (object ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": {"id": "1"},
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Invalid entry 6 (empty string ID)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "",
+                "title": "Example title"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
+        "description": "Integer ID",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 1
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Float ID",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 3.0e-10
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "0.0000000003"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Negative float ID",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": -3.0e-10
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "-0.0000000003"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Integral float ID",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 0.003e3
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "3"
+                }
+            ]
+        }
+    }
+]

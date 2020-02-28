@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\TestCase\JSON;
 
+use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Parser\Exception;
 use JKingWeb\Lax\Parser\JSON\Feed as Parser;
 use JKingWeb\Lax\Feed;
@@ -64,11 +65,25 @@ class TestJSON extends \PHPUnit\Framework\TestCase {
                     $c[] = $p;
                 }
                 $f->$k = $c;
+            } elseif ($k === "entries") {
+                $c = [];
+                foreach ($v as $m) {
+                    $c[] = $this->makeEntry($m);
+                }
+                $f->$k = $c;
             } else {
                 $f->$k = $v;
             }
         }
         return $f;
+    }
+
+    protected function makeEntry(\stdClass $entry): Entry {
+        $e = new Entry;
+        foreach ($entry as $k => $v) {
+            $e->$k = $v;
+        }
+        return $e;
     }
 
     protected function makeText($data): Text {
