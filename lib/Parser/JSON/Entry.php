@@ -83,7 +83,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                     } else {
                         $neg = false;
                     }
-                    while ($exp > 0) {
+                    while ($exp-- > 0) {
                         if ($mul && $dec) {
                             $int[] = array_shift($dec);
                         } elseif ($mul) {
@@ -93,7 +93,6 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                         } else {
                             array_unshift($dec, "0");
                         }
-                        $exp--;
                     }
                     return ($neg ? "-" : "") . ($int ? implode("", $int) : "0") . ($dec ? ("." . rtrim(implode("", $dec), "0")) : "");
                 }

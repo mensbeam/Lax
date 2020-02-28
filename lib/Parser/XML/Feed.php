@@ -8,6 +8,7 @@ namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Feed as FeedStruct;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
 
@@ -57,7 +58,8 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** Parses the feed to extract sundry metadata */
-    public function parse(\JKingWeb\Lax\Feed $feed): \JKingWeb\Lax\Feed {
+    public function parse(FeedStruct $feed = null): FeedStruct {
+        $feed = $feed ?? new FeedStruct;
         $feed->id = $this->getId();
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
@@ -66,7 +68,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         $feed->people = $this->getPeople();
         $feed->author = $this->people->primary();
         $feed->dateModified = $this->getDateModified();
-        $feed->entries = $this->getEntries();
+        $feed->entries = $this->getEntries($feed);
         // do a second pass on missing data we'd rather fill in
         $feed->link = strlen($this->link) ? $this->link : $this->url;
         $feed->title = strlen($this->title) ? $this->title : $this->link;
@@ -124,7 +126,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch the entries of a feed */
-    public function getEntries(): array {
+    public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
     }
 }
