@@ -71,6 +71,10 @@ class TestJSON extends \PHPUnit\Framework\TestCase {
                     $c[] = $this->makeEntry($m);
                 }
                 $f->$k = $c;
+            } elseif (in_array($k, ["meta", "sched"])) {
+                foreach ($v as $kk => $vv) {
+                    $f->$k->$kk = $vv;
+                }
             } else {
                 $f->$k = $v;
             }

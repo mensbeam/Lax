@@ -62,6 +62,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     /** Parses the feed to extract sundry metadata */
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
+        $feed->sched->expired = $this->getExpired();
         $feed->title = $this->getTitle();
         $feed->id = $this->getId();
         $feed->url = $this->getUrl();
@@ -135,5 +136,9 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
             }
         }
         return $out;
+    }
+
+    public function getExpired(): ?bool {
+        return $this->fetchMember("expired", "bool");
     }
 }

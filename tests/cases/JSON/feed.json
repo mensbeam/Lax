@@ -176,6 +176,45 @@
         }
     },
     {
+        "description": "Expired feed",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "expired": true
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "sched": {
+                "expired": true
+            }
+        }
+    },
+    {
+        "description": "Not expired feed",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "expired": false
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "sched": {
+                "expired": false
+            }
+        }
+    },
+    {
+        "description": "Invalidly expired feed",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "expired": 1
+        },
+        "output": {
+            "format": "json",
+            "version": "1"
+        }
+    },
+    {
         "description": "Basic example",
         "input": {
             "version": "https://jsonfeed.org/version/1",
