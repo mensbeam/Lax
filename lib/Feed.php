@@ -30,6 +30,8 @@ class Feed {
      * The version is largely advisory, but may be used when converting between formats
      */
     public $version;
+    /** @var string $lang The human language of the newsfeed as a whole */
+    public $lang;
     /** @var string $id The globally unique identifier for the newsfeed
      * 
      * For some formats, such as RSS 2.0 and JSON Feed, this may be he same as the newsfeed URL

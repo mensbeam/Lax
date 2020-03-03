@@ -16,6 +16,9 @@ interface Feed {
     /** Returns the globally unique identifier of the newsfeed; this is usually a URI */
     public function getId(): ?string;
 
+    /** Returns the human language of the newsfeed */
+    public function getLang(): ?string;
+
     /** Returns the canonical URL of the newsfeed, as contained in the document itself */
     public function getUrl(): ?string;
 

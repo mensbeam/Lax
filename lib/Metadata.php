@@ -8,6 +8,7 @@ namespace JKingWeb\Lax;
 
 class Metadata {
     public $url;
+    public $type;
     public $cached = false;
     public $lastModified;
     public $etag;

@@ -10,8 +10,10 @@ use JKingWeb\Lax\Feed as FeedStruct;
 use JKingWeb\Lax\Entry as EntryStruct;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Date;
+use JKingWeb\Lax\Enclosure\Enclosure;
 use JKingWeb\Lax\Text;
 
 class Entry implements \JKingWeb\Lax\Parser\Entry {
@@ -20,6 +22,8 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     protected $url;
     /** @var \JKingWeb\Lax\Feed */
     protected $feed;
+    /** @var \Mimey\MimeTypes */
+    protected $mime;
 
     public function __construct(\stdClass $data, FeedStruct $feed) {
         $this->data = $data;
@@ -33,6 +37,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
 
     public function parse(EntryStruct $entry = null): EntryStruct {
         $entry = $this->init($entry ?? new EntryStruct);
+        $entry->lang = $this->getLang();
         $entry->id = $this->getId();
         $entry->link = $this->getLink();
         $entry->relatedLink = $this->getRelatedLink();
@@ -41,22 +46,8 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         $entry->dateCreated = $this->getDateCreated();
         $entry->people = $this->getPeople();
         $entry->categories = $this->getCategories();
+        $entry->enclosures = $this->getEnclosures();
         return $entry; 
-    }
-
-    public function getCategories(): CategoryCollection {
-        $out = new CategoryCollection;
-        foreach ($this->fetchMember("tags", "array") ?? [] as $tag) {
-            if (is_string($tag)) {
-                $tag = $this->trimText($tag);
-                if (strlen($tag)) {
-                    $c = new Category;
-                    $c->name = $tag;
-                    $out[] = $c;
-                }
-            }
-        }
-        return $out;
     }
 
     public function getId(): ?string {
@@ -102,6 +93,10 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         }
     }
 
+    public function getLang(): ?string {
+        return $this->fetchMember("language", "str") ?? $this->feed->lang;
+    }
+
     public function getPeople(): PersonCollection {
         return $this->getAuthorsV1() ?? $this->getAuthorV1() ?? $this->feed->people ?? new PersonCollection;
     }
@@ -136,6 +131,47 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         if (strlen($html ?? "")) {
             $out->html = $html;
             $out->htmlBase = $this->feed->meta->url;
+        }
+        return $out;
+    }
+
+    public function getBanner(): ?string {
+        return $this->fetchUrl("banner_image");
+    }
+
+    public function getEnclosures(): EnclosureCollection {
+        $out = new EnclosureCollection;
+        foreach ($this->fetchMember("attachments", "array") as $attachment) {
+            $url = $this->fetchUrl("url", $attachment);
+            if ($url) {            
+                $m = new Enclosure;
+                $m->url = $url;
+                $m->type = $this->fetchMember("mime_type", "str", $attachment);
+                $m->title = $this->fetchMember("title", "str", $attachment);
+                $m->size = $this->fetchMember("size_in_bytes", "int", $attachment);
+                $m->duration = $this->fetchMember("duration_in_seconds", "int", $attachment);
+                // detect media type from file name if no type is provided
+                if (!$m->type) {
+                    $ext = "";
+                    $m->type = ($this->mime ?? ($this->mime = new \Mimey\MimeTypes))->getMimeType($ext);
+                }
+                $out[] = $m;
+            }
+        }
+        return $out;
+    }
+
+    public function getCategories(): CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->fetchMember("tags", "array") ?? [] as $tag) {
+            if (is_string($tag)) {
+                $tag = $this->trimText($tag);
+                if (strlen($tag)) {
+                    $c = new Category;
+                    $c->name = $tag;
+                    $out[] = $c;
+                }
+            }
         }
         return $out;
     }

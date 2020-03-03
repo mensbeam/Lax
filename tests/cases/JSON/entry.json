@@ -171,5 +171,36 @@
                 }
             ]
         }
+    },
+    {
+        "description": "Entry language",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "language": "en",
+            "items": [
+                {
+                    "id": 1,
+                    "language": "fr"
+                },
+                {
+                    "id": "2"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "lang": "en",
+            "entries": [
+                {
+                    "id": "1",
+                    "lang": "fr"
+                },
+                {
+                    "id": "2",
+                    "lang": "en"
+                }
+            ]
+        }
     }
 ]

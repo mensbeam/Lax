@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\XML;
 
 class XPath extends \DOMXpath {
-    const NS = [
+    public const NS = [
         'atom'  => "http://www.w3.org/2005/Atom",                       // Atom syndication format                  https://tools.ietf.org/html/rfc4287
         'rss1'  => "http://purl.org/rss/1.0/",                          // RDF site summary 1.0                     http://purl.org/rss/1.0/spec
         'rss0'  => "http://channel.netscape.com/rdf/simple/0.9/",       // RDF Site Summary 0.90                    http://www.rssboard.org/rss-0-9-0

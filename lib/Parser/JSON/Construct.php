@@ -86,9 +86,7 @@ trait Construct {
         $p->name = $this->fetchMember("name", "str", $o);
         $p->url = $this->fetchUrl("url", $o);
         $p->avatar = $this->fetchUrl("avatar", $o);
-        if (array_filter((array) $p, function($v) {
-            return !is_null($v);
-        })) {
+        if (!$this->empty($p)) {
             // if any keys are set the person is valid
             $p->role = "author";
             return $p;

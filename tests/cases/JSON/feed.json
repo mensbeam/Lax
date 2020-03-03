@@ -218,6 +218,7 @@
         "description": "Basic example",
         "input": {
             "version": "https://jsonfeed.org/version/1",
+            "language": "en",
             "title": "Example title",
             "feed_url": "http://example.com/",
             "home_page_url": "http://example.net/",
@@ -230,6 +231,7 @@
         "output": {
             "format": "json",
             "version": "1",
+            "lang": "en",
             "title": "Example title",
             "id": "http://example.com/",
             "url": "http://example.com/",

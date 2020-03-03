@@ -8,31 +8,50 @@ namespace JKingWeb\Lax\Parser;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
 
 interface Entry {
-    /** General function to fetch the entry title */
-    public function getTitle(): ?Text;
-
-    /** General function to fetch the categories of an entry */
-    public function getCategories(): CategoryCollection;
-
-    /** General function to fetch the entry identifier */
+    /** Returns the globally unique identifier of the entry; this is usually a URI */
     public function getId(): ?string;
 
-    /** General function to fetch a collection of people associated with an entry */
-    public function getPeople(): PersonCollection;
+    /** Returns the human language of the entry */
+    public function getLang(): ?string;
 
-    /** General function to fetch the entry's modification date */
-    public function getDateModified(): ?Date;
+    /** Returns the title text of the entry, which may be plain text or HTML */
+    public function getTitle(): ?Text;
 
-    /** General function to fetch the entry's creation date */
-    public function getDateCreated(): ?Date;
-
-    /** General function to fetch the Web URL of the entry */
+    /** Returns the URL of the published article this entry summarizes */
     public function getLink(): ?string;
 
-    /** General function to fetch the URL of a article related to the entry */
+    /** Returns the URL of an article related to the entry */
     public function getRelatedLink(): ?string;
+
+    /** Returns the content of the entry, either in plain text or HTML */
+    public function getContent(): ?Text;
+
+    /** Returns a short description of the entry, either in plain text or HTML; this should be distinct from the content */
+    public function getSummary(): ?Text;
+
+    /** Returns the date and time at which the entry was first made available */
+    public function getDateCreated(): ?Date;
+
+    /** Returns the date and time at which the entry was last modified */
+    public function getDateModified(): ?Date;
+
+    /** Returns the URL of a large image used as a banner when displaying the entry
+     * 
+     * This is only used by JSON Feed entries
+     */
+    public function getBanner(): ?string;
+
+    /** Returns a collection of categories associated with the entry */
+    public function getCategories(): CategoryCollection;
+
+    /** Returns a collection of persons associated with the entry*/
+    public function getPeople(): PersonCollection;
+
+    /** Returns a collection of external files associated with the entry i.e. attachments */
+    public function getEnclosures(): EnclosureCollection;
 }

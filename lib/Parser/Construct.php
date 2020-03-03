@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser;
 
+use JKingWeb\Lax\Collection;
 use JKingWeb\Lax\Date;
 
 trait Construct {
@@ -29,8 +30,7 @@ trait Construct {
 
     /** Resolves a relative URL against a base URL */
     protected function resolveUrl(string $url, string $base = null): string {
-        $base = $base ?? "";
-        return \Sabre\Uri\resolve($base, $url);
+        return \Sabre\Uri\resolve($base ?? "", $url);
     }
 
     /** Tests whether a string is a valid e-mail address
@@ -50,9 +50,7 @@ trait Construct {
             return false;
         }
         $addr = "$local@$domain";
-         // PHP 7.1 and above have the constant defined FIXME: Review if removing support for PHP 7.0
-        $flags = defined("\FILTER_FLAG_EMAIL_UNICODE") ?  \FILTER_FLAG_EMAIL_UNICODE : 0;
-        return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, $flags);
+        return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
     }
 
     protected function parseDate(string $date): ?Date {
@@ -69,5 +67,11 @@ trait Construct {
             }
         }
         return $out ?: null;
+    }
+
+    protected function empty($o): bool {
+        return !array_filter((array) $o, function($v) {
+            return !is_null($v) && (!$v instanceof Collection || sizeof($v) > 0);
+        });
     }
 }
