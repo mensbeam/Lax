@@ -20,7 +20,10 @@
 
 <testsuites>
     <testsuite name="JSON">
-        <directory suffix=".php">cases/JSON</directory>
+        <directory>cases/JSON</directory>
+    </testsuite>
+    <testsuite name="Util">
+        <directory>cases/Util</directory>
     </testsuite>
 </testsuites>
 </phpunit>

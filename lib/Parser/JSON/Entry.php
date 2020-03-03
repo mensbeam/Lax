@@ -141,7 +141,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
 
     public function getEnclosures(): EnclosureCollection {
         $out = new EnclosureCollection;
-        foreach ($this->fetchMember("attachments", "array") as $attachment) {
+        foreach ($this->fetchMember("attachments", "array")  ?? [] as $attachment) {
             $url = $this->fetchUrl("url", $attachment);
             if ($url) {            
                 $m = new Enclosure;

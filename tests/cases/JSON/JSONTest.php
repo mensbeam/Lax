@@ -16,7 +16,7 @@ use JKingWeb\Lax\Person\Collection as PersonCollection;
 
 
 /** @covers JKingWeb\Lax\Parser\JSON\Feed<extended> */
-class TestJSON extends \PHPUnit\Framework\TestCase {
+class JSONTest extends \PHPUnit\Framework\TestCase {
     /** @dataProvider provideJSONFeedVersion1 */
     public function testJSONFeedVersion1($input, string $type, $output): void {
         if (is_object($input)) {
