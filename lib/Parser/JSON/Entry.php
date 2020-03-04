@@ -45,6 +45,9 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         $entry->title = $this->getTitle();
         $entry->dateModified = $this->getDateModified();
         $entry->dateCreated = $this->getDateCreated();
+        $entry->content = $this->getContent();
+        $entry->summary = $this->getSummary();
+        $entry->banner = $this->getBanner();
         $entry->people = $this->getPeople();
         $entry->categories = $this->getCategories();
         $entry->enclosures = $this->getEnclosures();
@@ -127,9 +130,10 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     public function getContent(): ?Text {
-        $out = $this->fetchText("content_text") ?? new Text;
+        $out = $this->fetchText("content_text");
         $html = $this->fetchMember("content_html", "str");
         if (strlen($html ?? "")) {
+            $out = $out ?? new Text;
             $out->html = $html;
             $out->htmlBase = $this->feed->meta->url;
         }
@@ -160,13 +164,10 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     public function getCategories(): CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchMember("tags", "array") ?? [] as $tag) {
-            if (is_string($tag)) {
-                $tag = $this->trimText($tag);
-                if (strlen($tag)) {
-                    $c = new Category;
-                    $c->name = $tag;
-                    $out[] = $c;
-                }
+            if (is_string($tag) && strlen($tag)) {
+                $c = new Category;
+                $c->name = $tag;
+                $out[] = $c;
             }
         }
         return $out;

@@ -34,12 +34,14 @@ namespace JKingWeb\Lax\TestCase\JSON;
 
 */
 
-use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Parser\Exception;
 use JKingWeb\Lax\Parser\JSON\Feed as Parser;
 use JKingWeb\Lax\Person\Person;
+use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Feed;
+use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Url;
 
@@ -119,6 +121,16 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
                 $e->$k = new Url($v);
             } elseif (in_array($k, ["title", "summary", "content"])) {
                 $e->$k = $this->makeText($v);
+            } elseif ($k === "categories") {
+                $c = new CategoryCollection;
+                foreach ($v as $m) {
+                    $o = new Category;
+                    foreach ($m as $kk => $vv) {
+                        $o->$kk = $vv;
+                    }
+                    $c[] = $o;
+                }
+                $e->$k = $c;
             } else {
                 $e->$k = $v;
             }

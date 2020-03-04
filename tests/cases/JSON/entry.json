@@ -215,5 +215,150 @@
                 }
             ]
         }
+    },
+    {
+        "description": "Entry banner",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "banner_image": "http://example.com/banner"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "banner": "http://example.com/banner"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry summary",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "summary": "Example summary"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "summary": "Example summary"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry content (plain only)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_text": "Plain content"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "content": {
+                        "plain": "Plain content"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry content (HTML only)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_html": "HTML content"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "content": {
+                        "html": "HTML content"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry content (mixed)",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_text": "Plain content",
+                    "content_html": "HTML content"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "content": {
+                        "plain": "Plain content",
+                        "html": "HTML content"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry categories",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "tags": ["this", "that", "the other thing", "", null, false, 1, 3.0, " "]
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "categories": [
+                        {"name": "this"},
+                        {"name": "that"},
+                        {"name": "the other thing"},
+                        {"name": " "}
+                    ]
+                }
+            ]
+        }
     }
 ]

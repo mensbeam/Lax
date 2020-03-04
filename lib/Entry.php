@@ -34,6 +34,8 @@ class Entry {
     public $dateCreated;
     /** @var \JKingWeb\Lax\Date $dateModified The date and time at which the entry was last modified */
     public $dateModified;
+    /** @var \JKingWeb\Lax\Url $banner The URL of an image to use as a banner. Only applicable to JSON Feed documents */
+    public $banner;
     /** @var \JKingWeb\Lax\Category\Collection $categories The set of categories associated with the entry */
     public $categories;
     /** @var \JKingWeb\Lax\Person\Collection $people The set of people (authors, contributors, etc) associated with the entry */
