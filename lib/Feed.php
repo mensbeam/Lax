@@ -39,7 +39,7 @@ class Feed {
     public $id;
     /** @var string $url The feed's canonical URL. This may differ from the URL used to fetch the newsfeed */
     public $url;
-    /** @var string $link The URL  of the Web page associated with the feed */
+    /** @var \JKingWeb\Lax\Url $link The URL of the Web page associated with the feed */
     public $link;
     /** @var \JKingWeb\Lax\Text $title The title of the newsfeed */
     public $title;
@@ -50,9 +50,9 @@ class Feed {
      * This property only records a date embedded in the newsfeed itself, not any dates from HTTP or the file system
      */
     public $dateModified;
-    /** @var string $icon URL to a small icon for the newsfeed */
+    /** @var \JKingWeb\Lax\Url $icon URL to a small icon for the newsfeed */
     public $icon;
-    /** @var string $image URL to a large banner or poster image for the newsfeed */
+    /** @var \JKingWeb\Lax\Url $image URL to a large banner or poster image for the newsfeed */
     public $image;
     
     /** @var \JKingWeb\Lax\Category\Collection $categories A list of categories associated with the newsfeed as a whole */

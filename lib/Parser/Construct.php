@@ -28,11 +28,6 @@ trait Construct {
         }
     }
 
-    /** Resolves a relative URL against a base URL */
-    protected function resolveUrl(string $url, string $base = null): string {
-        return \Sabre\Uri\resolve($base ?? "", $url);
-    }
-
     /** Tests whether a string is a valid e-mail address
      * 
      * Accepts IDN hosts and (with PHP 7.1 and above) Unicode localparts

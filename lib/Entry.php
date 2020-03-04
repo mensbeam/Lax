@@ -18,9 +18,9 @@ class Entry {
     public $id;
     /** @var string $lang The human language of the entry */
     public $lang;
-    /** @var string $link The URL of the entry as published somwehere else, usually on the World Wide Web */
+    /** @var \JKingWeb\Lax\Url $link The URL of the entry as published somwehere else, usually on the World Wide Web */
     public $link;
-    /** @var string $relatedLink The URL of an article related to the entry. For example, if the entry is a commentary on an essay, this property might provide the URL of that essay */
+    /** @var \JKingWeb\Lax\Url $relatedLink The URL of an article related to the entry. For example, if the entry is a commentary on an essay, this property might provide the URL of that essay */
     public $relatedLink;
     /** @var \JKingWeb\Lax\Text $title The title of the entry */
     public $title;

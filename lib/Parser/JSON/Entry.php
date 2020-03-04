@@ -15,6 +15,7 @@ use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Enclosure\Enclosure;
 use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Url;
 
 class Entry implements \JKingWeb\Lax\Parser\Entry {
     use Construct;
@@ -28,7 +29,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     public function __construct(\stdClass $data, FeedStruct $feed) {
         $this->data = $data;
         $this->feed = $feed;
-        $this->url = $feed->meta->url ?? "";
+        $this->url = $feed->meta->url ?? null;
     }
 
     protected function init(EntryStruct $entry): EntryStruct {
@@ -109,11 +110,11 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         return $this->fetchDate("date_published");
     }
 
-    public function getLink(): ?string {
+    public function getLink(): ?Url {
         return $this->fetchUrl("url");
     }
 
-    public function getRelatedLink(): ?string {
+    public function getRelatedLink(): ?Url {
         return $this->fetchUrl("external_url");
     }
 
@@ -135,7 +136,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         return $out;
     }
 
-    public function getBanner(): ?string {
+    public function getBanner(): ?Url {
         return $this->fetchUrl("banner_image");
     }
 
@@ -152,7 +153,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                 $m->duration = $this->fetchMember("duration_in_seconds", "int", $attachment);
                 // detect media type from file name if no type is provided
                 if (!$m->type) {
-                    $ext = "";
+                    $ext = substr();
                     $m->type = ($this->mime ?? ($this->mime = new \Mimey\MimeTypes))->getMimeType($ext);
                 }
                 $out[] = $m;

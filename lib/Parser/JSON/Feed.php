@@ -14,6 +14,7 @@ use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Parser\Exception;
 use JKingWeb\Lax\Parser\JSON\Entry as EntryParser;
+use JKingWeb\Lax\Url;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
@@ -36,7 +37,9 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     public function __construct(string $data, string $contentType = null, string $url = null) {
         $this->data = $data;
         $this->contentType = $contentType;
-        $this->url = $url;
+        if (strlen($url ?? "")) {
+            $this->url = new Url($url);
+        }
     }
 
     /** Performs format-specific preparation and validation */
@@ -83,18 +86,18 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
      * For JSON feeds this is always the feed URL specified in the feed
     */
     public function getId(): ?string {
-        return $this->fetchUrl("feed_url");
+        return $this->fetchMember("feed_url", "str");
     }
 
     public function getLang(): ?string {
         return $this->fetchMember("language", "str");
     }
 
-    public function getUrl(): ?string {
+    public function getUrl(): ?Url {
         return $this->fetchUrl("feed_url");
     }
 
-    public function getLink(): ?string {
+    public function getLink(): ?Url {
         return $this->fetchUrl("home_page_url");
     }
 
@@ -126,11 +129,11 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         return $this->getAuthorsV1() ?? $this->getAuthorV1() ?? new PersonCollection;
     }
 
-    public function getIcon(): ?string {
+    public function getIcon(): ?Url {
         return $this->fetchUrl("favicon");
     }
 
-    public function getImage(): ?string {
+    public function getImage(): ?Url {
         return $this->fetchUrl("icon");
     }
 

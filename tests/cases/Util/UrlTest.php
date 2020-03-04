@@ -11,7 +11,6 @@ use JKingWeb\Lax\TestCase\Util\Url\AbstractUriTestCase;
 
 /** @covers JKingWeb\Lax\Url<extended> */
 class UrlTest extends AbstractUriTestCase {
-//class UrlTest extends \PHPUnit\Framework\TestCase {
     protected function createUri($uri = '') {
         return new Url($uri);
     }

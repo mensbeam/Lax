@@ -11,6 +11,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Feed as FeedStruct;
+use JKingWeb\Lax\Url;
 
 interface Feed {
     /** Returns the globally unique identifier of the newsfeed; this is usually a URI */
@@ -20,13 +21,13 @@ interface Feed {
     public function getLang(): ?string;
 
     /** Returns the canonical URL of the newsfeed, as contained in the document itself */
-    public function getUrl(): ?string;
+    public function getUrl(): ?Url;
 
     /** Returns the title text of the newsfeed, which may be plain text or HTML */
     public function getTitle(): ?Text;
 
     /** Returns the URL of the publication this newsfeed summarizes */
-    public function getLink(): ?string;
+    public function getLink(): ?Url;
 
     /** Returns a short description of the newsfeed, either in plain text or HTML */
     public function getSummary(): ?Text;
@@ -35,10 +36,10 @@ interface Feed {
     public function getDateModified(): ?Date;
 
     /** Returns the URL of a small image used as an icon to identify the newsfeed */
-    public function getIcon(): ?string;
+    public function getIcon(): ?Url;
 
     /** Returns the URL of a large image used as a poster or banner to identify the newsfeed */
-    public function getImage(): ?string;
+    public function getImage(): ?Url;
 
     /** Returns a collection of categories associated with the newsfeed as a whole. Each category is a structured Category object */
     public function getCategories(): CategoryCollection;

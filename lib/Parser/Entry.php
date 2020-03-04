@@ -11,6 +11,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Url;
 
 interface Entry {
     /** Returns the globally unique identifier of the entry; this is usually a URI */
@@ -23,10 +24,10 @@ interface Entry {
     public function getTitle(): ?Text;
 
     /** Returns the URL of the published article this entry summarizes */
-    public function getLink(): ?string;
+    public function getLink(): ?Url;
 
     /** Returns the URL of an article related to the entry */
-    public function getRelatedLink(): ?string;
+    public function getRelatedLink(): ?Url;
 
     /** Returns the content of the entry, either in plain text or HTML */
     public function getContent(): ?Text;
@@ -44,7 +45,7 @@ interface Entry {
      * 
      * This is only used by JSON Feed entries
      */
-    public function getBanner(): ?string;
+    public function getBanner(): ?Url;
 
     /** Returns a collection of categories associated with the entry */
     public function getCategories(): CategoryCollection;

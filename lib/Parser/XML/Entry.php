@@ -11,6 +11,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Url;
 
 class Entry implements \JKingWeb\Lax\Parser\Entry {
     use Construct;
@@ -80,7 +81,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     /** General function to fetch the Web URL of the entry */
-    public function getLink(): ?string {
+    public function getLink(): ?Url {
         return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
     }
 
@@ -88,11 +89,11 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
      * 
      * This is only reliable with Atom feeds
      */
-    public function getRelatedLink(): ?string {
+    public function getRelatedLink(): ?Url {
         return $this->getRelatedLinkAtom() ?? "";
     }
 
-    public function getBanner(): ?string {
+    public function getBanner(): ?Url {
         return null;
     }
 

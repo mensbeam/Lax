@@ -11,6 +11,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Feed as FeedStruct;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Url;
 
 class Feed implements \JKingWeb\Lax\Parser\Feed {
     use Construct;
@@ -81,7 +82,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
      * 
      * If the feed does not include a canonical URL, the request URL is returned instead
      */
-    public function getUrl(): string {
+    public function getUrl(): ?Url {
         return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod() ?? $this->reqUrl;
     }
     
@@ -91,7 +92,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch the feed's Web-representation URL */
-    public function getLink(): string {
+    public function getLink(): ?Url {
         return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
     }
 
@@ -107,7 +108,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** General function to fetch the feed identifier */
-    public function getId(): string {
+    public function getId(): ?string {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
     }
 
@@ -138,11 +139,11 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         return null;
     }
 
-    public function getIcon(): ?string {
+    public function getIcon(): ?Url {
         return null;
     }
 
-    public function getImage(): ?string {
+    public function getImage(): ?Url {
         return null;
     }
 }

@@ -13,7 +13,7 @@ use JKingWeb\Lax\Feed;
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
-
+use JKingWeb\Lax\Url;
 
 /** @covers JKingWeb\Lax\Parser\JSON\Feed<extended> */
 class JSONTest extends \PHPUnit\Framework\TestCase {
@@ -75,6 +75,8 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
                 foreach ($v as $kk => $vv) {
                     $f->$k->$kk = $vv;
                 }
+            } elseif (in_array($k, ["url", "link", "icon", "image"])) {
+                $f->$k = new Url($v);
             } else {
                 $f->$k = $v;
             }
@@ -85,7 +87,11 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
     protected function makeEntry(\stdClass $entry): Entry {
         $e = new Entry;
         foreach ($entry as $k => $v) {
-            $e->$k = $v;
+            if (in_array($k, ["url", "link", "icon", "image"])) {
+                $e->$k = new Url($v);
+            } else {
+                $e->$k = $v;
+            }
         }
         return $e;
     }

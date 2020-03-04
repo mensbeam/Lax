@@ -10,6 +10,7 @@ use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Person\Person;
+use JKingWeb\Lax\Url;
 
 trait Construct {
     use \JKingWeb\Lax\Parser\Construct;
@@ -33,9 +34,13 @@ trait Construct {
     }
 
     /** Returns an object member as a resolved and normalized URL */
-    protected function fetchUrl(string $key, \stdClass $obj = null): ?string {
+    protected function fetchUrl(string $key, \stdClass $obj = null): ?Url {
         $url = $this->fetchMember($key, "str", $obj);
-        return (!is_null($url)) ? $this->resolveUrl($url, $this->url) : null;
+        try {
+            return (!is_null($url)) ? new Url($url, $this->url) : null;
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
     }
 
     /** Returns an object member as a parsed date */
