@@ -63,6 +63,7 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
             $act = $p->parse(new Feed);
             $exp = $this->makeFeed($output);
             $this->assertEquals($exp, $act);
+            $this->assertEqualsCanonicalizing($exp, $act);
         }
     }
 
@@ -114,8 +115,10 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
     protected function makeEntry(\stdClass $entry): Entry {
         $e = new Entry;
         foreach ($entry as $k => $v) {
-            if (in_array($k, ["url", "link", "icon", "image"])) {
+            if (in_array($k, ["link", "relatedLink", "banner"])) {
                 $e->$k = new Url($v);
+            } elseif (in_array($k, ["title", "summary", "content"])) {
+                $e->$k = $this->makeText($v);
             } else {
                 $e->$k = $v;
             }

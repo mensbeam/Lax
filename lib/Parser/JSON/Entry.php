@@ -57,7 +57,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
             return null;
         } elseif (is_float($id)) {
             if (!fmod($id, 1.0)) {
-                return (string) (int) $id;
+                return (string) (int) $id; // @codeCoverageIgnore
             } else {
                 $id = preg_split("/E\+?/i", str_replace(localeconv()['decimal_point'], ".", (string) $id));
                 if (sizeof($id) === 1) {
@@ -77,9 +77,9 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                     }
                     while ($exp-- > 0) {
                         if ($mul && $dec) {
-                            $int[] = array_shift($dec);
+                            $int[] = array_shift($dec); // @codeCoverageIgnore
                         } elseif ($mul) {
-                            $int[] = "0";
+                            $int[] = "0"; // @codeCoverageIgnore
                         } elseif (!$mul && $int) {
                             array_unshift($dec, array_pop($int));
                         } else {

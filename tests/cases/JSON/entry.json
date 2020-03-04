@@ -155,11 +155,11 @@
         }
     },
     {
-        "description": "Integral float ID",
+        "description": "Simple float ID",
         "input": {
             "version": "https://jsonfeed.org/version/1",
             "items": [{
-                "id": 0.003e3
+                "id": 0.3
             }]
         },
         "output": {
@@ -167,7 +167,20 @@
             "version": "1",
             "entries": [
                 {
-                    "id": "3"
+                    "id": "0.3"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Bignum ID",
+        "input": "{\"version\": \"https://jsonfeed.org/version/1\",\"items\": [{\"id\": 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999}]}",
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
                 }
             ]
         }

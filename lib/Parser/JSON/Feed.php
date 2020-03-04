@@ -48,7 +48,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
             throw new Exception("notJSONType");
         }
-        $data = @json_decode($this->data, false, 20);
+        $data = @json_decode($this->data, false, 20, \JSON_BIGINT_AS_STRING | JSON_INVALID_UTF8_SUBSTITUTE);
         if (!is_object($data)) {
             throw new Exception("notJSON");
         } elseif (!isset($data->version) || !preg_match("<^https://jsonfeed\.org/version/(\d+(?:\.\d+)?)$>", $data->version, $match)) {
