@@ -63,8 +63,9 @@ PCRE;
 )?
 $>six
 PCRE;
-    protected const SCHEME_PATTERN = "<^[a-z][a-z0-9\.\-\+]*$>i";
-    protected const PORT_PATTERN = "<^\d+$>";
+    protected const SCHEME_PATTERN = "<^(?:[a-z][a-z0-9\.\-\+]*|)$>i";
+    protected const IPV6_PATTERN = "<^\[[a-f0-9:]+\]$>i";
+    protected const PORT_PATTERN = "<^\d*$>";
     protected const ESCAPE_CHARS = [
         'user'  => [":", "@", "/", "?", "#"],
         'pass'  => ["@", "/", "?", "#"],
@@ -87,20 +88,20 @@ PCRE;
 
     public function __construct(string $url, ?UriInterface $baseUrl = null) {
         if (preg_match(self::URI_PATTERN, $url, $match)) {
-            [$url, $scheme, $authority, $path, $query, $fragment] = $match;
+            [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
             foreach (["scheme", "path", "query", "fragment"] as $part) {
                 if (strlen($$part)) {
                     if ($part === "query" || $part === "fragment") {
                         $$part = substr($$part, 1);
                     }
-                    $this->__set($part, $$part);
+                    $this->set($part, $$part);
                 }
             }
             if (strlen($authority)) {
                 if (preg_match(self::AUTHORITY_PATTERN, $authority, $match)) {
-                    [$authority, $user, $pass, $host, $port] = $match;
+                    [$authority, $user, $pass, $host, $port] = array_pad($match, 5, "");
                     foreach (["user", "pass", "host", "port"] as $part) {
-                        $this->__set($part, $$part);
+                        $this->set($part, $$part);
                     }
                 }
             }
@@ -158,54 +159,57 @@ PCRE;
 
     public function withFragment($fragment) {
         $out = clone $this;
-        $out->fragment = $fragment;
+        $out->set("fragment", $fragment);
         return $out;
     }
 
     public function withHost($host) {
+        if ($host === "") {
+            $host = null;
+        }
         $out = clone $this;
-        $out->host = $host;
+        $out->set("host", $host);
         return $out;
     }
 
     public function withPath($path) {
         $out = clone $this;
-        $out->path = $path;
+        $out->set("path", $path);
         return $out;
     }
 
     public function withPort($port) {
         $out = clone $this;
-        $out->port = $port;
+        $out->set("port", $port);
         return $out;
     }
 
     public function withQuery($query) {
         $out = clone $this;
-        $out->query = $query;
+        $out->set("query", $query);
         return $out;
     }
 
     public function withScheme($scheme) {
         $out = clone $this;
-        $out->scheme = $scheme;
+        $out->set("scheme", $scheme);
         return $out;
     }
 
     public function withUserInfo($user, $password = null) {
         $out = clone $this;
-        $out->user = $user;
-        $out->pass = $password;
+        $out->set("user", $user);
+        $out->set("pass", $password);
         return $out;
     }
 
     public function __toString() {
         $out = "";
+        $out .= strlen($this->scheme) ? $this->scheme.":" : "";
         if (is_null($this->host)) {
-            $out .= strlen($this->scheme) ? $this->scheme.":" : "";
             $out .= $this->path;
         } else {
-            $out .= $this->scheme."://";
+            $out .= "//";
             $out .= $this->getAuthority();
             $out .= ($this->path[0] ?? "") === "/" ? "" : "/";
             $out .= preg_replace("<^/{2,}/>", "/", $this->path);
@@ -219,7 +223,7 @@ PCRE;
         return $this->$name;
     }
 
-    public function __set(string $name, $value): void {
+    protected function set(string $name, $value): void {
         switch ($name) {
             case "host":
                 $this->host = $this->normalizeHost($value);
@@ -322,17 +326,22 @@ PCRE;
 
     /** Normalizes a hostname per IDNA:2008 */
     protected function normalizeHost(?string $host): ?string {
-        $host = trim($host);
         if (!is_null($host) && strlen($host)) {
-            if ($host[0] === "[" && substr($host, -1) === "]") {
+            if (preg_match(self::IPV6_PATTERN, $host)) {
                 // normalize IPv6 addresses
                 $addr = @inet_pton(substr($host, 1, strlen($host) - 2));
                 if ($addr !== false) {
                     return "[".inet_ntop($addr)."]";
                 }
             }
-            $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII, \INTL_IDNA_VARIANT_UTS46);
-            $host = $idn !== false ? idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE, \INTL_IDNA_VARIANT_UTS46) : $host;
+            $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
+            if ($idn === false) {
+                throw new \InvalidArgumentException("Invalid host in URL");
+            }
+            $host = idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46);
+            if ($host === false) {
+                throw new \InvalidArgumentException("Invalid host in URL");
+            }
         }
         return $host;
     }

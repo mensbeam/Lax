@@ -7,11 +7,12 @@ declare(strict_types=1);
 namespace JKingWeb\Lax\TestCase\Util;
 
 use JKingWeb\Lax\Url;
+use JKingWeb\Lax\TestCase\Util\Url\AbstractUriTestCase;
 
 /** @covers JKingWeb\Lax\Url<extended> */
-class UrlTest extends \PHPUnit\Framework\TestCase {
-    public function testTemp(): void {
-        $url = "https://me:secret@example.com:443/file?question#bit";
-        $this->assertSame((string) new Url("https://me:secret@example.com:443/file?question#bit"), $url);
+class UrlTest extends AbstractUriTestCase {
+//class UrlTest extends \PHPUnit\Framework\TestCase {
+    protected function createUri($uri = '') {
+        return new Url($uri);
     }
 }
