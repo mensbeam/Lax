@@ -129,4 +129,20 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
     }
+
+    public function getExpired(): ?bool {
+        return null;
+    }
+
+    public function getLang(): ?string {
+        return null;
+    }
+
+    public function getIcon(): ?string {
+        return null;
+    }
+
+    public function getImage(): ?string {
+        return null;
+    }
 }

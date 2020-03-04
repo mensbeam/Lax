@@ -8,6 +8,7 @@ namespace JKingWeb\Lax\Parser\XML;
 
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Text;
 
@@ -89,5 +90,25 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
      */
     public function getRelatedLink(): ?string {
         return $this->getRelatedLinkAtom() ?? "";
+    }
+
+    public function getBanner(): ?string {
+        return null;
+    }
+
+    public function getContent(): ?Text {
+        return new Text;
+    }
+
+    public function getEnclosures(): EnclosureCollection {
+        return new EnclosureCollection;   
+    }
+
+    public function getLang(): ?string {
+        return null;
+    }
+
+    public function getSummary(): ?Text {
+        return new Text;
     }
 }
