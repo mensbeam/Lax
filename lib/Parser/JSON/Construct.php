@@ -19,7 +19,7 @@ trait Construct {
      * 
      * Returns null otherwise
      */
-    protected function fetchMember(string $key, string $type, \stdClass $obj = null) {
+    protected function fetchMember(string $key, string $type, ?\stdClass $obj = null) {
         $obj = $obj ?? $this->data;
         if (!isset($obj->$key)) {
             return null;
@@ -34,7 +34,7 @@ trait Construct {
     }
 
     /** Returns an object member as a resolved and normalized URL */
-    protected function fetchUrl(string $key, \stdClass $obj = null): ?Url {
+    protected function fetchUrl(string $key, ?\stdClass $obj = null): ?Url {
         $url = $this->fetchMember($key, "str", $obj);
         try {
             return (!is_null($url)) ? new Url($url, $this->url) : null;
@@ -43,13 +43,19 @@ trait Construct {
         }
     }
 
+    /** Returns a media type from an object member or from a URL's file name when possible */
+    protected function fetchType(string $key, ?Url $url, ?\stdClass $obj = null): ?string {
+        $type = $this->fetchMember($key, "str", $obj) ?? "";
+        return $this->parseMediaType($type, $url);
+    }
+
     /** Returns an object member as a parsed date */
-    protected function fetchDate(string $key, \stdClass $obj = null): ?Date {
+    protected function fetchDate(string $key, ?\stdClass $obj = null): ?Date {
         return $this->parseDate($this->fetchMember($key, "str", $obj) ?? "");
     }
 
     /** Returns a plain-text string object member wrapped in a Text object */
-    protected function fetchText(string $key, \stdClass $obj = null): ?Text {
+    protected function fetchText(string $key, ?\stdClass $obj = null): ?Text {
         $t = $this->fetchMember($key, "str", $obj);
         if (!is_null($t)) {
             return new Text($t);

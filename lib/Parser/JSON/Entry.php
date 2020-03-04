@@ -147,15 +147,10 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
             if ($url) {            
                 $m = new Enclosure;
                 $m->url = $url;
-                $m->type = $this->fetchMember("mime_type", "str", $attachment);
+                $m->type = $this->fetchType("mime_type", $url, $attachment);
                 $m->title = $this->fetchMember("title", "str", $attachment);
                 $m->size = $this->fetchMember("size_in_bytes", "int", $attachment);
                 $m->duration = $this->fetchMember("duration_in_seconds", "int", $attachment);
-                // detect media type from file name if no type is provided
-                if (!$m->type) {
-                    $ext = substr();
-                    $m->type = ($this->mime ?? ($this->mime = new \Mimey\MimeTypes))->getMimeType($ext);
-                }
                 $out[] = $m;
             }
         }
