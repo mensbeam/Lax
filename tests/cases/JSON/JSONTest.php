@@ -6,16 +6,47 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\TestCase\JSON;
 
+/* Test format is as follows:
+
+    Each test is a JSON object with the following keys:
+
+    - `description`: a short human-readable description of the test
+    - `base_url`: A base URL against which relative URLs should be resolved
+    - `input`: The test input, as a string or directly as a JSON Feed structure
+    - `output`: The result of the parsing upon success; described in more detail below
+    - `exception`: The exception ID thrown upon failure
+
+    The 'description' and 'input' keys along with either 'output' or 'exception'
+    are required for all tests.
+
+    The test output is necessarily mangled due to the limits of JSON:
+
+    - Any field which should be a URL should be written as a string, which
+      will be transformed accordingly
+    - Any collections should be represented as arrays of objects, which will
+      all be transformed accordingly
+    - Rich text can either be supplied as a string (which will yield a Text object 
+      with plain-text content) or as an object with any of the properties of the
+      Text class listed
+
+    The transformations as performed by the `makeFeed` and `makeEntry` methods 
+    of the abstract test case.
+
+*/
+
 use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Parser\Exception;
 use JKingWeb\Lax\Parser\JSON\Feed as Parser;
-use JKingWeb\Lax\Feed;
-use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Feed;
+use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Url;
 
-/** @covers JKingWeb\Lax\Parser\JSON\Feed<extended> */
+/** 
+ * @covers JKingWeb\Lax\Parser\JSON\Feed<extended>
+ * @covers JKingWeb\Lax\Parser\JSON\Entry<extended>
+ */
 class JSONTest extends \PHPUnit\Framework\TestCase {
     /** @dataProvider provideJSONFeedVersion1 */
     public function testJSONFeedVersion1($input, string $type, $output): void {
@@ -58,11 +89,7 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
             } elseif ($k === "people") {
                 $c = new PersonCollection;
                 foreach ($v as $m) {
-                    $p = new Person;
-                    foreach ($m as $kk => $vv) {
-                        $p->$kk = $vv;
-                    }
-                    $c[] = $p;
+                    $c[] = $this->makePerson($m);
                 }
                 $f->$k = $c;
             } elseif ($k === "entries") {
@@ -101,11 +128,21 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
             return new Text($data);
         }
         $out = new Text;
-        foreach(["plain", "html", "xhtml", "loose"] as $k) {
-            if (isset($data[$k])) {
-                $out->$k = $data[$k];
-            }
+        foreach ($data as $k => $v) {
+            $out->$k = $v;
         }
         return $out;
+    }
+
+    protected function makePerson(\stdClass $person): Person {
+        $p = new Person;
+        foreach ($person as $k => $v) {
+            if (in_array($k, ["url", "avatar"])) {
+                $p->$k = new Url($v);
+            } else {
+                $p->$k = $v;
+            }
+        }
+        return $p;
     }
 }
