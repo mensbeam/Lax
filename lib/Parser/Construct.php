@@ -51,14 +51,13 @@ trait Construct {
     protected function parseDate(string $date): ?Date {
         $out = null;
         $date = $this->trimText($date);
-        if (!strlen($date)) {
-            return $out;
-        }
-        $tz = new \DateTimeZone("UTC");
-        foreach (Date::$supportedFormats as $format) {
-            $out = Date::createFromFormat($format, $date, $tz);
-            if ($out) {
-                break;
+        if (strlen($date)) {
+            $tz = new \DateTimeZone("UTC");
+            foreach (Date::$supportedFormats as $format) {
+                $out = Date::createFromFormat($format, $date, $tz);
+                if ($out) {
+                    break;
+                }
             }
         }
         return $out ?: null;
