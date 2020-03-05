@@ -40,6 +40,7 @@ use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Feed;
 use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Text;
@@ -119,8 +120,16 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
         foreach ($entry as $k => $v) {
             if (in_array($k, ["link", "relatedLink", "banner"])) {
                 $e->$k = new Url($v);
+            } elseif (in_array($k, ["dateCreated", "dateModified"])) {
+                $e->$k = new Date($v, new \DateTimeZone("UTC"));
             } elseif (in_array($k, ["title", "summary", "content"])) {
                 $e->$k = $this->makeText($v);
+            } elseif ($k === "people") {
+                $c = new PersonCollection;
+                foreach ($v as $m) {
+                    $c[] = $this->makePerson($m);
+                }
+                $e->$k = $c;
             } elseif ($k === "categories") {
                 $c = new CategoryCollection;
                 foreach ($v as $m) {

@@ -239,6 +239,76 @@
         }
     },
     {
+        "description": "Entry dates",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "date_published": "2020-03-03T21:12:42Z",
+                    "date_modified": "2020-03-03T21:12:42Z"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "dateCreated": "2020-03-03T21:12:42Z",
+                    "dateModified": "2020-03-03T21:12:42Z"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry URLs",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "url": "http://example.com/",
+                    "external_url": "http://example.org/"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "link": "http://example.com/",
+                    "relatedLink": "http://example.org/"
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry title",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "title": "Example title"
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "title": "Example title"
+                }
+            ]
+        }
+    },
+    {
         "description": "Entry summary",
         "input": {
             "version": "https://jsonfeed.org/version/1",
@@ -358,6 +428,53 @@
                         {"name": " "}
                     ]
                 }
+            ]
+        }
+    },
+    {
+        "description": "Entry authors",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [
+                {"name": "Jane Doe"},
+                {"name": "John Doe"}
+            ],
+            "items": [
+                {
+                    "id": 1,
+                    "author": {"name": "John Doe"},
+                    "authors": [{"name": "Jane Doe"}]
+                },
+                {
+                    "id": 2,
+                    "author": {"name": "John Doe"}
+                },
+                {
+                    "id": 3,
+                    "authors": [{"name": "Jane Doe"}]
+                },
+                {
+                    "id": 4
+                },
+                {
+                    "id": 5,
+                    "authors": [{"NAME": "Jane Doe"}]
+                }
+            ]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "people": [
+                {"name": "Jane Doe", "role": "author"},
+                {"name": "John Doe", "role": "author"}
+            ],
+            "entries": [
+                {"id": "1", "people": [{"name": "Jane Doe", "role": "author"}]},
+                {"id": "2", "people": [{"name": "John Doe", "role": "author"}]},
+                {"id": "3", "people": [{"name": "Jane Doe", "role": "author"}]},
+                {"id": "4", "people": [{"name": "Jane Doe", "role": "author"},{"name": "John Doe", "role": "author"}]},
+                {"id": "5", "people": [{"name": "Jane Doe", "role": "author"},{"name": "John Doe", "role": "author"}]}
             ]
         }
     }
