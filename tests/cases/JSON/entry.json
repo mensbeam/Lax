@@ -477,5 +477,152 @@
                 {"id": "5", "people": [{"name": "Jane Doe", "role": "author"},{"name": "John Doe", "role": "author"}]}
             ]
         }
+    },
+    {
+        "description": "Entry image",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "image": "http://example.com/image"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "enclosures": [
+                        {
+                            "type": "image",
+                            "url": "http://example.com/image",
+                            "preferred": true
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry attachments",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "attachments": [
+                    {
+                        "url": "http://example.com/image",
+                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "title": "Logo",
+                        "size_in_bytes": 2345
+                    },
+                    {
+                        "url": "http://example.com/graphic.png"
+                    },
+                    {
+                        "url": "http://example.com/graphic.PNG"
+                    },
+                    {
+                        "url": "data:text/plain,Hello%20World!",
+                        "title": "Example text"
+                    },
+                    {
+                        "url": "data:text/plain,File:example.jpg",
+                        "title": "Sneaky URN"
+                    },
+                    {
+                        "url": "http://example.com/talk",
+                        "mime_type": "audio",
+                        "duration_in_seconds": 72
+                    },
+                    {
+                        "title": "Invalid URL",
+                        "url": "http://[.com/bogus"
+                    },
+                    {
+                        "title": "No URL"
+                    }
+                ]
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "enclosures": [
+                        {
+                            "type": "image/svg+xml",
+                            "url": "http://example.com/image",
+                            "title": "Logo",
+                            "size": 2345
+                        },
+                        {
+                            "type": "image/png",
+                            "url": "http://example.com/graphic.png"
+                        },
+                        {
+                            "type": "image/png",
+                            "url": "http://example.com/graphic.PNG"
+                        },
+                        {
+                            "url": "data:text/plain,Hello%20World!",
+                            "title": "Example text"
+                        },
+                        {
+                            "url": "data:text/plain,File:example.jpg",
+                            "title": "Sneaky URN"
+                        },
+                        {
+                            "url": "http://example.com/talk",
+                            "type": "audio",
+                            "duration": 72
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "description": "Entry image and attachments",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "attachments": [
+                    {
+                        "url": "http://example.com/image",
+                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "title": "Logo",
+                        "size_in_bytes": 2345
+                    }
+                ],
+                "image": "http://example.com/image"
+            }]
+        },
+        "output": {
+            "format": "json",
+            "version": "1",
+            "entries": [
+                {
+                    "id": "1",
+                    "enclosures": [
+                        {
+                            "type": "image",
+                            "url": "http://example.com/image",
+                            "preferred": true
+                        },
+                        {
+                            "type": "image/svg+xml",
+                            "url": "http://example.com/image",
+                            "title": "Logo",
+                            "size": 2345
+                        }
+                    ]
+                }
+            ]
+        }
     }
 ]

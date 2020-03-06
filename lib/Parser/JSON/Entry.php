@@ -146,6 +146,16 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
 
     public function getEnclosures(): EnclosureCollection {
         $out = new EnclosureCollection;
+        // handle JSON Feed's special "image" key first
+        $img = $this->fetchUrl("image");
+        if ($img) {
+            $m = new Enclosure;
+            $m->url = $img;
+            $m->type = "image";
+            $m->preferred = true;
+            $out[] = $m;
+        }
+        // handle other attachments
         foreach ($this->fetchMember("attachments", "array")  ?? [] as $attachment) {
             $url = $this->fetchUrl("url", $attachment);
             if ($url) {            

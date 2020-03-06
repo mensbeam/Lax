@@ -64,7 +64,7 @@ trait Construct {
     }
 
     protected function parseMediaType(string $type, ?Url $url = null): ?string {
-        if (preg_match('<^\s*([0-9a-z]+(?:/[!#$%&\'\*\+\-\.^_`|~0-9a-z]+))(?:\s|;|$)>i', $type, $match)) {
+        if (preg_match('<^\s*([0-9a-z]+(?:/[!#$%&\'\*\+\-\.^_`|~0-9a-z]+)?)(?:\s|;|$)>i', $type, $match)) {
             /* NOTE: The pattern used here is a subset of what is 
                 technically allowed by RFC 7231: the "type" portion
                 is supposed to be as general as the "subtype" portion,
@@ -82,7 +82,7 @@ trait Construct {
             */
             return strtolower($match[1]);
         }
-        if ($url) {
+        if ($url && (strlen($url->getScheme()) && $url->host !== null)) {
             $file = substr($url->getPath(), (int) strrpos($url->getPath(), "/"));
             $ext = strrpos($file, ".");
             if ($ext !== false) {

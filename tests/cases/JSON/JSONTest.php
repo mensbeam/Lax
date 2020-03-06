@@ -34,17 +34,19 @@ namespace JKingWeb\Lax\TestCase\JSON;
 
 */
 
-use JKingWeb\Lax\Parser\Exception;
-use JKingWeb\Lax\Parser\JSON\Feed as Parser;
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Category\Category;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Feed;
 use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Url;
+use JKingWeb\Lax\Parser\Exception;
+use JKingWeb\Lax\Parser\JSON\Feed as Parser;
+use JKingWeb\Lax\Person\Person;
+use JKingWeb\Lax\Category\Category;
+use JKingWeb\Lax\Enclosure\Enclosure;
+use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 
 /** 
  * @covers JKingWeb\Lax\Parser\JSON\Feed<extended>
@@ -66,7 +68,6 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
             $act = $p->parse(new Feed);
             $exp = $this->makeFeed($output);
             $this->assertEquals($exp, $act);
-            $this->assertEqualsCanonicalizing($exp, $act);
         }
     }
 
@@ -130,6 +131,12 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
                     $c[] = $this->makePerson($m);
                 }
                 $e->$k = $c;
+            } elseif ($k === "enclosures") {
+                $c = new EnclosureCollection;
+                foreach ($v as $m) {
+                    $c[] = $this->makeEnclosure($m);
+                }
+                $e->$k = $c;
             } elseif ($k === "categories") {
                 $c = new CategoryCollection;
                 foreach ($v as $m) {
@@ -168,5 +175,17 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
             }
         }
         return $p;
+    }
+
+    protected function makeEnclosure(\stdClass $enclosure): Enclosure {
+        $e = new Enclosure;
+        foreach ($enclosure as $k => $v) {
+            if ($k === "urli") {
+                $e->$k = new Url($v);
+            } else {
+                $e->$k = $v;
+            }
+        }
+        return $e;
     }
 }
