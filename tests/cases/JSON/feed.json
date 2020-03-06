@@ -240,5 +240,22 @@
             "icon": "http://example.com/icon",
             "image": "http://example.com/image"
         }
+    },
+    {
+        "description": "Relative URL resolution",
+        "doc_url": "http://example.com",
+        "input": {
+            "version": "https://jsonfeed.org/version/1",
+            "feed_url": "feed.json"
+        },
+        "output": {
+            "meta": {
+                "url": "http://example.com"
+            },
+            "format": "json",
+            "version": "1",
+            "id": "feed.json",
+            "url": ["feed.json", "http://example.com"]
+        }
     }
 ]

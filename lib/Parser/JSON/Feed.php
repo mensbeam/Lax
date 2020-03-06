@@ -44,7 +44,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
 
     /** Performs format-specific preparation and validation */
     protected function init(FeedStruct $feed): FeedStruct {
-        $type = preg_replace("/[\s;,].*/", "", trim(strtolower($this->contentType)));
+        $type = $this->parseMediaType($this->contentType) ?? "";
         if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
             throw new Exception("notJSONType");
         }

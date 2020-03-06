@@ -74,10 +74,10 @@ PCRE;
     ];
 
     protected $scheme = null;
-    protected $host = null;
-    protected $port = null;
     protected $user = "";
     protected $pass = "";
+    protected $host = null;
+    protected $port = null;
     protected $path = null;
     protected $query = null;
     protected $fragment = null;
@@ -105,7 +105,7 @@ PCRE;
                     }
                 }
             }
-            if ($baseUrl && !strlen($this->scheme)) {
+            if ($baseUrl && !$this->scheme) {
                 $this->resolve(self::fromUri($baseUrl));
             }
             foreach (["scheme", "path", "query", "fragment"] as $part) {

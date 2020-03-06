@@ -11,7 +11,7 @@ namespace JKingWeb\Lax\TestCase\JSON;
     Each test is a JSON object with the following keys:
 
     - `description`: a short human-readable description of the test
-    - `base_url`: A base URL against which relative URLs should be resolved
+    - `doc_url`: A fictitious URL where a newsfeed might be located, used for relative URL resolution
     - `input`: The test input, as a string or directly as a JSON Feed structure
     - `output`: The result of the parsing upon success; described in more detail below
     - `exception`: The exception ID thrown upon failure
@@ -21,8 +21,10 @@ namespace JKingWeb\Lax\TestCase\JSON;
 
     The test output is necessarily mangled due to the limits of JSON:
 
-    - Any field which should be a URL should be written as a string, which
-      will be transformed accordingly
+    - Any field which should be an absolute URL should be written as a string,
+      which will be transformed accordingly. Relative URLs should be represented
+      as an array with the relative part first, followed by the base that should
+      be applied to it
     - Any collections should be represented as arrays of objects, which will
       all be transformed accordingly
     - Rich text can either be supplied as a string (which will yield a Text object 
@@ -54,13 +56,13 @@ use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
  */
 class JSONTest extends \PHPUnit\Framework\TestCase {
     /** @dataProvider provideJSONFeedVersion1 */
-    public function testJSONFeedVersion1($input, string $type, $output): void {
+    public function testJSONFeedVersion1($input, string $type, ?string $url, $output): void {
         if (is_object($input)) {
             $input = json_encode($input);
         } elseif (!is_string($input)) {
             throw new \Exception("Test input is invalid");
         }
-        $p = new Parser($input, $type);
+        $p = new Parser($input, $type, $url);
         if ($output instanceof \Exception) {
             $this->expectExceptionObject($output);
             $p->parse(new Feed);
@@ -80,6 +82,7 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
                 yield "$file #$index: {$test->description}" => [
                     $test->input,
                     $test->type ?? "",
+                    $test->doc_url ?? null,
                     $test->output,
                 ];
             }
@@ -105,10 +108,14 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
                 $f->$k = $c;
             } elseif (in_array($k, ["meta", "sched"])) {
                 foreach ($v as $kk => $vv) {
-                    $f->$k->$kk = $vv;
+                    if ($kk === "url") {
+                        $f->$k->$kk = $this->makeUrl($vv);
+                    } else {
+                        $f->$k->$kk = $vv;
+                    }
                 }
             } elseif (in_array($k, ["url", "link", "icon", "image"])) {
-                $f->$k = new Url($v);
+                $f->$k = $this->makeUrl($v);
             } else {
                 $f->$k = $v;
             }
@@ -120,7 +127,7 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
         $e = new Entry;
         foreach ($entry as $k => $v) {
             if (in_array($k, ["link", "relatedLink", "banner"])) {
-                $e->$k = new Url($v);
+                $e->$k = $this->makeUrl($v);
             } elseif (in_array($k, ["dateCreated", "dateModified"])) {
                 $e->$k = new Date($v, new \DateTimeZone("UTC"));
             } elseif (in_array($k, ["title", "summary", "content"])) {
@@ -169,7 +176,7 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
         $p = new Person;
         foreach ($person as $k => $v) {
             if (in_array($k, ["url", "avatar"])) {
-                $p->$k = new Url($v);
+                $p->$k = $this->makeUrl($v);
             } else {
                 $p->$k = $v;
             }
@@ -181,11 +188,19 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
         $e = new Enclosure;
         foreach ($enclosure as $k => $v) {
             if ($k === "urli") {
-                $e->$k = new Url($v);
+                $e->$k = $this->makeUrl($v);
             } else {
                 $e->$k = $v;
             }
         }
         return $e;
+    }
+
+    protected function makeUrl($url): ?Url {
+        if (is_array($url)) {
+            return new Url($url[0] ?? "", ($url[1] ?? null) ? new Url($url[1]) : null);
+        } else {
+            return new Url($url);
+        }
     }
 }
