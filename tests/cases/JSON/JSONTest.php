@@ -51,6 +51,7 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 
 /** 
+ * @covers JKingWeb\Lax\Parser\Construct<extended>
  * @covers JKingWeb\Lax\Parser\JSON\Feed<extended>
  * @covers JKingWeb\Lax\Parser\JSON\Entry<extended>
  */

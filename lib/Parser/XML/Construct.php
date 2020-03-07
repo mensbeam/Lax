@@ -6,8 +6,10 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\XML;
 
+use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
+use JKingWeb\Lax\Text;
 
 trait Construct {
     use \JKingWeb\Lax\Parser\Construct;
@@ -23,7 +25,7 @@ trait Construct {
     protected function fetchElement(string $query, \DOMNode $context = null) {
         $node = @$this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
         if ($node===false) {
-            throw new \Exception("Invalid XPath query: $query");
+            throw new \Exception("Invalid XPath query: $query"); // @codeCoverageIgnore
         }
         return ($node->length) ? $node->item(0) : null;
     }
@@ -34,13 +36,13 @@ trait Construct {
     }
 
     /** Retrieves the trimmed text content of a DOM element based on an XPath query  */
-    protected function fetchText(string $query, \DOMNode $context = null) {
+    protected function fetchString(string $query, \DOMNode $context = null): ?string {
         $node = $this->fetchElement($query, $context);
         return ($node) ? $this->trimText($node->textContent) : null;
     }
 
     /** Retrieves the trimmed text content of multiple DOM elements based on an XPath query  */
-    protected function fetchTextMulti(string $query, \DOMNode $context = null) {
+    protected function fetchStringMulti(string $query, \DOMNode $context = null) {
         $out = [];
         $nodes = $this->xpath->query($query, $context ?? $this->subject);
         foreach ($nodes as $node) {
@@ -50,7 +52,7 @@ trait Construct {
     }
 
     /** Retrieves the trimmed plain-text or HTML content of an Atom text construct based on an XPath query */
-    protected function fetchTextAtom(string $query, bool $html = false) {
+    protected function fetchStringAtom(string $query, bool $html = false): ?Text {
         $node = $this->fetchElement($query);
         if ($node) {
             if (!$node->hasAttribute("type") || $node->getAttribute("type")=="text") {
@@ -69,8 +71,8 @@ trait Construct {
     }
 
     /** Retrieves and parses a date from the content of a DOM element based on an XPath query  */
-    protected function fetchDate(string $query, \DOMNode $context = null) {
-        return $this->parseDate($this->fetchText($query, $context) ?? "");
+    protected function fetchDate(string $query, \DOMNode $context = null): ?Date {
+        return $this->parseDate($this->fetchString($query, $context) ?? "");
     }
 
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
@@ -104,8 +106,8 @@ trait Construct {
      * - user@example.com (Full Name)
      * - Full Name <user@example.com>
      */
-    protected function fetchPeople(string $query, string $role) {
-        $people = $this->fetchTextMulti($query) ?? [];
+    protected function fetchPeople(string $query, string $role): ?PersonCollection {
+        $people = $this->fetchStringMulti($query) ?? [];
         $out = new PersonCollection;
         foreach ($people as $person) {
             if (!strlen($person)) {
@@ -139,13 +141,13 @@ trait Construct {
     }
 
     /** Finds and parses Atom person-constructs, and returns a collection of Person objects */
-    protected function fetchPeopleAtom(string $query, string $role) {
+    protected function fetchPeopleAtom(string $query, string $role): ?PersonCollection {
         $nodes = $this->fetchElements($query);
         $out = new PersonCollection;
         foreach ($nodes as $node) {
             $p = new Person;
-            $p->mail = $this->fetchText("atom:email", $node) ?? "";
-            $p->name = $this->fetchText("atom:name", $node) ?? $p->mail;
+            $p->mail = $this->fetchString("atom:email", $node) ?? "";
+            $p->name = $this->fetchString("atom:name", $node) ?? $p->mail;
             $p->url = $this->fetchUrl("atom:uri", $node);
             $p->role = $role;
             if (strlen($p->name)) {

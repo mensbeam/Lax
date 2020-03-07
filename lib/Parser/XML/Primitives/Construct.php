@@ -10,56 +10,58 @@ use JKingWeb\Lax\Person\Person;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Category;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
+use JKingWeb\Lax\Date;
 use JKingWeb\Lax\Parser\XML\Entry as FeedEntry;
+use JKingWeb\Lax\Text;
+use JKingWeb\Lax\Url;
 
 trait Construct {
     /** Primitive to fetch an Atom feed/entry title
-     * 
-     * This fetches the title in plain text rather than HTML, even if HTML is provided in the feed/entry
      */
-    protected function getTitleAtom() {
-        return $this->fetchTextAtom("atom:title");
+    protected function getTitleAtom(): ?Text {
+        // FIXME: fetch rich text
+        return $this->fetchStringAtom("atom:title");
     }
 
     /** Primitive to fetch an RSS feed/entry title */
-    protected function getTitleRss2() {
-        return $this->fetchText("title");
+    protected function getTitleRss2(): ?Text {
+        return $this->fetchString("title");
     }
 
     /** Primitive to fetch an RDF feed/entry title */
-    protected function getTitleRss1() {
-        return $this->fetchText("rss1:title|rss0:title");
+    protected function getTitleRss1(): ?Text {
+        return $this->fetchString("rss1:title|rss0:title");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry title */
-    protected function getTitleDC() {
-        return $this->fetchText("dc:title");
+    protected function getTitleDC(): ?Text {
+        return $this->fetchString("dc:title");
     }
 
     /** Primitive to fetch an Apple podcast/episdoe title */
-    protected function getTitlePod() {
-        return $this->fetchText("apple:title");
+    protected function getTitlePod(): ?Text {
+        return $this->fetchString("apple:title");
     }
 
     /** Primitive to fetch an Atom feed/entry Web-representation URL */
-    protected function getLinkAtom() {
+    protected function getLinkAtom(): ?Url {
         // FIXME: Atom link fetching should ideally prefer links to text/html resources or the like over e.g. other-format newsfeeds, generic XML, images, etc
         $node = $this->fetchAtomRelations();
         return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
     }
 
     /** Primitive to fetch an RSS feed/entry Web-representation URL */
-    protected function getLinkRss2() {
+    protected function getLinkRss2(): ?Url {
         return $this->fetchUrl("link") ?? $this->fetchUrl("guid[not(@isPermalink='false')]");
     }
 
     /** Primitive to fetch an RDF feed/entry Web-representation URL */
-    protected function getLinkRss1() {
+    protected function getLinkRss1(): ?Url {
         return $this->fetchUrl("rss1:link|rss0:link");
     }
 
     /** Primitive to fetch Atom feed/entry categories */
-    protected function getCategoriesAtom() {
+    protected function getCategoriesAtom(): ?CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchElements("atom:category[@term]") ?? [] as $node) {
             $c = new Category;
@@ -74,7 +76,7 @@ trait Construct {
     }
 
     /** Primitive to fetch RSS feed/entry categories */
-    protected function getCategoriesRss2() {
+    protected function getCategoriesRss2(): ?CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchElements("category") ?? [] as $node) {
             $c = new Category;
@@ -91,9 +93,9 @@ trait Construct {
      * 
      * Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation
     */
-    protected function getCategoriesDC() {
+    protected function getCategoriesDC(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->fetchTextMulti("dc:subject") ?? [] as $text) {
+        foreach ($this->fetchStringMulti("dc:subject") ?? [] as $text) {
             if (strlen($text)) {
                 $c = new Category;
                 $c->name = $text;
@@ -104,7 +106,7 @@ trait Construct {
     }
 
     /** Primitive to fetch podcast/episode categories */
-    protected function getCategoriesPod() {
+    protected function getCategoriesPod(): ?CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchElements("apple:category|gplay:category") ?? [] as $node) {
             $c = new Category;
@@ -117,50 +119,50 @@ trait Construct {
     }
 
     /** Primitive to fetch an Atom feed/entry identifier */
-    protected function getIdAtom() {
-        return $this->fetchText("atom:id");
+    protected function getIdAtom(): ?string {
+        return $this->fetchString("atom:id");
     }
 
     /** Primitive to fetch an RSS feed/entry identifier 
      * 
      * Using RSS' <guid> for feed identifiers is non-standard, but harmless
     */
-    protected function getIdRss2() {
-        return $this->fetchText("guid");
+    protected function getIdRss2(): ?string {
+        return $this->fetchString("guid");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry identifier */
-    protected function getIdDC() {
-        return $this->fetchText("dc:identifier");
+    protected function getIdDC(): ?string {
+        return $this->fetchString("dc:identifier");
     }
 
     /** Primitive to fetch a collection of authors associated with a feed/entry via Dublin Core */
-    protected function getAuthorsDC() {
+    protected function getAuthorsDC(): ?PersonCollection {
         return $this->fetchPeople("dc:creator", "author");
     }
 
     /** Primitive to fetch a collection of contributors associated with a feed/entry via Dublin Core */
-    protected function getContributorsDC() {
+    protected function getContributorsDC(): ?PersonCollection {
         return $this->fetchPeople("dc:ccontributor", "contributor");
     }
 
     /** Primitive to fetch a collection of authors associated with an RSS feed/entry */
-    protected function getAuthorsRss2() {
+    protected function getAuthorsRss2(): ?PersonCollection {
         return $this->fetchPeople("author", "author");
     }
 
     /** Primitive to fetch a collection of editors associated with an RSS feed/entry */
-    protected function getEditorsRss2() {
+    protected function getEditorsRss2(): ?PersonCollection {
         return $this->fetchPeople("managingEditor", "editor");
     }
 
     /** Primitive to fetch a collection of authors associated with an RSS feed/entry */
-    protected function getWebmastersRss2() {
+    protected function getWebmastersRss2(): ?PersonCollection {
         return $this->fetchPeople("webMaster", "webMaster");
     }
 
     /** Primitive to fetch a collection of contributors associated with an Atom feed */
-    protected function getContributorsAtom() {
+    protected function getContributorsAtom(): ?PersonCollection {
         return $this->fetchPeopleAtom("atom:contributor", "contributor");
     }
 
@@ -168,11 +170,11 @@ trait Construct {
      * 
      * The collection only ever contains the first author found: podcasts implicitly have only one author
     */
-    protected function getAuthorsPod() {
+    protected function getAuthorsPod(): ?PersonCollection {
         $out = new PersonCollection;
         $p = new Person;
-        $p->name = $this->fetchText("gplay:author|apple:author") ?? "";
-        $p->mail = $this->fetchText("gplay:email|apple:email") ?? "";
+        $p->name = $this->fetchString("gplay:author|apple:author") ?? "";
+        $p->mail = $this->fetchString("gplay:email|apple:email") ?? "";
         $p->role = "author";
         if (strlen($p->name)) {
             $out[] = $p;
@@ -184,13 +186,13 @@ trait Construct {
      * 
      * The collection only ever contains the first webmaster found: podcasts implicitly have only one webmaster
     */
-    protected function getWebmastersPod() {
+    protected function getWebmastersPod(): ?PersonCollection {
         $out = new PersonCollection;
         $node = $this->fetchElement("gplay:owner|apple:owner");
         if ($node) {
             $p = new Person;
-            $p->name = $this->fetchText("gplay:author|apple:author", $node) ?? "";
-            $p->mail = $this->fetchText("gplay:email|apple:email", $node) ?? "";
+            $p->name = $this->fetchString("gplay:author|apple:author", $node) ?? "";
+            $p->mail = $this->fetchString("gplay:email|apple:email", $node) ?? "";
             $p->role = "webmaster";
             if (strlen($p->name)) {
                 $out[] = $p;
@@ -200,28 +202,28 @@ trait Construct {
     }
 
     /** Primitive to fetch an Atom feed or entry's canonical URL */
-    protected function getUrlAtom() {
+    protected function getUrlAtom(): ?Url {
         $node = $this->fetchAtomRelations("self");
         return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
     }
 
     /** Primitive to fetch the modification date of an Atom feed/entry */
-    protected function getDateModifiedAtom() {
+    protected function getDateModifiedAtom(): ?Date {
         return $this->fetchDate("atom:updated");
     }
 
     /** Primitive to fetch the modification date of an Atom feed/entry */
-    protected function getDateModifiedDC() {
+    protected function getDateModifiedDC(): ?Date {
         return $this->fetchDate("dc:date");
     }
 
     /** Primitive to fetch the modification date of an Atom entry */
-    protected function getDateCreatedAtom() {
+    protected function getDateCreatedAtom(): ?Date {
         return $this->fetchDate("atom:published");
     }
 
     /** Primitive to fetch the list of entries in an Atom feed */
-    protected function getEntriesAtom() {
+    protected function getEntriesAtom(): ?array {
         $out = [];
         foreach ($this->fetchElements("atom:entry") ?? [] as $node) {
             $out[] = new FeedEntry($node, $this, $this->xpath);
@@ -230,7 +232,7 @@ trait Construct {
     }
 
     /** Primitive to fetch the list of entries in an RDF feed */
-    protected function getEntriesRss1() {
+    protected function getEntriesRss1(): ?array {
         $out = [];
         foreach ($this->fetchElements("rss1:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss1:item") ?? $this->fetchElements("rss0:item", $this->subject->ownerDocument->documentElement) ?? $this->fetchElements("rss0:item") ?? [] as $node) {
             $out[] = new FeedEntry($node, $this, $this->xpath);
@@ -239,7 +241,7 @@ trait Construct {
     }
 
     /** Primitive to fetch the list of entries in an RSS feed */
-    protected function getEntriesRss2() {
+    protected function getEntriesRss2(): ?array {
         $out = [];
         foreach ($this->fetchElements("item") ?? [] as $node) {
             $out[] = new FeedEntry($node, $this, $this->xpath);
@@ -248,7 +250,7 @@ trait Construct {
     }
 
     /** Primitive to fetch the URL of a article related to the entry */
-    protected function getRelatedLinkAtom() {
+    protected function getRelatedLinkAtom(): ?Url {
         // FIXME: Atom link fetching should ideally prefer links to text/html resources or the like over e.g. other-format newsfeeds, generic XML, images, etc
         $node = $this->fetchAtomRelations("related");
         return $node->length ? $this->resolveNodeUrl($node->item(0), "href") : null;
