@@ -8,27 +8,26 @@ namespace JKingWeb\Lax\TestCase\JSON;
 
 /* Test format is as follows:
 
-    Each test is a JSON object with the following keys:
+    Each test is a YAML map with the following keys:
 
-    - `description`: a short human-readable description of the test
-    - `doc_url`: A fictitious URL where a newsfeed might be located, used for relative URL resolution
     - `input`: The test input, as a string or directly as a JSON Feed structure
     - `output`: The result of the parsing upon success; described in more detail below
     - `exception`: The exception ID thrown upon failure
+    - `type`: An HTTP Content-Type (with or without parameters) for the document
+    - `doc_url`: A fictitious URL where a newsfeed might be located, used for relative URL resolution
 
-    The 'description' and 'input' keys along with either 'output' or 'exception'
-    are required for all tests.
+    The 'input' key along with either 'output' or 'exception' are required for all tests.
 
-    The test output is necessarily mangled due to the limits of JSON:
+    The test output is necessarily mangled due to the limits of YAML:
 
     - Any field which should be an absolute URL should be written as a string,
       which will be transformed accordingly. Relative URLs should be represented
-      as an array with the relative part first, followed by the base that should
+      as a sequence with the relative part first, followed by the base that should
       be applied to it
-    - Any collections should be represented as arrays of objects, which will
+    - Any collections should be represented as sequences of maps, which will
       all be transformed accordingly
     - Rich text can either be supplied as a string (which will yield a Text object 
-      with plain-text content) or as an object with any of the properties of the
+      with plain-text content) or as a map with any of the properties of the
       Text class listed
 
     The transformations as performed by the `makeFeed` and `makeEntry` methods 
@@ -49,6 +48,9 @@ use JKingWeb\Lax\Enclosure\Enclosure;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
+use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Parser as YamlParser;
+
 
 /** 
  * @covers JKingWeb\Lax\Parser\Construct<extended>
@@ -75,12 +77,12 @@ class JSONTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function provideJSONFeedVersion1(): iterable {
-        foreach (new \GlobIterator(__DIR__."/*.json", \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::KEY_AS_FILENAME) as $file => $path) {
-            foreach (json_decode(file_get_contents($path)) as $index => $test) {
+        foreach (new \GlobIterator(__DIR__."/*.yaml", \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::KEY_AS_FILENAME) as $file => $path) {
+            foreach ((new YamlParser)->parseFile($path, Yaml::PARSE_OBJECT_FOR_MAP) as $description => $test) {
                 if (isset($test->exception)) {
                     $test->output = new Exception((string) $test->exception);
                 }
-                yield "$file #$index: {$test->description}" => [
+                yield "$file: {$description}" => [
                     $test->input,
                     $test->type ?? "",
                     $test->doc_url ?? null,

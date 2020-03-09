@@ -1,0 +1,24 @@
+Content-Type mismatch:
+    type: text/html
+    input: '{"version": "https://jsonfeed.org/version/1"}'
+    exception: notJSONType
+
+Not valid JSON 1:
+    input: '{'
+    exception: notJSON
+
+Not valid JSON 2:
+    input: '<rss><channel/></rss>'
+    exception: notJSON
+
+Not a JSON feed 1:
+    input: '{}'
+    exception: notJSONFeed
+
+Not a JSON feed 2:
+    input: '{"version": "https://example.com/"}'
+    exception: notJSONFeed
+
+Not a JSON feed 3:
+    input: '{"version": "https://jsonfeed.org/version/"}'
+    exception: notJSONFeed

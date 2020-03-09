@@ -1,0 +1,547 @@
+Minimal entry:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1"
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+
+Invalid entry 1: # no ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title"
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Invalid entry 2: # null ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title",
+                "id": null
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Invalid entry 3: # boolean ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title",
+                "id": true
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Invalid entry 4: # array ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title",
+                "id": ["1"]
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Invalid entry 5: # object ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title",
+                "id": {"id": "1"}
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Invalid entry 6: # empty string ID
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "title": "Example title",
+                "id": ""
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+
+Integer ID:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 1
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+
+Float ID:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 3.0e-10
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '0.0000000003'
+
+Negative float ID:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": -3.0e-10
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '-0.0000000003'
+
+Simple float ID:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 0.3
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '0.3'
+
+Bignum ID:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
+
+Entry language:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "language": "en",
+            "items": [
+                {
+                    "id": 1,
+                    "language": "fr"
+                },
+                {
+                    "id": "2"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        lang: en
+        entries:
+            - id: '1'
+              lang: fr
+            - id: '2'
+              lang: en
+
+Entry banner:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "banner_image": "http://example.com/banner"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              banner: 'http://example.com/banner'
+
+Entry dates:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "date_published": "2020-03-03T21:12:42Z",
+                    "date_modified": "2020-03-03T21:12:42Z"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              dateCreated: '2020-03-03T21:12:42Z'
+              dateModified: '2020-03-03T21:12:42Z'
+
+Entry URLs:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "url": "http://example.com/",
+                    "external_url": "http://example.org/"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              link: 'http://example.com/'
+              relatedLink: 'http://example.org/'
+
+Entry title:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "title": "Example title"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              title: 'Example title'
+
+Entry summary:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "summary": "Example summary"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              summary: 'Example summary'
+
+Entry content (plain only):
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_text": "Plain content"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              content:
+                plain: 'Plain content'
+
+Entry content (HTML only):
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_html": "HTML content"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              content:
+                html: 'HTML content'
+
+Entry content (mixed):
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "content_text": "Plain content",
+                    "content_html": "HTML content"
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              content:
+                plain: 'Plain content'
+                html: 'HTML content'
+
+Entry categories:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [
+                {
+                    "id": "1",
+                    "tags": ["this", "that", "the other thing", "", null, false, 1, 3.0, " "]
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              categories:
+                - name: this
+                - name: that
+                - name: 'the other thing'
+                - name: ' '
+
+Entry authors:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "authors": [
+                {"name": "Jane Doe"},
+                {"name": "John Doe"}
+            ],
+            "items": [
+                {
+                    "id": 1,
+                    "author": {"name": "John Doe"},
+                    "authors": [{"name": "Jane Doe"}]
+                },
+                {
+                    "id": 2,
+                    "author": {"name": "John Doe"}
+                },
+                {
+                    "id": 3,
+                    "authors": [{"name": "Jane Doe"}]
+                },
+                {
+                    "id": 4
+                },
+                {
+                    "id": 5,
+                    "authors": [{"NAME": "Jane Doe"}]
+                }
+            ]
+        }
+    output:
+        format: json
+        version: '1'
+        people:
+            - name: Jane Doe
+              role: author
+            - name: John Doe
+              role: author
+        entries:
+            - id: '1'
+              people:
+                - name: Jane Doe
+                  role: author
+            - id: '2'
+              people:
+                - name: John Doe
+                  role: author
+            - id: '3'
+              people:
+                - name: Jane Doe
+                  role: author
+            - id: '4'
+              people:
+                - name: Jane Doe
+                  role: author
+                - name: John Doe
+                  role: author
+            - id: '5'
+              people:
+                - name: Jane Doe
+                  role: author
+                - name: John Doe
+                  role: author
+
+Entry image:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "image": "http://example.com/image"
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              enclosures:
+                - url: 'http://example.com/image'
+                  type: image
+                  preferred: true
+
+Entry attachments:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "attachments": [
+                    {
+                        "url": "http://example.com/image",
+                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "title": "Logo",
+                        "size_in_bytes": 2345
+                    },
+                    {
+                        "url": "http://example.com/graphic.png"
+                    },
+                    {
+                        "url": "http://example.com/graphic.PNG"
+                    },
+                    {
+                        "url": "data:text/rtf,Hello%20World!",
+                        "title": "Example text"
+                    },
+                    {
+                        "url": "data:,Hello%20World!",
+                        "title": "Example text"
+                    },
+                    {
+                        "url": "urn:bogus:example.jpg",
+                        "title": "Sneaky URN"
+                    },
+                    {
+                        "url": "http://example.com/talk",
+                        "mime_type": "audio",
+                        "duration_in_seconds": 72
+                    },
+                    {
+                        "title": "Invalid URL",
+                        "url": "http://[.com/bogus"
+                    },
+                    {
+                        "title": "No URL"
+                    }
+                ]
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              enclosures:
+                - url: 'http://example.com/image'
+                  type: 'image/svg+xml'
+                  title: Logo
+                  size: 2345
+                - url: 'http://example.com/graphic.png'
+                  type: 'image/png'
+                - url: 'http://example.com/graphic.PNG'
+                  type: 'image/png'
+                - url: 'data:text/rtf,Hello%20World!'
+                  type: 'text/rtf'
+                  title: 'Example text'
+                - url: 'data:,Hello%20World!'
+                  type: 'text/plain'
+                  title: 'Example text'
+                - url: 'urn:bogus:example.jpg'
+                  title: 'Sneaky URN'
+                - url: 'http://example.com/talk'
+                  type: 'audio'
+                  duration: 72
+
+Entry image and attachments:
+    input: >
+        {
+            "version": "https://jsonfeed.org/version/1",
+            "items": [{
+                "id": "1",
+                "attachments": [
+                    {
+                        "url": "http://example.com/logo",
+                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "title": "Logo",
+                        "size_in_bytes": 2345
+                    }
+                ],
+                "image": "http://example.com/image"
+            }]
+        }
+    output:
+        format: json
+        version: '1'
+        entries:
+            - id: '1'
+              enclosures:
+                - url: 'http://example.com/image'
+                  type: image
+                  preferred: true
+                - url: 'http://example.com/logo'
+                  type: 'image/svg+xml'
+                  title: Logo
+                  size: 2345

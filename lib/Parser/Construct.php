@@ -64,7 +64,7 @@ trait Construct {
     }
 
     protected function parseMediaType(string $type, ?Url $url = null): ?string {
-        if (preg_match('<^\s*([0-9a-z]+(?:/[!#$%&\'\*\+\-\.^_`|~0-9a-z]+)?)(?:\s|;|$)>i', $type, $match)) {
+        if (preg_match('<^\s*([0-9a-z]+(?:/[!#$%&\'\*\+\-\.^_`|~0-9a-z]+)?)(?:\s|;|,|$)>i', $type, $match)) {
             /* NOTE: The pattern used here is a subset of what is 
                 technically allowed by RFC 7231: the "type" portion
                 is supposed to be as general as the "subtype" portion,
@@ -91,6 +91,8 @@ trait Construct {
                     return ($this->mime ?? ($this->mime = new \Mimey\MimeTypes))->getMimeType($ext);
                 }
             }
+        } elseif ($url && $url->getScheme() === "data") {
+            return $this->parseMediaType($url->getPath()) ?? "text/plain";
         }
         return null;
     }
