@@ -172,24 +172,24 @@ class Sanitizer {
         //"autocapitalize",     // not useful for static content
         //"contenteditable",    // not useful for static content
         "class",
-        "dir", 
+        "dir",
         //"draggable",          // not useful for static content
-        "hidden", 
+        "hidden",
         //"inputmode",          // not useful for static content
         //"is",                 // only used with custom elements
         "id",
-        "itemid", 
-        "itemprop", 
-        "itemref", 
-        "itemscope", 
-        "itemtype", 
-        "lang", 
+        "itemid",
+        "itemprop",
+        "itemref",
+        "itemscope",
+        "itemtype",
+        "lang",
         //"nonce",              // only used via scripts (I think)
         //"slot",               // only used via scripts (I think)
         //"spellcheck",         // not useful for static content
         //"style",              // arbitrary styling; potentially unsafe
         "tabindex",
-        "title", 
+        "title",
         "translate",
         // WAI-ARIA
         "aria-describedby",
@@ -207,22 +207,22 @@ class Sanitizer {
         "poster",
     ];
 
-    /** 
+    /**
      * Sanitizes a DOMDocument object, returning the same document, modified
-     * 
+     *
      * The document may be an HTML document or or any partial XHTML tree, possibly mixed with other XML vocabularies
-     * 
+     *
      * The document's documentURI is assumed to already be set
      */
     public function processDocument(\DOMDocument $doc, string $url): \DOMDocument {
         // determine if the document is non-XML HTML
-        $isHtml = ($doc->documentElement->tagName=="html" && $doc->documentElement->namespaceURI=="");
+        $isHtml = ($doc->documentElement->tagName === "html" && $doc->documentElement->namespaceURI === "");
         // loop through each element in the document
         foreach ((new \DOMXPath($doc))->query("//*") as $node) {
             // resolve a qualified name for the element
-            if (($isHtml && $node->namespaceURI=="") || $node->namespaceURI=="http://www.w3.org/1999/xhtml") {
+            if (($isHtml && $node->namespaceURI === "") || $node->namespaceURI === "http://www.w3.org/1999/xhtml") {
                 $qName = "html:".$node->tagName;
-            } elseif ($node->namespaceURI=="") {
+            } elseif ($node->namespaceURI === "") {
                 $qName = $node->tagName;
             } elseif (isset($this->namespaces[$node->namespaceURI])) {
                 $qName = $this->namespaces[$node->namespaceURI].":".$node->tagName;
@@ -244,7 +244,7 @@ class Sanitizer {
                 $node->parentNode->removeChild($node);
             } else {
                 // if the element is in the keep list, clean up its attributes
-                foreach (iterator_to_array($node->attributes) as $attr) { // we use an array 
+                foreach (iterator_to_array($node->attributes) as $attr) { // we use an array
                     if (!in_array($attr->name, $this->attrKeep) && !(isset($this->elemKeep[$qName]) && in_array($attr->name, $this->elemKeep[$qName]))) {
                         // if the attribute is not allowed globally or for the element, remove it
                         $attr->ownerElement->removeAttributeNode($attr);

@@ -9,7 +9,7 @@ namespace JKingWeb\Lax\Category;
 class Category {
     public $name = "";
     public $label = "";
-    public $domain  = "";
+    public $domain = "";
 
     public function __toString() {
         return strlen(strlen((string) $this->label)) ? $this->label : $this->name;

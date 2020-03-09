@@ -9,9 +9,9 @@ namespace JKingWeb\Lax;
 abstract class Exception extends \Exception {
     public const SYMBOLS = [
         // Parsing: 0x1100
-        "notJSONType"                => [0x1111, "Document Content-Type is not either that of JSON Feed or generic JSON"],  
+        "notJSONType"                => [0x1111, "Document Content-Type is not either that of JSON Feed or generic JSON"],
         "notJSON"                    => [0x1112, "Document is not valid JSON"],
-        "notJSONFeed"                => [0x1113, "Document is not a JSON Feed document"]
+        "notJSONFeed"                => [0x1113, "Document is not a JSON Feed document"],
     ];
 
     public function __construct(string $symbol, \Exception $e = null) {
@@ -19,7 +19,7 @@ abstract class Exception extends \Exception {
         if (!$data) {
             throw new \Exception("Exception symbol \"$symbol\" does not exist");
         }
-        list($code, $msg) = $data;
+        [$code, $msg] = $data;
         parent::__construct($msg, $code, $e);
     }
 }

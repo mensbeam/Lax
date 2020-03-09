@@ -16,7 +16,7 @@ trait Construct {
     use \JKingWeb\Lax\Parser\Construct;
 
     /** Returns an object member if the member exists and is of the expected type
-     * 
+     *
      * Returns null otherwise
      */
     protected function fetchMember(string $key, string $type, ?\stdClass $obj = null) {

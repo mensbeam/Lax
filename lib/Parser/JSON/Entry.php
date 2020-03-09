@@ -51,7 +51,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         $entry->people = $this->getPeople();
         $entry->categories = $this->getCategories();
         $entry->enclosures = $this->getEnclosures();
-        return $entry; 
+        return $entry;
     }
 
     public function getId(): ?string {
@@ -69,7 +69,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                     $exp = (int) $id[1];
                     $mul = $exp > -1;
                     $exp = abs($exp);
-                    list($int, $dec) = explode(".", $id[0]);
+                    [$int, $dec] = explode(".", $id[0]);
                     $dec = strlen($dec) ? str_split($dec, 1) : [];
                     $int = str_split($int, 1);
                     if ($int[0] === "-") {
@@ -89,7 +89,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
                             array_unshift($dec, "0");
                         }
                     }
-                    return ($neg ? "-" : "") . ($int ? implode("", $int) : "0") . ($dec ? ("." . rtrim(implode("", $dec), "0")) : "");
+                    return ($neg ? "-" : "").($int ? implode("", $int) : "0").($dec ? (".".rtrim(implode("", $dec), "0")) : "");
                 }
             }
         } else {
@@ -156,9 +156,9 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
             $out[] = $m;
         }
         // handle other attachments
-        foreach ($this->fetchMember("attachments", "array")  ?? [] as $attachment) {
+        foreach ($this->fetchMember("attachments", "array") ?? [] as $attachment) {
             $url = $this->fetchUrl("url", $attachment);
-            if ($url) {            
+            if ($url) {
                 $m = new Enclosure;
                 $m->url = $url;
                 $m->type = $this->fetchType("mime_type", $url, $attachment);

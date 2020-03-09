@@ -42,7 +42,7 @@ interface Entry {
     public function getDateModified(): ?Date;
 
     /** Returns the URL of a large image used as a banner when displaying the entry
-     * 
+     *
      * This is only used by JSON Feed entries
      */
     public function getBanner(): ?Url;

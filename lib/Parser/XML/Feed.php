@@ -24,8 +24,6 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     protected $contentType;
     /** @var \JKingWeb\Lax\Url */
     protected $url;
-    /** @var \DOMDocument */
-    protected $document;
     /** @var \DOMElement */
     protected $subject;
     /** @var \DOMXpath */
@@ -49,23 +47,23 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
         $this->subject = $this->document->documentElement;
         $ns = $this->subject->namespaceURI;
         $name = $this->subject->localName;
-        if (is_null($ns) && $name=="rss") {
+        if (is_null($ns) && $name === "rss") {
             $this->subject = $this->fetchElement("channel") ?? $this->subject;
             $feed->format = "rss";
             $feed->version = $this->document->documentElement->getAttribute("version");
-        } elseif ($ns==XPath::NS['rdf'] && $name=="RDF") {
+        } elseif ($ns === XPath::NS['rdf'] && $name === "RDF") {
             $feed->format = "rdf";
             $channel = $this->fetchElement("rss1:channel|rss0:channel");
             if ($channel) {
                 $this->subject = $channel;
-                $feed->version = ($channel->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
+                $feed->version = ($channel->namespaceURI === XPath::NS['rss1']) ? "1.0" : "0.90";
             } else {
-                 $element = $this->fetchElement("rss1:item|rss0:item|rss1:image|rss0:image");
-                 if ($element) {
-                     $feed->version = ($element->namespaceURI==XPath::NS['rss1']) ? "1.0" : "0.90";
-                 }
+                $element = $this->fetchElement("rss1:item|rss0:item|rss1:image|rss0:image");
+                if ($element) {
+                    $feed->version = ($element->namespaceURI === XPath::NS['rss1']) ? "1.0" : "0.90";
+                }
             }
-        } elseif ($ns==XPath::NS['atom'] && $name=="feed") {
+        } elseif ($ns === XPath::NS['atom'] && $name === "feed") {
             $feed->format = "atom";
             $feed->version = "1.0";
         } else {
@@ -98,11 +96,11 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     public function getId(): ?string {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
     }
-    
+
     public function getUrl(): ?Url {
         return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod() ?? $this->reqUrl;
     }
-    
+
     public function getTitle(): ?Text {
         return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
     }

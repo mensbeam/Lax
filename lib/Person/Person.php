@@ -9,7 +9,7 @@ namespace JKingWeb\Lax\Person;
 class Person {
     public $name = null;
     public $mail = null;
-    public $url  = null;
+    public $url = null;
     public $role = null;
     public $avatar = null;
 

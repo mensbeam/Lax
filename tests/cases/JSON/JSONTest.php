@@ -26,11 +26,11 @@ namespace JKingWeb\Lax\TestCase\JSON;
       be applied to it
     - Any collections should be represented as sequences of maps, which will
       all be transformed accordingly
-    - Rich text can either be supplied as a string (which will yield a Text object 
+    - Rich text can either be supplied as a string (which will yield a Text object
       with plain-text content) or as a map with any of the properties of the
       Text class listed
 
-    The transformations as performed by the `makeFeed` and `makeEntry` methods 
+    The transformations as performed by the `makeFeed` and `makeEntry` methods
     of the abstract test case.
 
 */
@@ -51,8 +51,7 @@ use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Parser as YamlParser;
 
-
-/** 
+/**
  * @covers JKingWeb\Lax\Parser\Construct<extended>
  * @covers JKingWeb\Lax\Parser\JSON\Feed<extended>
  * @covers JKingWeb\Lax\Parser\JSON\Entry<extended>

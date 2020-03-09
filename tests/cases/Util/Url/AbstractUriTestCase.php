@@ -6,8 +6,7 @@ use Psr\Http\Message\UriInterface;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 
-abstract class AbstractUriTestCase extends TestCase
-{
+abstract class AbstractUriTestCase extends TestCase {
     /**
      * @var UriInterface
      */
@@ -24,13 +23,11 @@ abstract class AbstractUriTestCase extends TestCase
      */
     abstract protected function createUri($uri = '');
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         $this->uri = $this->createUri($this->uri_string);
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         $this->uri = null;
     }
 
@@ -41,15 +38,13 @@ abstract class AbstractUriTestCase extends TestCase
      * The value returned MUST be normalized to lowercase, per RFC 3986
      * Section 3.1.
      */
-    public function testGetScheme($scheme, $expected)
-    {
+    public function testGetScheme($scheme, $expected) {
         $uri = $this->uri->withScheme($scheme);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getScheme(), 'Scheme must be normalized according to RFC3986');
     }
 
-    public function schemeProvider()
-    {
+    public function schemeProvider() {
         return [
             'normalized scheme' => ['HtTpS', 'https'],
             'simple scheme'     => ['http', 'http'],
@@ -66,15 +61,13 @@ abstract class AbstractUriTestCase extends TestCase
      * user value, with a colon (":") separating the values.
      *
      */
-    public function testGetUserInfo($user, $pass, $expected)
-    {
+    public function testGetUserInfo($user, $pass, $expected) {
         $uri = $this->uri->withUserInfo($user, $pass);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getUserInfo(), 'UserInfo must be normalized according to RFC3986');
     }
 
-    public function userInfoProvider()
-    {
+    public function userInfoProvider() {
         return [
             'with userinfo'  => ['iGoR', 'rAsMuZeN', 'iGoR:rAsMuZeN'],
             'no userinfo'    => ['', '', ''],
@@ -92,15 +85,13 @@ abstract class AbstractUriTestCase extends TestCase
      * Section 3.2.2.
      *
      */
-    public function testGetHost($host, $expected)
-    {
+    public function testGetHost($host, $expected) {
         $uri = $this->uri->withHost($host);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getHost(), 'Host must be normalized according to RFC3986');
     }
 
-    public function hostProvider()
-    {
+    public function hostProvider() {
         return [
             'normalized host' => ["MaStEr.eXaMpLe.CoM", "master.example.com"],
             "simple host"     => ["www.example.com", "www.example.com"],
@@ -122,18 +113,16 @@ abstract class AbstractUriTestCase extends TestCase
      * If no port is present, but a scheme is present, this method MAY return
      * the standard port for that scheme, but SHOULD return null.
      */
-    public function testPort($uri, $port, $expected)
-    {
+    public function testPort($uri, $port, $expected) {
         $uri = $this->createUri($uri)->withPort($port);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getPort(), 'port must be an int or null');
     }
 
-    public function portProvider()
-    {
+    public function portProvider() {
         return [
-            'non standard port for http' => ['http://www.example.com', 443, 443],
-            'remove port' => ['http://www.example.com', null, null],
+            'non standard port for http'           => ['http://www.example.com', 443, 443],
+            'remove port'                          => ['http://www.example.com', null, null],
             'standard port on schemeless http url' => ['//www.example.com', 80, 80],
         ];
     }
@@ -141,12 +130,10 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group port
      */
-    public function testUriWithStandardPort()
-    {
+    public function testUriWithStandardPort() {
         $uri = $this->createUri('http://example.com:80');
         $this->assertContains($uri->getPort(), [80, null], "If no port is present, but a scheme is present, this method MAY return the standard port for that scheme, but SHOULD return null.");
     }
-
 
     /**
      * @group authority
@@ -155,8 +142,7 @@ abstract class AbstractUriTestCase extends TestCase
      * If the port component is not set or is the standard port for the current
      * scheme, it SHOULD NOT be included.
      */
-    public function testGetAuthority($scheme, $user, $pass, $host, $port, $authority)
-    {
+    public function testGetAuthority($scheme, $user, $pass, $host, $port, $authority) {
         $uri = $this
             ->createUri()
             ->withHost($host)
@@ -168,8 +154,7 @@ abstract class AbstractUriTestCase extends TestCase
         $this->assertSame($authority, $uri->getAuthority());
     }
 
-    public function authorityProvider()
-    {
+    public function authorityProvider() {
         return [
             'authority' => [
                 'scheme'    => 'http',
@@ -222,15 +207,13 @@ abstract class AbstractUriTestCase extends TestCase
      * any characters. To determine what characters to encode, please refer to
      * RFC 3986, Sections 2 and 3.4.
      */
-    public function testGetQuery($query, $expected)
-    {
+    public function testGetQuery($query, $expected) {
         $uri = $this->uri->withQuery($query);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getQuery(), 'Query must be normalized according to RFC3986');
     }
 
-    public function queryProvider()
-    {
+    public function queryProvider() {
         return [
             'normalized query' => ['foo.bar=%7evalue', 'foo.bar=~value'],
             'empty query'      => ['', ''],
@@ -247,15 +230,13 @@ abstract class AbstractUriTestCase extends TestCase
      * any characters. To determine what characters to encode, please refer to
      * RFC 3986, Sections 2 and 3.5.
      */
-    public function testGetFragment($fragment, $expected)
-    {
+    public function testGetFragment($fragment, $expected) {
         $uri = $this->uri->withFragment($fragment);
         $this->assertInstanceOf(UriInterface::class, $uri);
         $this->assertSame($expected, $uri->getFragment(), 'Fragment must be normalized according to RFC3986');
     }
 
-    public function fragmentProvider()
-    {
+    public function fragmentProvider() {
         return [
             'URL with full components'        => ['fragment', 'fragment'],
             'URL with non-encodable fragment' => ["azAZ0-9/?-._~!$&'()*+,;=:@", "azAZ0-9/?-._~!$&'()*+,;=:@"],
@@ -278,8 +259,7 @@ abstract class AbstractUriTestCase extends TestCase
      * - If a query is present, it MUST be prefixed by "?".
      * - If a fragment is present, it MUST be prefixed by "#".
      */
-    public function testToString($scheme, $user, $pass, $host, $port, $path, $query, $fragment, $expected)
-    {
+    public function testToString($scheme, $user, $pass, $host, $port, $path, $query, $fragment, $expected) {
         $uri = $this->createUri()
             ->withHost($host)
             ->withScheme($scheme)
@@ -295,8 +275,7 @@ abstract class AbstractUriTestCase extends TestCase
             'URI string must be normalized according to RFC3986 rules'
         );
     }
-    public function stringProvider()
-    {
+    public function stringProvider() {
         return [
             'URL normalized' => [
                 'scheme'   => 'HtTps',
@@ -307,7 +286,7 @@ abstract class AbstractUriTestCase extends TestCase
                 'path'     => '/%7ejohndoe/%a1/index.php',
                 'query'    => 'foo.bar=%7evalue',
                 'fragment' => 'fragment',
-                'uri'      => 'https://iGoR:rAsMuZeN@master.example.com:443/~johndoe/%A1/index.php?foo.bar=~value#fragment'
+                'uri'      => 'https://iGoR:rAsMuZeN@master.example.com:443/~johndoe/%A1/index.php?foo.bar=~value#fragment',
             ],
             'URL without scheme' => [
                 'scheme'   => '',
@@ -337,8 +316,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group fragment
      */
-    public function testRemoveFragment()
-    {
+    public function testRemoveFragment() {
         $uri = 'http://example.com/path/to/me';
         $this->assertSame($uri, (string) $this->createUri($uri.'#doc')->withFragment(''));
     }
@@ -346,8 +324,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group query
      */
-    public function testRemoveQuery()
-    {
+    public function testRemoveQuery() {
         $uri = 'http://example.com/path/to/me';
         $this->assertSame($uri, (string) (string) $this->createUri($uri.'?name=value')->withQuery(''));
     }
@@ -355,8 +332,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group path
      */
-    public function testRemovePath()
-    {
+    public function testRemovePath() {
         $uri = 'http://example.com';
         $this->assertContains(
             (string) $this->createUri($uri.'/path/to/me')->withPath(''),
@@ -367,8 +343,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group port
      */
-    public function testRemovePort()
-    {
+    public function testRemovePort() {
         $this->assertSame(
             'http://example.com/path/to/me',
             (string) $this->createUri('http://example.com:81/path/to/me')->withPort(null)
@@ -378,8 +353,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group userinfo
      */
-    public function testRemoveUserInfo()
-    {
+    public function testRemoveUserInfo() {
         $this->assertSame(
             'http://example.com/path/to/me',
             (string) $this->createUri('http://user:pass@example.com/path/to/me')->withUserInfo('')
@@ -389,8 +363,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group scheme
      */
-    public function testRemoveScheme()
-    {
+    public function testRemoveScheme() {
         $this->assertSame(
             '//example.com/path/to/me',
             (string) $this->createUri('http://example.com/path/to/me')->withScheme('')
@@ -400,8 +373,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group authority
      */
-    public function testRemoveAuthority()
-    {
+    public function testRemoveAuthority() {
         $uri = 'http://user:login@example.com:82/path?q=v#doc';
 
         $uri_with_host = $this->createUri($uri)
@@ -418,14 +390,12 @@ abstract class AbstractUriTestCase extends TestCase
      * @group scheme
      * @dataProvider withSchemeFailedProvider
      */
-    public function testWithSchemeFailed($scheme)
-    {
+    public function testWithSchemeFailed($scheme) {
         $this->expectException(InvalidArgumentException::class);
         $this->uri->withScheme($scheme);
     }
 
-    public function withSchemeFailedProvider()
-    {
+    public function withSchemeFailedProvider() {
         return [
             'invalid char'         => ['in,valid'],
             'integer like string'  => ['123'],
@@ -436,14 +406,12 @@ abstract class AbstractUriTestCase extends TestCase
      * @group host
      * @dataProvider withHostFailedProvider
      */
-    public function testWithHostFailed($host)
-    {
+    public function testWithHostFailed($host) {
         $this->expectException(InvalidArgumentException::class);
         $this->uri->withHost($host);
     }
 
-    public function withHostFailedProvider()
-    {
+    public function withHostFailedProvider() {
         return [
             'dot in front'                         => ['.example.com'],
             'hyphen suffix'                        => ['host.com-'],
@@ -469,8 +437,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group host
      */
-    public function testModificationFailedWithInvalidHost()
-    {
+    public function testModificationFailedWithInvalidHost() {
         $this->expectException(InvalidArgumentException::class);
         $this->createUri('http://example.com')->withHost('?');
     }
@@ -479,15 +446,12 @@ abstract class AbstractUriTestCase extends TestCase
      * @group uri
      * @dataProvider invalidURI
      */
-    public function testCreateFromInvalidUrlKO($uri)
-    {
+    public function testCreateFromInvalidUrlKO($uri) {
         $this->expectException(InvalidArgumentException::class);
         $this->createUri($uri);
-        
     }
 
-    public function invalidURI()
-    {
+    public function invalidURI() {
         return [
             ['http://user@:80'],
         ];
@@ -496,8 +460,7 @@ abstract class AbstractUriTestCase extends TestCase
     /**
      * @group uri
      */
-    public function testEmptyValueDetection()
-    {
+    public function testEmptyValueDetection() {
         $expected = '//0:0@0/0?0#0';
         $this->assertSame($expected, (string) $this->createUri($expected));
     }
@@ -506,8 +469,7 @@ abstract class AbstractUriTestCase extends TestCase
      * @group path
      * @group uri
      */
-    public function testPathDetection()
-    {
+    public function testPathDetection() {
         $expected = 'foo/bar:';
         $this->assertSame($expected, $this->createUri($expected)->getPath());
     }

@@ -12,7 +12,7 @@ use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
 
 class Entry {
     /** @var string $id The persistent identifier of the entry. This is often identical to the URL of the entry, but the latter may change
-     * 
+     *
      * While identifiers are usually supposed to be globally unique, in practice they are frequently only unique within the context of a particular newsfeed
      */
     public $id;
@@ -25,7 +25,7 @@ class Entry {
     /** @var \JKingWeb\Lax\Text $title The title of the entry */
     public $title;
     /** @var \JKingWeb\Lax\Text $content The content of the entry
-     * 
+     *
      * This may be merely a summary or excerpt for many newsfeeds */
     public $content;
     /** @var \JKingWeb\Lax\Text $summary A short summary or excerpt of the entry, distinct from the content */

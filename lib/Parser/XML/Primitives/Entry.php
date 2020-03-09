@@ -6,14 +6,13 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\XML\Primitives;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Parser\XML\XPath;
 
 trait Entry {
-    /** Primitive to fetch a collection of authors associated with an Atom entry 
-     * 
+    /** Primitive to fetch a collection of authors associated with an Atom entry
+     *
      * This differs from feeds in that an entry's <source> element (which possibly contains metadata for the source feed) is checked for authors if the entry itself has none
-    */
+     */
     protected function getAuthorsAtom() {
         return $this->fetchPeopleAtom("atom:author", "author") ?? $this->fetchPeopleAtom("atom:source[1]/atom:author", "author");
     }
@@ -22,7 +21,7 @@ trait Entry {
     protected function getUrlRss1() {
         // XPath doesn't seem to like the query we'd need for this, so it must be done the hard way.
         $node = $this->subject;
-        if ($node->localName=="item" && ($node->namespaceURI==XPath::NS['rss1'] || $node->namespaceURI==XPath::NS['rss0']) && $node->hasAttributeNS(XPath::NS['rdf'], "about")) {
+        if ($node->localName === "item" && ($node->namespaceURI === XPath::NS['rss1'] || $node->namespaceURI == XPath::NS['rss0']) && $node->hasAttributeNS(XPath::NS['rdf'], "about")) {
             return $this->resolveNodeUrl($node, "about", XPath::NS['rdf']);
         } else {
             return null;

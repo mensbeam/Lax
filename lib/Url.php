@@ -9,9 +9,9 @@ namespace JKingWeb\Lax;
 use Psr\Http\Message\UriInterface;
 
 /** Normalized URI representation, compatible with the PSR-7 URI interface
- * 
+ *
  * The following features are implemented:
- * 
+ *
  * - The full PSR-7 `UriInterface` interface
  * - Correct handling of both URLs and URNs
  * - Relative URL resolution
@@ -20,13 +20,13 @@ use Psr\Http\Message\UriInterface;
  * - IDNA normalization
  * - IPv6 address normalization
  * - Empty query and fragment removal
- * 
+ *
  * Some things this class does not do:
- * 
+ *
  * - Handle non-standard schemes (e.g. ed2k)
  * - Collapse paths
  * - Drop default ports
- * 
+ *
  * This class should not be used with XML namespace URIs,
  * as the normalizations performed will change the values
  * of some namespaces.
@@ -243,7 +243,7 @@ PCRE;
                 }
                 break;
             default:
-                $this->$name = $this->normalizeEncoding((string) $value, $name);    
+                $this->$name = $this->normalizeEncoding((string) $value, $name);
         }
     }
 
@@ -266,7 +266,7 @@ PCRE;
                         $this->fragment = $fragment;
                     }
                 }
-            } elseif(strlen($path)) {
+            } elseif (strlen($path)) {
                 if ($this->path[0] !== "/") {
                     if ($path[-1] === "/") {
                         $this->path = $path.$this->path;

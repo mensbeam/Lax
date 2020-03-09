@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace JKingWeb\Lax;
 
 class Date extends \DateTimeImmutable implements \JsonSerializable {
-    static public $supportedFormats = [
+    public static $supportedFormats = [
         // RFC 3339 formats
         'Y-m-d\TH:i:s.u\Z',
         'Y-m-d\TH:i:s.u\z',

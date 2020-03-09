@@ -45,9 +45,9 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
         $entry->title = strlen($this->title) ? $this->title : $this->link;
         // do extra stuff just to test it
         $entry->categories = $this->getCategories();
-        return $entry; 
+        return $entry;
     }
-    
+
     /** General function to fetch the entry title */
     public function getTitle(): ?Text {
         return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
@@ -86,7 +86,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     /** General function to fetch the URL of a article related to the entry
-     * 
+     *
      * This is only reliable with Atom feeds
      */
     public function getRelatedLink(): ?Url {
@@ -102,7 +102,7 @@ class Entry implements \JKingWeb\Lax\Parser\Entry {
     }
 
     public function getEnclosures(): EnclosureCollection {
-        return new EnclosureCollection;   
+        return new EnclosureCollection;
     }
 
     public function getLang(): ?string {

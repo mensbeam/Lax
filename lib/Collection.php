@@ -7,7 +7,6 @@ declare(strict_types=1);
 namespace JKingWeb\Lax;
 
 abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countable, \JsonSerializable {
-
     protected $data = [];
 
     /** Implementation for IteratorAggregate */
@@ -49,10 +48,10 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
         unset($this->data[$offset]);
     }
 
-    /** Merges one or more other collections' items into this one 
-     * 
+    /** Merges one or more other collections' items into this one
+     *
      * The returned collection is the original instance, modified
-    */
+     */
     public function merge(Collection ...$coll): self {
         foreach ($coll as $c) {
             foreach ($c as $p) {
@@ -62,14 +61,14 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
         return $this;
     }
 
-    /** Returns a collection filtered along a given axis which includes or excludes only the specified terms 
-     * 
+    /** Returns a collection filtered along a given axis which includes or excludes only the specified terms
+     *
      * $terms is the list of values to include or exclude in the result
-     * 
-     * $axis is the property of each collection member which value is to be checked against the terms 
-     * 
+     *
+     * $axis is the property of each collection member which value is to be checked against the terms
+     *
      * $inclusive specified whether the terms are to included in (true) or excluded from (false) the result
-    */
+     */
     protected function filter(array $terms, string $axis, bool $inclusive): self {
         $out = new static;
         foreach ($this as $item) {

@@ -8,16 +8,16 @@ namespace JKingWeb\Lax\Category;
 
 class Collection extends \JKingWeb\Lax\Collection {
     protected static $ranks = [
-        'webmaster' => 10,
-        'editor' => 20,
+        'webmaster'   => 10,
+        'editor'      => 20,
         'contributor' => 30,
-        'author' => 40,
+        'author'      => 40,
     ];
 
     /** Returns the collection formatted as an array of strings
-     * 
+     *
      * The $humanFriendly parameter controls whether or not an effort is made to return human-friendly category names. Only Atom categories have this distinction
-     * 
+     *
      */
     public function list(bool $humanFriendly = true) {
         $out = [];

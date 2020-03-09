@@ -48,7 +48,7 @@ interface Feed {
     public function getPeople(): PersonCollection;
 
     /** Returns the list of entries
-     * 
+     *
      * @param \JKingWeb\Lax\Feed $feed The newsfeed to which the entry belongs. Some data from the newsfeed may be used in parsing the entry
      */
     public function getEntries(FeedStruct $feed = null): array;

@@ -9,18 +9,18 @@ namespace JKingWeb\Lax\Person;
 class Collection extends \JKingWeb\Lax\Collection {
     protected static $ranks = [
         'contributor' => -10,
-        'webmaster' => 10,
-        'editor' => 20,
-        'author' => 30,
+        'webmaster'   => 10,
+        'editor'      => 20,
+        'author'      => 30,
     ];
 
     /** Returns the primary person of the collection
-     * 
+     *
      * The primary is the first member of the highest-weight role
-     * 
+     *
      * Roles are ranked thus:
      * author > contributor > editor > webmaster > (anything else)
-     * 
+     *
      */
     public function primary() {
         $out = null;

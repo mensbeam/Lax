@@ -6,12 +6,11 @@
 declare(strict_types=1);
 namespace JKingWeb\Lax\Parser\XML\Primitives;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Parser\XML\XPath;
 
 trait Feed {
     /** Primitive to fetch an Atom feed summary
-     * 
+     *
      * Atom does not have a 'description' element like the RSSes, but it does have 'subtitle', which fills roughly the same function
      */
     protected function getSummaryAtom() {
@@ -49,8 +48,8 @@ trait Feed {
         $node = $this->subject;
         if ($node->hasAttributeNS(XPath::NS['rdf'], "about")) {
             if (
-                ($node->localName=="channel" && ($node->namespaceURI==XPath::NS['rss1'] || $node->namespaceURI==XPath::NS['rss0'])) ||
-                ($node==$node->ownerDocument->documentElement && $node->localName=="RDF" && $node->namespaceURI==XPath::NS['rdf'])
+                ($node->localName === "channel" && ($node->namespaceURI === XPath::NS['rss1'] || $node->namespaceURI === XPath::NS['rss0'])) ||
+                ($node === $node->ownerDocument->documentElement && $node->localName === "RDF" && $node->namespaceURI === XPath::NS['rdf'])
             ) {
                 return $this->resolveNodeUrl($node, "about", XPath::NS['rdf']);
             }

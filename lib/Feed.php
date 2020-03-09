@@ -10,30 +10,30 @@ use JKingWeb\Lax\Category\Collection as CategoryCollection;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 
 /** Represents a newsfeed, in arbitrary format
- * 
+ *
  * All properties may be null.
  */
 class Feed {
     /** @var string $format The format of newsfeed, one of the following:
-     * 
+     *
      * - `rss` for RSS 0.9x or RSS 2.0.x
      * - `rdf` for RSS 1.0
      * - `atom` for Atom feeds
      * - `json` for JSON Feed
      * - `hfeed` for a microformat h-feeds
-     * 
+     *
      * The format is largely advisory, but may be used when converting between formats
      */
     public $format;
     /** @var string $version The format version of the newsfeed
-     * 
+     *
      * The version is largely advisory, but may be used when converting between formats
      */
     public $version;
     /** @var string $lang The human language of the newsfeed as a whole */
     public $lang;
     /** @var string $id The globally unique identifier for the newsfeed
-     * 
+     *
      * For some formats, such as RSS 2.0 and JSON Feed, this may be he same as the newsfeed URL
      */
     public $id;
@@ -46,7 +46,7 @@ class Feed {
     /** @var \JKingWeb\Lax\Text $summary A short description or summary of the newsfeed */
     public $summary;
     /** @var \JKingWeb\Lax\Date $dateModified The date at which the newsfeed was last modified
-     * 
+     *
      * This property only records a date embedded in the newsfeed itself, not any dates from HTTP or the file system
      */
     public $dateModified;
@@ -54,7 +54,7 @@ class Feed {
     public $icon;
     /** @var \JKingWeb\Lax\Url $image URL to a large banner or poster image for the newsfeed */
     public $image;
-    
+
     /** @var \JKingWeb\Lax\Category\Collection $categories A list of categories associated with the newsfeed as a whole */
     public $categories;
     /** @var \JKingWeb\Lax\Person\Collection $people A list of people (e.g. authors, contributors) associated with the newsfeed as a whole */
@@ -73,14 +73,14 @@ class Feed {
         $this->categories = new CategoryCollection;
         $this->sched = new Schedule;
     }
-    
+
     /** Parses a string to produce a Feed object
-     * 
+     *
      * Most users will probably rather want the Feed::fetch() method
-     * 
+     *
      * @param string $data The newsfeed to parse
      * @param string|null $contentType The HTTP Content-Type of the document, if available
-     * @param string|null $url The URL used to retrieve the newsfeed, if applicable 
+     * @param string|null $url The URL used to retrieve the newsfeed, if applicable
      */
     public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
         $out = new self;

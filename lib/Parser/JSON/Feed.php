@@ -8,7 +8,6 @@ namespace JKingWeb\Lax\Parser\JSON;
 
 use JKingWeb\Lax\Text;
 use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Entry;
 use JKingWeb\Lax\Feed as FeedStruct;
 use JKingWeb\Lax\Person\Collection as PersonCollection;
 use JKingWeb\Lax\Category\Collection as CategoryCollection;
@@ -82,9 +81,9 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** {@inheritdoc}
-     * 
+     *
      * For JSON feeds this is always the feed URL specified in the feed
-    */
+     */
     public function getId(): ?string {
         return $this->fetchMember("feed_url", "str");
     }
@@ -106,9 +105,9 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** {@inheritdoc}
-     * 
+     *
      *  JSON feeds themselves don't have dates, so this always returns null
-    */
+     */
     public function getDateModified(): ?Date {
         return null;
     }
@@ -118,9 +117,9 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     }
 
     /** {@inheritdoc}
-     * 
+     *
      * JSON Feed does not have categories at the feed level, so this always returns and empty collection
-    */
+     */
     public function getCategories(): CategoryCollection {
         return new CategoryCollection;
     }

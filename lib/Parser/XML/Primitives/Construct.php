@@ -90,9 +90,9 @@ trait Construct {
     }
 
     /** Primitive to fetch Dublin Core feed/entry categories
-     * 
+     *
      * Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation
-    */
+     */
     protected function getCategoriesDC(): ?CategoryCollection {
         $out = new CategoryCollection;
         foreach ($this->fetchStringMulti("dc:subject") ?? [] as $text) {
@@ -123,10 +123,10 @@ trait Construct {
         return $this->fetchString("atom:id");
     }
 
-    /** Primitive to fetch an RSS feed/entry identifier 
-     * 
+    /** Primitive to fetch an RSS feed/entry identifier
+     *
      * Using RSS' <guid> for feed identifiers is non-standard, but harmless
-    */
+     */
     protected function getIdRss2(): ?string {
         return $this->fetchString("guid");
     }
@@ -166,10 +166,10 @@ trait Construct {
         return $this->fetchPeopleAtom("atom:contributor", "contributor");
     }
 
-    /** Primitive to fetch a collection of authors associated with a podcast/episode 
-     * 
+    /** Primitive to fetch a collection of authors associated with a podcast/episode
+     *
      * The collection only ever contains the first author found: podcasts implicitly have only one author
-    */
+     */
     protected function getAuthorsPod(): ?PersonCollection {
         $out = new PersonCollection;
         $p = new Person;
@@ -182,10 +182,10 @@ trait Construct {
         return count($out) ? $out : null;
     }
 
-    /** Primitive to fetch a collection of webmasters associated with a podcast 
-     * 
+    /** Primitive to fetch a collection of webmasters associated with a podcast
+     *
      * The collection only ever contains the first webmaster found: podcasts implicitly have only one webmaster
-    */
+     */
     protected function getWebmastersPod(): ?PersonCollection {
         $out = new PersonCollection;
         $node = $this->fetchElement("gplay:owner|apple:owner");
