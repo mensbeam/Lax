@@ -1,6 +1,6 @@
 <?php
 
-namespace JKingWeb\Lax\TestCase\Util\Url;
+namespace MensBeam\Lax\TestCase\Util\Url;
 
 use Psr\Http\Message\UriInterface;
 use PHPUnit\Framework\TestCase;

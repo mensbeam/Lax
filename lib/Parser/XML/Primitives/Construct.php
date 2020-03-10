@@ -4,16 +4,16 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\XML\Primitives;
+namespace MensBeam\Lax\Parser\XML\Primitives;
 
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Category;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Parser\XML\Entry as FeedEntry;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Person\Person;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Category;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Parser\XML\Entry as FeedEntry;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Url;
 
 trait Construct {
     /** Primitive to fetch an Atom feed/entry title

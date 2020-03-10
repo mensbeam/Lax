@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Category;
+namespace MensBeam\Lax\Category;
 
-class Collection extends \JKingWeb\Lax\Collection {
+class Collection extends \MensBeam\Lax\Collection {
     protected static $ranks = [
         'webmaster'   => 10,
         'editor'      => 20,

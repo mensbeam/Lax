@@ -4,14 +4,14 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser;
+namespace MensBeam\Lax\Parser;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Feed as FeedStruct;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Feed as FeedStruct;
+use MensBeam\Lax\Url;
 
 interface Feed {
     /** Returns the globally unique identifier of the newsfeed; this is usually a URI */
@@ -49,7 +49,7 @@ interface Feed {
 
     /** Returns the list of entries
      *
-     * @param \JKingWeb\Lax\Feed $feed The newsfeed to which the entry belongs. Some data from the newsfeed may be used in parsing the entry
+     * @param \MensBeam\Lax\Feed $feed The newsfeed to which the entry belongs. Some data from the newsfeed may be used in parsing the entry
      */
     public function getEntries(FeedStruct $feed = null): array;
 

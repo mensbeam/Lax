@@ -4,18 +4,18 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\JSON;
+namespace MensBeam\Lax\Parser\JSON;
 
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Feed as FeedStruct;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Parser\Exception;
-use JKingWeb\Lax\Parser\JSON\Entry as EntryParser;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Feed as FeedStruct;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Parser\Exception;
+use MensBeam\Lax\Parser\JSON\Entry as EntryParser;
+use MensBeam\Lax\Url;
 
-class Feed implements \JKingWeb\Lax\Parser\Feed {
+class Feed implements \MensBeam\Lax\Parser\Feed {
     use Construct;
 
     protected const MIME_TYPES = [

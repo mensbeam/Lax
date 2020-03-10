@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace MensBeam\Lax;
 
 class Sanitizer {
     /** @var string[] An array of namespace URIs (the keys) and prefixes (the values). The prefixes are used in the element and attribute lists that follow */

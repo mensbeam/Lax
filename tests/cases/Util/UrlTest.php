@@ -4,12 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\TestCase\Util;
+namespace MensBeam\Lax\TestCase\Util;
 
-use JKingWeb\Lax\Url;
-use JKingWeb\Lax\TestCase\Util\Url\AbstractUriTestCase;
+use MensBeam\Lax\Url;
+use MensBeam\Lax\TestCase\Util\Url\AbstractUriTestCase;
 
-/** @covers JKingWeb\Lax\Url<extended> */
+/** @covers MensBeam\Lax\Url<extended> */
 class UrlTest extends AbstractUriTestCase {
     protected function createUri($uri = '') {
         return new Url($uri);

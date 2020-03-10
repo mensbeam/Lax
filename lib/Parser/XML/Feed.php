@@ -4,16 +4,16 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\XML;
+namespace MensBeam\Lax\Parser\XML;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Feed as FeedStruct;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Feed as FeedStruct;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Url;
 
-class Feed implements \JKingWeb\Lax\Parser\Feed {
+class Feed implements \MensBeam\Lax\Parser\Feed {
     use Construct;
     use Primitives\Construct;
     use Primitives\Feed;
@@ -22,7 +22,7 @@ class Feed implements \JKingWeb\Lax\Parser\Feed {
     protected $data;
     /** @var string */
     protected $contentType;
-    /** @var \JKingWeb\Lax\Url */
+    /** @var \MensBeam\Lax\Url */
     protected $url;
     /** @var \DOMElement */
     protected $subject;

@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace MensBeam\Lax;
 
 const NS_BASE = __NAMESPACE__."\\";
 define(NS_BASE."BASE", dirname(__DIR__).DIRECTORY_SEPARATOR);

@@ -4,10 +4,10 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace MensBeam\Lax;
 
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Person\Collection as PersonCollection;
 
 /** Represents a newsfeed, in arbitrary format
  *
@@ -39,32 +39,32 @@ class Feed {
     public $id;
     /** @var string $url The feed's canonical URL. This may differ from the URL used to fetch the newsfeed */
     public $url;
-    /** @var \JKingWeb\Lax\Url $link The URL of the Web page associated with the feed */
+    /** @var \MensBeam\Lax\Url $link The URL of the Web page associated with the feed */
     public $link;
-    /** @var \JKingWeb\Lax\Text $title The title of the newsfeed */
+    /** @var \MensBeam\Lax\Text $title The title of the newsfeed */
     public $title;
-    /** @var \JKingWeb\Lax\Text $summary A short description or summary of the newsfeed */
+    /** @var \MensBeam\Lax\Text $summary A short description or summary of the newsfeed */
     public $summary;
-    /** @var \JKingWeb\Lax\Date $dateModified The date at which the newsfeed was last modified
+    /** @var \MensBeam\Lax\Date $dateModified The date at which the newsfeed was last modified
      *
      * This property only records a date embedded in the newsfeed itself, not any dates from HTTP or the file system
      */
     public $dateModified;
-    /** @var \JKingWeb\Lax\Url $icon URL to a small icon for the newsfeed */
+    /** @var \MensBeam\Lax\Url $icon URL to a small icon for the newsfeed */
     public $icon;
-    /** @var \JKingWeb\Lax\Url $image URL to a large banner or poster image for the newsfeed */
+    /** @var \MensBeam\Lax\Url $image URL to a large banner or poster image for the newsfeed */
     public $image;
 
-    /** @var \JKingWeb\Lax\Category\Collection $categories A list of categories associated with the newsfeed as a whole */
+    /** @var \MensBeam\Lax\Category\Collection $categories A list of categories associated with the newsfeed as a whole */
     public $categories;
-    /** @var \JKingWeb\Lax\Person\Collection $people A list of people (e.g. authors, contributors) associated with the newsfeed as a whole */
+    /** @var \MensBeam\Lax\Person\Collection $people A list of people (e.g. authors, contributors) associated with the newsfeed as a whole */
     public $people;
-    /** @var \JKingWeb\Lax\Entry[] $entries An array of the newsfeed's entries */
+    /** @var \MensBeam\Lax\Entry[] $entries An array of the newsfeed's entries */
     public $entries = [];
 
-    /** @var \JKingWeb\Lax\Metadata $meta A collection of metadata not contained in the feed itself, usually from HTTP */
+    /** @var \MensBeam\Lax\Metadata $meta A collection of metadata not contained in the feed itself, usually from HTTP */
     public $meta;
-    /** @var \JKingWeb\Lax\Schedule $sched A collection of data related to the publishing shedule of the newsfeed */
+    /** @var \MensBeam\Lax\Schedule $sched A collection of data related to the publishing shedule of the newsfeed */
     public $sched;
 
     public function __construct() {

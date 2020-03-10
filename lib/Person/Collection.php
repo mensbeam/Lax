@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Person;
+namespace MensBeam\Lax\Person;
 
-class Collection extends \JKingWeb\Lax\Collection {
+class Collection extends \MensBeam\Lax\Collection {
     protected static $ranks = [
         'contributor' => -10,
         'webmaster'   => 10,

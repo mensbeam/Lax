@@ -4,16 +4,16 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\JSON;
+namespace MensBeam\Lax\Parser\JSON;
 
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Person\Person;
+use MensBeam\Lax\Url;
 
 trait Construct {
-    use \JKingWeb\Lax\Parser\Construct;
+    use \MensBeam\Lax\Parser\Construct;
 
     /** Returns an object member if the member exists and is of the expected type
      *

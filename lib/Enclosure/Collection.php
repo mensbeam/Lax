@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Enclosure;
+namespace MensBeam\Lax\Enclosure;
 
-class Collection extends \JKingWeb\Lax\Collection {
+class Collection extends \MensBeam\Lax\Collection {
 
     /** Returns the primary ("best") enclosure of the collection
      *

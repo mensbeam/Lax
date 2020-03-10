@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\TestCase\JSON;
+namespace MensBeam\Lax\TestCase\JSON;
 
 /* Test format is as follows:
 
@@ -35,26 +35,26 @@ namespace JKingWeb\Lax\TestCase\JSON;
 
 */
 
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Feed;
-use JKingWeb\Lax\Entry;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Url;
-use JKingWeb\Lax\Parser\Exception;
-use JKingWeb\Lax\Parser\JSON\Feed as Parser;
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Category\Category;
-use JKingWeb\Lax\Enclosure\Enclosure;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Feed;
+use MensBeam\Lax\Entry;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Url;
+use MensBeam\Lax\Parser\Exception;
+use MensBeam\Lax\Parser\JSON\Feed as Parser;
+use MensBeam\Lax\Person\Person;
+use MensBeam\Lax\Category\Category;
+use MensBeam\Lax\Enclosure\Enclosure;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Parser as YamlParser;
 
 /**
- * @covers JKingWeb\Lax\Parser\Construct<extended>
- * @covers JKingWeb\Lax\Parser\JSON\Feed<extended>
- * @covers JKingWeb\Lax\Parser\JSON\Entry<extended>
+ * @covers MensBeam\Lax\Parser\Construct<extended>
+ * @covers MensBeam\Lax\Parser\JSON\Feed<extended>
+ * @covers MensBeam\Lax\Parser\JSON\Entry<extended>
  */
 class JSONTest extends \PHPUnit\Framework\TestCase {
     /** @dataProvider provideJSONFeedVersion1 */

@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser;
+namespace MensBeam\Lax\Parser;
 
-use JKingWeb\Lax\Exception as BaseException;
+use MensBeam\Lax\Exception as BaseException;
 
 class Exception extends BaseException {
 }

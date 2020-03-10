@@ -4,9 +4,9 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\XML\Primitives;
+namespace MensBeam\Lax\Parser\XML\Primitives;
 
-use JKingWeb\Lax\Parser\XML\XPath;
+use MensBeam\Lax\Parser\XML\XPath;
 
 trait Feed {
     /** Primitive to fetch an Atom feed summary

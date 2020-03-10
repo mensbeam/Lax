@@ -4,24 +4,24 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\JSON;
+namespace MensBeam\Lax\Parser\JSON;
 
-use JKingWeb\Lax\Feed as FeedStruct;
-use JKingWeb\Lax\Entry as EntryStruct;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
-use JKingWeb\Lax\Category\Category;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Enclosure\Enclosure;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Feed as FeedStruct;
+use MensBeam\Lax\Entry as EntryStruct;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
+use MensBeam\Lax\Category\Category;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Enclosure\Enclosure;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Url;
 
-class Entry implements \JKingWeb\Lax\Parser\Entry {
+class Entry implements \MensBeam\Lax\Parser\Entry {
     use Construct;
 
     protected $url;
-    /** @var \JKingWeb\Lax\Feed */
+    /** @var \MensBeam\Lax\Feed */
     protected $feed;
     /** @var \Mimey\MimeTypes */
     protected $mime;

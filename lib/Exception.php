@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax;
+namespace MensBeam\Lax;
 
 abstract class Exception extends \Exception {
     public const SYMBOLS = [

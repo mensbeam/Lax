@@ -4,14 +4,14 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser;
+namespace MensBeam\Lax\Parser;
 
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Category\Collection as CategoryCollection;
-use JKingWeb\Lax\Enclosure\Collection as EnclosureCollection;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Text;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Text;
+use MensBeam\Lax\Url;
 
 interface Entry {
     /** Returns the globally unique identifier of the entry; this is usually a URI */

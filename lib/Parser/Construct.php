@@ -4,11 +4,11 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser;
+namespace MensBeam\Lax\Parser;
 
-use JKingWeb\Lax\Collection;
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Url;
+use MensBeam\Lax\Collection;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Url;
 
 trait Construct {
     /** Trims plain text and collapses whitespace */

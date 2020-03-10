@@ -4,15 +4,15 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\XML;
+namespace MensBeam\Lax\Parser\XML;
 
-use JKingWeb\Lax\Date;
-use JKingWeb\Lax\Person\Person;
-use JKingWeb\Lax\Person\Collection as PersonCollection;
-use JKingWeb\Lax\Text;
+use MensBeam\Lax\Date;
+use MensBeam\Lax\Person\Person;
+use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Text;
 
 trait Construct {
-    use \JKingWeb\Lax\Parser\Construct;
+    use \MensBeam\Lax\Parser\Construct;
 
     /** @var \DOMDocument */
     protected $document;

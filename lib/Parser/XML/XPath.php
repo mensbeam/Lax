@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace JKingWeb\Lax\Parser\XML;
+namespace MensBeam\Lax\Parser\XML;
 
 class XPath extends \DOMXpath {
     public const NS = [
