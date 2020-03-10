@@ -22,6 +22,9 @@
     <testsuite name="JSON">
         <directory>cases/JSON</directory>
     </testsuite>
+    <testsuite name="XML">
+        <directory>cases/XML</directory>
+    </testsuite>
     <testsuite name="Util">
         <directory>cases/Util</directory>
     </testsuite>

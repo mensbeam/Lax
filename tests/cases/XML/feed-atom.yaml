@@ -1,0 +1,6 @@
+Minimal Atom feed:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom"/>
+    output:
+        format: atom
+        version: '1.0'

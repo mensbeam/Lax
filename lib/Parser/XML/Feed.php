@@ -30,7 +30,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     protected $xpath;
 
     /** Constructs a parsed feed */
-    public function __construct(string $data, string $contentType = "", string $url = "") {
+    public function __construct(string $data, string $contentType = null, string $url = null) {
         $this->data = $data;
         $this->contentType = $contentType;
         if (strlen($url ?? "")) {

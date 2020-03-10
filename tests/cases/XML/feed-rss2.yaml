@@ -1,0 +1,6 @@
+Minimal RSS 1.0 feed:
+    input : >
+        <rss version="2.0"/>
+    output:
+        format: rss
+        version: '2.0'
