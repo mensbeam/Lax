@@ -1,0 +1,11 @@
+Malformed XML:
+    input: >
+        <rss>
+            <channel>
+        </rss>
+    exception: notXML
+
+Root element of non-feed type:
+    input: >
+        <html/>
+    exception: notXMLFeed

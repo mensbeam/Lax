@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML;
 
+use MensBeam\Lax\Parser\Exception;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Feed as FeedStruct;
@@ -17,6 +18,8 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     use Construct;
     use Primitives\Construct;
     use Primitives\Feed;
+
+    protected const LIBXML_OPTIONS = \LIBXML_BIGLINES | \LIBXML_COMPACT | \LIBXML_HTML_NODEFDTD | \LIBXML_NOCDATA | \LIBXML_NOENT | \LIBXML_NONET | \LIBXML_NOERROR | LIBXML_NOWARNING;
 
     /** @var string */
     protected $data;
@@ -41,7 +44,9 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
         $this->document = new \DOMDocument();
-        $this->document->loadXML($this->data, \LIBXML_BIGLINES | \LIBXML_COMPACT);
+        if (!$this->document->loadXML($this->data, self::LIBXML_OPTIONS)) {
+            throw new Exception("notXML");
+        }
         $this->document->documentURI = (string) $this->url;
         $this->xpath = new XPath($this->document);
         $this->subject = $this->document->documentElement;
@@ -61,13 +66,15 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
                 $element = $this->fetchElement("rss1:item|rss0:item|rss1:image|rss0:image");
                 if ($element) {
                     $feed->version = ($element->namespaceURI === XPath::NS['rss1']) ? "1.0" : "0.90";
+                } else {
+                    throw new Exception("notXMLFeed");
                 }
             }
         } elseif ($ns === XPath::NS['atom'] && $name === "feed") {
             $feed->format = "atom";
             $feed->version = "1.0";
         } else {
-            throw new \Exception;
+            throw new Exception("notXMLFeed");
         }
         $feed->meta->url = $this->url;
         return $feed;

@@ -11,7 +11,9 @@ abstract class Exception extends \Exception {
         // Parsing: 0x1100
         "notJSONType"                => [0x1111, "Document Content-Type is not either that of JSON Feed or generic JSON"],
         "notJSON"                    => [0x1112, "Document is not valid JSON"],
+        "notXML"                     => [0x1112, "Document is not well-formed XML"],
         "notJSONFeed"                => [0x1113, "Document is not a JSON Feed document"],
+        "notXMLFeed"                 => [0x1113, "Document is not a newsfeed"],
     ];
 
     public function __construct(string $symbol, \Exception $e = null) {
