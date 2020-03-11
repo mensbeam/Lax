@@ -1,7 +1,25 @@
-Minimal RSS 0.90 feed:
-    input : >
+Minimal feed:
+    input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
             <channel/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+
+Minimal feed without channel 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <item/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+
+Minimal feed without channel 2:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <image/>
         </rdf:RDF>
     output:
         format: rdf

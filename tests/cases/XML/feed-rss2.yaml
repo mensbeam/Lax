@@ -1,6 +1,39 @@
-Minimal RSS 1.0 feed:
-    input : >
+Minimal feed:
+    input: >
         <rss version="2.0"/>
     output:
         format: rss
         version: '2.0'
+
+Channel GUID:
+    input: >
+        <rss>
+            <channel>
+                <guid>http://example.com/</guid>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+
+Channel GUID with whitespace:
+    input: >
+        <rss>
+            <channel>
+                <guid>
+                    http://example.com/
+                </guid>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+
+Root GUID:
+    input: >
+        <rss>
+            <channel/>
+            <guid>http://example.com/</guid>
+        </rss>
+    output:
+        format: rss

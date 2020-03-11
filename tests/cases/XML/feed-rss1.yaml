@@ -1,8 +1,54 @@
-Minimal RSS 1.0 feed:
-    input : >
+# For the purposes of testing Dublin Core metadata is considered a part of RSS 1.0
+
+Minimal feed:
+    input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <channel/>
         </rdf:RDF>
     output:
         format: rdf
         version: '1.0'
+
+Minimal feed without channel 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <item/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+
+Minimal feed without channel 2:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <image/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+
+DC ID:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:identifier>http://example.com/</dc:identifier>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        id: 'http://example.com/'
+
+DC ID with whitespace:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:identifier>
+                    http://example.com/
+                </dc:identifier>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        id: 'http://example.com/'

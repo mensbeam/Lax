@@ -1,6 +1,28 @@
-Minimal Atom feed:
+Minimal feed:
     input: >
         <feed xmlns="http://www.w3.org/2005/Atom"/>
     output:
         format: atom
         version: '1.0'
+
+Atom ID:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <id>http://example.com/</id>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        id: 'http://example.com/'
+
+Atom ID with whitespace:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <id>
+                http://example.com/
+            </id>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        id: 'http://example.com/'
