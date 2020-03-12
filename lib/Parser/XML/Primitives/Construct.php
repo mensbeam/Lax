@@ -120,7 +120,7 @@ trait Construct {
 
     /** Primitive to fetch an Atom feed/entry identifier */
     protected function getIdAtom(): ?string {
-        return $this->fetchString("atom:id");
+        return $this->fetchString("atom:id", ".+");
     }
 
     /** Primitive to fetch an RSS feed/entry identifier
@@ -128,12 +128,12 @@ trait Construct {
      * Using RSS' <guid> for feed identifiers is non-standard, but harmless
      */
     protected function getIdRss2(): ?string {
-        return $this->fetchString("guid");
+        return $this->fetchString("guid", ".+");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry identifier */
     protected function getIdDC(): ?string {
-        return $this->fetchString("dc:identifier");
+        return $this->fetchString("dc:identifier", ".+");
     }
 
     /** Primitive to fetch a collection of authors associated with a feed/entry via Dublin Core */

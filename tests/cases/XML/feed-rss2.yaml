@@ -38,6 +38,18 @@ Root GUID: # Any elements on the RSS2 root element should be ignored
     output:
         format: rss
 
+Bogus GUID before good:
+    input: >
+        <rss>
+            <channel>
+                <guid/>
+                <guid>http://example.com/</guid>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+
 Schedule interval 1:
     input: >
         <rss><channel>

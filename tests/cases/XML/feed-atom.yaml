@@ -26,3 +26,16 @@ Atom ID with whitespace:
         format: atom
         version: '1.0'
         id: 'http://example.com/'
+
+
+
+Bogus ID before good:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <id/>
+            <id>http://example.com/</id>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        id: 'http://example.com/'
