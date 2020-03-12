@@ -90,6 +90,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                 foreach ($v as $kk => $vv) {
                     if ($kk === "url") {
                         $f->$k->$kk = $this->makeUrl($vv);
+                    } elseif ($kk === "interval") {
+                        $f->$k->$kk = new \DateInterval($vv);
                     } else {
                         $f->$k->$kk = $vv;
                     }

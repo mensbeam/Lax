@@ -95,23 +95,20 @@ trait Feed {
                 "monthly" => ["D", 30],  // 30 days
                 "yearly"  => ["M", 12],  // 12 months
             ][strtolower($period)];
-            $f = min(1, (int) $this->fetchString("sched:updateFrequency", "0*[1-9]\d*")); // a frequency of zero makes no sense
+            $f = max(1, (int) $this->fetchString("sched:updateFrequency", "0*[1-9]\d*")); // a frequency of zero makes no sense
             // divide the period by the frequency
             // FIXME: we must have an integer result because PHP (incorrectly) rejects fractional intervals
             // see https://bugs.php.net/bug.php?id=53831
-            $n = min(1, intdiv($n, $f)); // a frequency of zero still makes no sense, so we assume at least one subdivision
+            $n = max(1, intdiv($n, $f)); // a frequency of zero still makes no sense, so we assume at least one subdivision
             return new \DateInterval("P".(strlen($p) === 1 ? "" : $p[0]).$n.$p[-1]);
         }
         return null;
     } 
 
-
-
     /** Computes the "skip-schedule" of an RSS feed, the set of days and hours during which a feed should not be fetched */
     protected function getSchedSkipRss2(): ?int {
         $out = 0;
-        $hours = $this->fetchString("skipHours/hour", "\d+", true) ?? [];
-        foreach($hours as $h) {
+        foreach($this->fetchString("skipHours/hour", "\d+", true) ?? [] as $h) {
             $out |= [
                 Schedule::HOUR_0,
                 Schedule::HOUR_1,
@@ -140,8 +137,7 @@ trait Feed {
                 Schedule::HOUR_0,
             ][(int) $h] ?? 0;
         }
-        $days = $this->fetchString("skipDays/day", null, true) ?? [];
-        foreach($days as $d) {
+        foreach($this->fetchString("skipDays/day", null, true) ?? [] as $d) {
             $out |= [
                 "monday"    => Schedule::DAY_MON,
                 "tuesday"   => Schedule::DAY_TUE,

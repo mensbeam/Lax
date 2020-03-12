@@ -38,6 +38,47 @@ Root GUID: # Any elements on the RSS2 root element should be ignored
     output:
         format: rss
 
+Schedule interval 1:
+    input: >
+        <rss><channel>
+            <ttl>60</ttl>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            interval: PT60M
+
+Schedule interval 2:
+    input: >
+        <rss><channel>
+            <ttl>bogus</ttl>
+            <ttl>60</ttl>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            interval: PT60M
+
+Schedule interval 3:
+    input: >
+        <rss><channel>
+            <ttl>
+                0120
+            </ttl>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            interval: PT120M
+
+Schedule interval 4:
+    input: >
+        <rss><channel>
+            <ttl>0</ttl>
+        </channel></rss>
+    output:
+        format: rss
+
 Skip days:
     input: >
         <rss><channel>

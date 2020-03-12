@@ -52,3 +52,72 @@ DC ID with whitespace:
         format: rdf
         version: '1.0'
         id: 'http://example.com/'
+
+Syndication schedule 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>hourly</sy:updatePeriod>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: PT60M
+
+Syndication schedule 2:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>DAILY</sy:updatePeriod>
+                <sy:updateFrequency>012</sy:updateFrequency>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: PT2H
+
+Syndication schedule 3:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod> WeeKLy   </sy:updatePeriod>
+                <sy:updateFrequency>2</sy:updateFrequency>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: P3D
+
+Syndication schedule 4:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>monthly</sy:updatePeriod>
+                <sy:updateFrequency>3</sy:updateFrequency>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: P10D
+
+Syndication schedule 5:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>yearly</sy:updatePeriod>
+                <sy:updateFrequency>24</sy:updateFrequency>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: P1M

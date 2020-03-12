@@ -144,7 +144,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
 
     public function getSchedule(): Schedule {
         $out = new Schedule;
-        $out->interval = $this->getSchedIntervalRss2();
+        $out->interval = $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
         $out->skip = $this->getSchedSkipRss2();
         $out->expired = $this->getExpiredPod();
         if (is_null($out->expired) && (($out->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($out->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
