@@ -54,6 +54,6 @@ class Schedule {
      * UTC on other days.
      */
     public $skip;
-    /** @var int $interval The suggested interval before the feed should be fetched again, in seconds */
+    /** @var \DateInterval $interval The suggested interval before the feed should be fetched again */
     public $interval;
 }

@@ -44,7 +44,7 @@ Skip days:
             <skipDays>
                 <day>MONDAY</day>
                 <day>sunday</day>
-                <day>TuE</day>
+                <day>TuE </day>
                 <day>bogus</day>
             </skipDays>
         </channel></rss>
@@ -78,7 +78,7 @@ Skip hours:
             <skipHours>
                 <hour>24</hour>
                 <hour>04</hour>
-                <hour>9</hour>
+                <hour> 9</hour>
                 <hour>bogus</hour>
                 <hour>25</hour>
             </skipHours>

@@ -95,7 +95,7 @@ trait Construct {
      */
     protected function getCategoriesDC(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->fetchStringMulti("dc:subject") ?? [] as $text) {
+        foreach ($this->fetchString("dc:subject", null, true) ?? [] as $text) {
             if (strlen($text)) {
                 $c = new Category;
                 $c->name = $text;

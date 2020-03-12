@@ -68,6 +68,7 @@ trait Feed {
         return $this->fetchDate("lastBuildDate") ?? $this->fetchDate("pubDate");
     }
 
+    /** Fetches the "complete" flag from an iTunes podcast */
     protected function getExpiredPod(): ?bool {
         $complete = $this->fetchString("apple:complete");
         if ($complete === "Yes") {
@@ -76,49 +77,70 @@ trait Feed {
         return null;
     }
 
+    protected function getSchedIntervalRss2(): ?\DateInterval {
+        $ttl = (int) $this->fetchString("ttl", "\d+");
+        if ($ttl) {
+            return new \DateInterval("PT{$ttl}M");
+        }
+        return null;
+    }
+
+    protected function getSchedIntervalRss1(): ?\DateInterval {
+        $period = $this->fetchString("sched:updatePeriod", "(?:year|month|week|dai|hour)ly");
+        if ($period) {
+            [$p, $n] = [
+                "hourly"  => ["TM", 60], // 60 minutes
+                "daily"   => ["TH", 24], // 24 hors
+                "weekly"  => ["D", 7],   // 7 days
+                "monthly" => ["D", 30],  // 30 days
+                "yearly"  => ["M", 12],  // 12 months
+            ][strtolower($period)];
+            $f = min(1, (int) $this->fetchString("sched:updateFrequency", "0*[1-9]\d*")); // a frequency of zero makes no sense
+            // divide the period by the frequency
+            // FIXME: we must have an integer result because PHP (incorrectly) rejects fractional intervals
+            // see https://bugs.php.net/bug.php?id=53831
+            $n = min(1, intdiv($n, $f)); // a frequency of zero still makes no sense, so we assume at least one subdivision
+            return new \DateInterval("P".(strlen($p) === 1 ? "" : $p[0]).$n.$p[-1]);
+        }
+        return null;
+    } 
+
+
+
+    /** Computes the "skip-schedule" of an RSS feed, the set of days and hours during which a feed should not be fetched */
     protected function getSchedSkipRss2(): ?int {
         $out = 0;
-        $hours = $this->fetchStringMulti("skipHours/hour") ?? [];
+        $hours = $this->fetchString("skipHours/hour", "\d+", true) ?? [];
         foreach($hours as $h) {
             $out |= [
-                "0"  => Schedule::HOUR_0,
-                "1"  => Schedule::HOUR_1,
-                "2"  => Schedule::HOUR_2,
-                "3"  => Schedule::HOUR_3,
-                "4"  => Schedule::HOUR_4,
-                "5"  => Schedule::HOUR_5,
-                "6"  => Schedule::HOUR_6,
-                "7"  => Schedule::HOUR_7,
-                "8"  => Schedule::HOUR_8,
-                "9"  => Schedule::HOUR_9,
-                "00" => Schedule::HOUR_0,
-                "01" => Schedule::HOUR_1,
-                "02" => Schedule::HOUR_2,
-                "03" => Schedule::HOUR_3,
-                "04" => Schedule::HOUR_4,
-                "05" => Schedule::HOUR_5,
-                "06" => Schedule::HOUR_6,
-                "07" => Schedule::HOUR_7,
-                "08" => Schedule::HOUR_8,
-                "09" => Schedule::HOUR_9,
-                "10" => Schedule::HOUR_10,
-                "11" => Schedule::HOUR_11,
-                "12" => Schedule::HOUR_12,
-                "13" => Schedule::HOUR_13,
-                "14" => Schedule::HOUR_14,
-                "15" => Schedule::HOUR_15,
-                "16" => Schedule::HOUR_16,
-                "17" => Schedule::HOUR_17,
-                "18" => Schedule::HOUR_18,
-                "19" => Schedule::HOUR_19,
-                "20" => Schedule::HOUR_20,
-                "21" => Schedule::HOUR_21,
-                "22" => Schedule::HOUR_22,
-                "23" => Schedule::HOUR_23,
-                "24" => Schedule::HOUR_0,
-            ][$h] ?? 0;
+                Schedule::HOUR_0,
+                Schedule::HOUR_1,
+                Schedule::HOUR_2,
+                Schedule::HOUR_3,
+                Schedule::HOUR_4,
+                Schedule::HOUR_5,
+                Schedule::HOUR_6,
+                Schedule::HOUR_7,
+                Schedule::HOUR_8,
+                Schedule::HOUR_9,
+                Schedule::HOUR_10,
+                Schedule::HOUR_11,
+                Schedule::HOUR_12,
+                Schedule::HOUR_13,
+                Schedule::HOUR_14,
+                Schedule::HOUR_15,
+                Schedule::HOUR_16,
+                Schedule::HOUR_17,
+                Schedule::HOUR_18,
+                Schedule::HOUR_19,
+                Schedule::HOUR_20,
+                Schedule::HOUR_21,
+                Schedule::HOUR_22,
+                Schedule::HOUR_23,
+                Schedule::HOUR_0,
+            ][(int) $h] ?? 0;
         }
-        $days = $this->fetchStringMulti("skipDays/day") ?? [];
+        $days = $this->fetchString("skipDays/day", null, true) ?? [];
         foreach($days as $d) {
             $out |= [
                 "monday"    => Schedule::DAY_MON,

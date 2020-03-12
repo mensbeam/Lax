@@ -22,7 +22,7 @@ trait Construct {
     protected $subject;
 
     /** Retrieves an element node based on an XPath query */
-    protected function fetchElement(string $query, \DOMNode $context = null) {
+    protected function fetchElement(string $query, \DOMNode $context = null): ?\DOMElement {
         $node = @$this->xpath->query("(".$query.")[1]", $context ?? $this->subject);
         if ($node === false) {
             throw new \Exception("Invalid XPath query: $query"); // @codeCoverageIgnore
@@ -35,39 +35,32 @@ trait Construct {
         return $this->xpath->query($query, $context ?? $this->subject);
     }
 
-    /** Retrieves the trimmed text content of a DOM element based on an XPath query  */
-    protected function fetchString(string $query, \DOMNode $context = null): ?string {
-        $node = $this->fetchElement($query, $context);
-        return ($node) ? $this->trimText($node->textContent) : null;
-    }
-
-    /** Retrieves the trimmed text content of multiple DOM elements based on an XPath query  */
-    protected function fetchStringMulti(string $query, \DOMNode $context = null) {
+    /** Retrieves the trimmed text content of one or more DOM elements based on an XPath query, optionally matching a pattern
+     * 
+     * Returns null if no suitable nodes were found
+     * 
+     * @param string $query The XPath query of the nodes to return
+     * @param string|null $pattern The pattern to optionally filter matches with. The pattern should not include delimiters or anchors and is always case-insensitive
+     * @param bool|null $multi Whether to return multiple results as an array (true) or one result as a string (false, default)
+     * @param \DOMNode $context The context node for the XPath query
+     * @return string|array|null
+      */
+    protected function fetchString(string $query, ?string $pattern = null, ?bool $multi = null, ?\DOMNode $context = null) {
         $out = [];
+        $pattern = strlen($pattern ?? "") ? "/^(?:".str_replace("/", "\\/", $pattern).")$/i" : "";
+        $multi = $multi ?? false;
         $nodes = $this->xpath->query($query, $context ?? $this->subject);
         foreach ($nodes as $node) {
-            $out[] = $this->trimText($node->textContent);
+            $t = $this->trimText($node->textContent);
+            if ($pattern && preg_match($pattern, $t)) {
+                if (!$multi) {
+                    return $t;
+                } else {
+                    $out[] = $t;
+                }
+            }
         }
         return ($out) ? $out : null;
-    }
-
-    /** Retrieves the trimmed plain-text or HTML content of an Atom text construct based on an XPath query */
-    protected function fetchStringAtom(string $query, bool $html = false): ?Text {
-        $node = $this->fetchElement($query);
-        if ($node) {
-            if (!$node->hasAttribute("type") || $node->getAttribute("type") == "text") {
-                return $html ? htmlspecialchars($this->trimText($node->textContent), \ENT_QUOTES | \ENT_HTML5) : $this->trimText($node->textContent);
-            } elseif ($node->getAttribute("type") == "xhtml") {
-                $node = $node->getElementsByTagNameNS(self::NS['xhtml'], "div")->item(0);
-                return $node ? $this->sanitizeElement($node, $html) : null;
-            } elseif ($node->getAttribute("type") == "html") {
-                return $this->sanitizeString($node->textContent, $html);
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
     }
 
     /** Retrieves and parses a date from the content of a DOM element based on an XPath query  */
@@ -107,7 +100,7 @@ trait Construct {
      * - Full Name <user@example.com>
      */
     protected function fetchPeople(string $query, string $role): ?PersonCollection {
-        $people = $this->fetchStringMulti($query) ?? [];
+        $people = $this->fetchString($query, null, true) ?? [];
         $out = new PersonCollection;
         foreach ($people as $person) {
             if (!strlen($person)) {
