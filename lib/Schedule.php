@@ -56,4 +56,6 @@ class Schedule {
     public $skip;
     /** @var \DateInterval $interval The suggested interval before the feed should be fetched again */
     public $interval;
+    /** @var \MensBeam\Lax\Date $base The suggested base against which the update interval should be applied */
+    public $base;
 }
