@@ -52,7 +52,7 @@ trait Construct {
         $nodes = $this->xpath->query($query, $context ?? $this->subject);
         foreach ($nodes as $node) {
             $t = $this->trimText($node->textContent);
-            if ($pattern && preg_match($pattern, $t)) {
+            if (!$pattern || preg_match($pattern, $t)) {
                 if (!$multi) {
                     return $t;
                 } else {
