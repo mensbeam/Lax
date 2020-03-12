@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML\Primitives;
 
 use MensBeam\Lax\Parser\XML\XPath;
+use MensBeam\Lax\Schedule;
 
 trait Feed {
     /** Primitive to fetch an Atom feed summary
@@ -73,5 +74,69 @@ trait Feed {
             return true;
         }
         return null;
+    }
+
+    protected function getSchedSkipRss2(): ?int {
+        $out = 0;
+        $hours = $this->fetchStringMulti("skipHours/hour") ?? [];
+        foreach($hours as $h) {
+            $out |= [
+                "0"  => Schedule::HOUR_0,
+                "1"  => Schedule::HOUR_1,
+                "2"  => Schedule::HOUR_2,
+                "3"  => Schedule::HOUR_3,
+                "4"  => Schedule::HOUR_4,
+                "5"  => Schedule::HOUR_5,
+                "6"  => Schedule::HOUR_6,
+                "7"  => Schedule::HOUR_7,
+                "8"  => Schedule::HOUR_8,
+                "9"  => Schedule::HOUR_9,
+                "00" => Schedule::HOUR_0,
+                "01" => Schedule::HOUR_1,
+                "02" => Schedule::HOUR_2,
+                "03" => Schedule::HOUR_3,
+                "04" => Schedule::HOUR_4,
+                "05" => Schedule::HOUR_5,
+                "06" => Schedule::HOUR_6,
+                "07" => Schedule::HOUR_7,
+                "08" => Schedule::HOUR_8,
+                "09" => Schedule::HOUR_9,
+                "10" => Schedule::HOUR_10,
+                "11" => Schedule::HOUR_11,
+                "12" => Schedule::HOUR_12,
+                "13" => Schedule::HOUR_13,
+                "14" => Schedule::HOUR_14,
+                "15" => Schedule::HOUR_15,
+                "16" => Schedule::HOUR_16,
+                "17" => Schedule::HOUR_17,
+                "18" => Schedule::HOUR_18,
+                "19" => Schedule::HOUR_19,
+                "20" => Schedule::HOUR_20,
+                "21" => Schedule::HOUR_21,
+                "22" => Schedule::HOUR_22,
+                "23" => Schedule::HOUR_23,
+                "24" => Schedule::HOUR_0,
+            ][$h] ?? 0;
+        }
+        $days = $this->fetchStringMulti("skipDays/day") ?? [];
+        foreach($days as $d) {
+            $out |= [
+                "monday"    => Schedule::DAY_MON,
+                "tuesday"   => Schedule::DAY_TUE,
+                "wednesday" => Schedule::DAY_WED,
+                "thursday"  => Schedule::DAY_THU,
+                "friday"    => Schedule::DAY_FRI,
+                "saturday"  => Schedule::DAY_SAT,
+                "sunday"    => Schedule::DAY_SUN,
+                "mon"       => Schedule::DAY_MON,
+                "tue"       => Schedule::DAY_TUE,
+                "wed"       => Schedule::DAY_WED,
+                "thu"       => Schedule::DAY_THU,
+                "fri"       => Schedule::DAY_FRI,
+                "sat"       => Schedule::DAY_SAT,
+                "sun"       => Schedule::DAY_SUN,
+            ][strtolower($d)] ?? 0;
+        }
+        return $out ?: null;
     }
 }

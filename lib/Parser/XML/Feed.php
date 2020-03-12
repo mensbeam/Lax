@@ -11,6 +11,7 @@ use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Feed as FeedStruct;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
@@ -84,7 +85,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
         $feed->meta->url = $this->url;
-        $feed->sched->expired = $this->getExpired();
+        $feed->sched = $this->getSchedule();
         $feed->id = $this->getId();
         //$feed->lang = $this->getLang();
         //$feed->url = $this->getUrl();
@@ -141,8 +142,14 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
     }
 
-    public function getExpired(): ?bool {
-        return $this->getExpiredPod();
+    public function getSchedule(): Schedule {
+        $out = new Schedule;
+        $out->skip = $this->getSchedSkipRss2();
+        $out->expired = $this->getExpiredPod();
+        if (is_null($out->expired) && (($out->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($out->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
+            $out->expired = true;
+        }
+        return $out;
     }
 
     public function getLang(): ?string {

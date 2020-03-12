@@ -13,6 +13,7 @@ use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Parser\Exception;
 use MensBeam\Lax\Parser\JSON\Entry as EntryParser;
+use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Url;
 
 class Feed implements \MensBeam\Lax\Parser\Feed {
@@ -64,7 +65,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
         $feed->meta->url = $this->url;
-        $feed->sched->expired = $this->getExpired();
+        $feed->sched = $this->getSchedule();
         $feed->id = $this->getId();
         $feed->lang = $this->getLang();
         $feed->url = $this->getUrl();
@@ -151,7 +152,9 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
         return $out;
     }
 
-    public function getExpired(): ?bool {
-        return $this->fetchMember("expired", "bool");
+    public function getSchedule(): Schedule {
+        $out = new Schedule;
+        $out->expired = $this->fetchMember("expired", "bool");
+        return $out;
     }
 }

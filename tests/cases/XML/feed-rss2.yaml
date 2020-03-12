@@ -37,3 +37,135 @@ Root GUID: # Any elements on the RSS2 root element should be ignored
         </rss>
     output:
         format: rss
+
+Skip days:
+    input: >
+        <rss><channel>
+            <skipDays>
+                <day>MONDAY</day>
+                <day>sunday</day>
+                <day>TuE</day>
+                <day>bogus</day>
+            </skipDays>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            skip: 1124073472 # 0b1000011000000000000000000000000
+
+Skip all days:
+    input: >
+        <rss><channel>
+            <skipDays>
+                <day>mon</day>
+                <day>tue</day>
+                <day>wed</day>
+                <day>thu</day>
+                <day>fri</day>
+                <day>sat</day>
+                <day>sun</day>
+            </skipDays>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            expired: true
+            skip: 2130706432 # 0b1111111000000000000000000000000
+
+Skip hours:
+    input: >
+        <rss><channel>
+            <skipHours>
+                <hour>24</hour>
+                <hour>04</hour>
+                <hour>9</hour>
+                <hour>bogus</hour>
+                <hour>25</hour>
+            </skipHours>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            skip: 529 # 0b000000000000001000010001
+
+Skip all hours:
+    input: >
+        <rss><channel>
+            <skipHours>
+                <hour>00</hour>
+                <hour>01</hour>
+                <hour>02</hour>
+                <hour>03</hour>
+                <hour>04</hour>
+                <hour>05</hour>
+                <hour>06</hour>
+                <hour>07</hour>
+                <hour>08</hour>
+                <hour>09</hour>
+                <hour>10</hour>
+                <hour>11</hour>
+                <hour>12</hour>
+                <hour>13</hour>
+                <hour>14</hour>
+                <hour>15</hour>
+                <hour>16</hour>
+                <hour>17</hour>
+                <hour>18</hour>
+                <hour>19</hour>
+                <hour>20</hour>
+                <hour>21</hour>
+                <hour>22</hour>
+                <hour>23</hour>
+            </skipHours>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            expired: true
+            skip: 16777215 # 0b111111111111111111111111
+
+
+Skip all days and hours:
+    input: >
+        <rss><channel>
+            <skipDays>
+                <day>mon</day>
+                <day>tue</day>
+                <day>wed</day>
+                <day>thu</day>
+                <day>fri</day>
+                <day>sat</day>
+                <day>sun</day>
+            </skipDays>
+            <skipHours>
+                <hour>00</hour>
+                <hour>01</hour>
+                <hour>02</hour>
+                <hour>03</hour>
+                <hour>04</hour>
+                <hour>05</hour>
+                <hour>06</hour>
+                <hour>07</hour>
+                <hour>08</hour>
+                <hour>09</hour>
+                <hour>10</hour>
+                <hour>11</hour>
+                <hour>12</hour>
+                <hour>13</hour>
+                <hour>14</hour>
+                <hour>15</hour>
+                <hour>16</hour>
+                <hour>17</hour>
+                <hour>18</hour>
+                <hour>19</hour>
+                <hour>20</hour>
+                <hour>21</hour>
+                <hour>22</hour>
+                <hour>23</hour>
+            </skipHours>
+        </channel></rss>
+    output:
+        format: rss
+        sched:
+            expired: true
+            skip: 2147483647 # 0b1111111111111111111111111111111

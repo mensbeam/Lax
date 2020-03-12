@@ -8,6 +8,7 @@ namespace MensBeam\Lax\Parser;
 
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
+use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Date;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Feed as FeedStruct;
@@ -54,5 +55,5 @@ interface Feed {
     public function getEntries(FeedStruct $feed = null): array;
 
     /** Returns whether the newsfeed has ceased publication */
-    public function getExpired(): ?bool;
+    public function getSchedule(): Schedule;
 }
