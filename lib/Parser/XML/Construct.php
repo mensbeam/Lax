@@ -11,7 +11,7 @@ use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Text;
 
-trait Construct {
+abstract class Construct {
     use \MensBeam\Lax\Parser\Construct;
 
     /** @var \DOMDocument */
@@ -63,9 +63,27 @@ trait Construct {
         return ($out) ? $out : null;
     }
 
-    /** Retrieves and parses a date from the content of a DOM element based on an XPath query  */
-    protected function fetchDate(string $query, \DOMNode $context = null): ?Date {
-        return $this->parseDate($this->fetchString($query, $context) ?? "");
+    /** Retrieves and parses a date from one or more DOM elements based on an XPath query
+     * 
+     * Returns null if no suitable nodes were found  
+     * 
+     * @param string $query The XPath query of the nodes to return
+     * @param bool|null $multi Whether to return multiple results as an array (true) or one result as a date object (false, default)
+     * @param \DOMNode $context The context node for the XPath query
+     * @return \MensBeam\Lax\Date|array|null
+     */
+    protected function fetchDate(string $query, ?bool $multi = null, \DOMNode $context = null) {
+        $out = [];
+        foreach((array) $this->fetchString($query, null, $multi, $context) as $d) {
+            if ($d = $this->parseDate($d ?? "")) {
+                if (!$multi) {
+                    return $d;
+                } else {
+                    $out[] = $d;
+                }
+            }
+        }
+        return $out ?: null;
     }
 
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
@@ -172,5 +190,23 @@ trait Construct {
             }
         }
         return null;
+    }
+
+    /** Primitive to fetch an Atom feed/entry identifier */
+    protected function getIdAtom(): ?string {
+        return $this->fetchString("atom:id", ".+");
+    }
+
+    /** Primitive to fetch an RSS feed/entry identifier
+     *
+     * Using RSS' <guid> for feed identifiers is non-standard, but harmless
+     */
+    protected function getIdRss2(): ?string {
+        return $this->fetchString("guid", ".+");
+    }
+
+    /** Primitive to fetch a Dublin Core feed/entry identifier */
+    protected function getIdDC(): ?string {
+        return $this->fetchString("dc:identifier", ".+");
     }
 }

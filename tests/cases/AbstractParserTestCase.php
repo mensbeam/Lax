@@ -35,11 +35,13 @@ namespace MensBeam\Lax\TestCase;
 
 */
 
-use MensBeam\Lax\Date;
 use MensBeam\Lax\Feed;
-use MensBeam\Lax\Entry;
+use MensBeam\Lax\Date;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
+use MensBeam\Lax\Entry;
+use MensBeam\Lax\Metadata;
+use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Category\Category;
 use MensBeam\Lax\Enclosure\Enclosure;
@@ -69,7 +71,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         }
     }
 
-    protected function makeFeed(\stdClass $output): Feed {
+    private function makeFeed(\stdClass $output): Feed {
         $f = new Feed;
         foreach ($output as $k => $v) {
             if (in_array($k, ["title", "summary"])) {
@@ -86,16 +88,10 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                     $c[] = $this->makeEntry($m);
                 }
                 $f->$k = $c;
-            } elseif (in_array($k, ["meta", "sched"])) {
-                foreach ($v as $kk => $vv) {
-                    if ($kk === "url") {
-                        $f->$k->$kk = $this->makeUrl($vv);
-                    } elseif ($kk === "interval") {
-                        $f->$k->$kk = new \DateInterval($vv);
-                    } else {
-                        $f->$k->$kk = $vv;
-                    }
-                }
+            } elseif ($k === "meta") {
+                $f->$k = $this->makeMeta($v);
+            } elseif ($k === "sched") {
+                $f->$k = $this->makeSched($v);
             } elseif (in_array($k, ["url", "link", "icon", "image"])) {
                 $f->$k = $this->makeUrl($v);
             } else {
@@ -105,7 +101,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         return $f;
     }
 
-    protected function makeEntry(\stdClass $entry): Entry {
+    private function makeEntry(\stdClass $entry): Entry {
         $e = new Entry;
         foreach ($entry as $k => $v) {
             if (in_array($k, ["link", "relatedLink", "banner"])) {
@@ -143,7 +139,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         return $e;
     }
 
-    protected function makeText($data): Text {
+    private function makeText($data): Text {
         if (is_string($data)) {
             return new Text($data);
         }
@@ -154,7 +150,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         return $out;
     }
 
-    protected function makePerson(\stdClass $person): Person {
+    private function makePerson(\stdClass $person): Person {
         $p = new Person;
         foreach ($person as $k => $v) {
             if (in_array($k, ["url", "avatar"])) {
@@ -166,7 +162,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         return $p;
     }
 
-    protected function makeEnclosure(\stdClass $enclosure): Enclosure {
+    private function makeEnclosure(\stdClass $enclosure): Enclosure {
         $e = new Enclosure;
         foreach ($enclosure as $k => $v) {
             if ($k === "urli") {
@@ -178,7 +174,33 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         return $e;
     }
 
-    protected function makeUrl($url): ?Url {
+    private function makeMeta(\stdClass $meta): Metadata {
+        $m = new Metadata;
+        foreach ($meta as $k => $v) {
+            if ($k === 'url') {
+                $m->$k = new Url($v);
+            } else {
+                $m->$k = $v;
+            }
+        }
+        return $m;
+    }
+
+    private function makeSched(\stdClass $sched): Schedule {
+        $s = new Schedule;
+        foreach ($sched as $k => $v) {
+            if ($k === 'base') {
+                $s->$k = new Date($v);
+            } elseif ($k === 'interval') {
+                $s->$k = new \DateInterval($v);
+            } else {
+                $s->$k = $v;
+            }
+        }
+        return $s;
+    }
+
+    private function makeUrl($url): ?Url {
         if (is_array($url)) {
             return new Url($url[0] ?? "", ($url[1] ?? null) ? new Url($url[1]) : null);
         } else {

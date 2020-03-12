@@ -13,11 +13,7 @@ use MensBeam\Lax\Date;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
-class Entry implements \MensBeam\Lax\Parser\Entry {
-    use Construct;
-    use Primitives\Construct;
-    use Primitives\Entry;
-
+class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     /** Constructs a parsed feed */
     public function __construct(\DOMElement $data, Feed $feed, XPath $xpath = null) {
         $this->init($data, $feed, $xpath);

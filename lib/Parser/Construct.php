@@ -47,15 +47,7 @@ trait Construct {
             return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
         }
         return false;
-    }
-
-    protected function parseInt(string ...$v) {
-        for ($a = 0; $a < sizeof($v); $a++) {
-            $v[$a] = (preg_match("<^\d+$>", $v[$a])) ? (int) $v[$a] : null;
-        }
-        return sizeof($v) === 1 ? $v[0] : $v;
-    }
-                
+    }                
 
     protected function parseDate(string $date): ?Date {
         $out = null;
