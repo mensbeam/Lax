@@ -135,6 +135,22 @@ Syndication schedule 5:
         sched:
             interval: P1M
 
+Syndication schedule 6:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>brotly</sy:updatePeriod>
+                <sy:updatePeriod>yearly</sy:updatePeriod>
+                <sy:updateFrequency>twenty-four</sy:updateFrequency>
+                <sy:updateFrequency>3</sy:updateFrequency>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: P4M
+
 Syndication schedule base 1:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
