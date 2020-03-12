@@ -55,7 +55,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
         if (is_null($ns) && $name === "rss") {
             $this->subject = $this->fetchElement("channel") ?? $this->subject;
             $feed->format = "rss";
-            $feed->version = $this->document->documentElement->getAttribute("version");
+            $feed->version = $this->document->documentElement->hasAttribute("version") ? $this->document->documentElement->getAttribute("version") : null;
         } elseif ($ns === XPath::NS['rdf'] && $name === "RDF") {
             $feed->format = "rdf";
             $channel = $this->fetchElement("rss1:channel|rss0:channel");
@@ -84,7 +84,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
         $feed->meta->url = $this->url;
-        //$feed->sched->expired = $this->getExpired();
+        $feed->sched->expired = $this->getExpired();
         $feed->id = $this->getId();
         //$feed->lang = $this->getLang();
         //$feed->url = $this->getUrl();
@@ -101,24 +101,24 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getId(): ?string {
-        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
+        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
     }
 
     public function getUrl(): ?Url {
-        return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod() ?? $this->reqUrl;
+        return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod();
     }
 
     public function getTitle(): ?Text {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
+        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
     }
 
     public function getLink(): ?Url {
-        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
+        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2();
     }
 
     public function getSummary(): ?Text {
         // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom() ?? "";
+        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom();
     }
 
     public function getCategories(): CategoryCollection {
@@ -142,7 +142,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getExpired(): ?bool {
-        return null;
+        return $this->getExpiredPod();
     }
 
     public function getLang(): ?string {

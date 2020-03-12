@@ -29,7 +29,7 @@ Channel GUID with whitespace:
         format: rss
         id: 'http://example.com/'
 
-Root GUID:
+Root GUID: # Any elements on the RSS2 root element should be ignored
     input: >
         <rss>
             <channel/>

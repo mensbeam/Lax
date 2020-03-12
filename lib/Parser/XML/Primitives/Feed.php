@@ -66,4 +66,12 @@ trait Feed {
     protected function getDateModifiedRss2() {
         return $this->fetchDate("lastBuildDate") ?? $this->fetchDate("pubDate");
     }
+
+    protected function getExpiredPod(): ?bool {
+        $complete = $this->fetchString("apple:complete");
+        if ($complete === "Yes") {
+            return true;
+        }
+        return null;
+    }
 }

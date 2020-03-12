@@ -1,0 +1,13 @@
+# This file tests extensions primarily designed for RSS 2
+
+iPod expiration marker:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <channel>
+                <itunes:complete>Yes</itunes:complete>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        sched:
+            expired: true
