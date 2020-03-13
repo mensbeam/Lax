@@ -209,4 +209,22 @@ abstract class Construct {
     protected function getIdDC(): ?string {
         return $this->fetchString("dc:identifier", ".+");
     }
+
+    protected function getLangXML(): ?string {
+        // walk up the tree looking for the nearest language tag
+        $el = $this->subject;
+        do {
+            $out = $this->fetchString("@xml:lang", ".+", false, $el);
+            $el = $el->parentNode;
+        } while (is_null($out) && $el);
+        return $out;
+    }
+
+    protected function getLangDC(): ?string {
+        return $this->fetchString("dc:language", ".+");
+    }
+
+    protected function getLangRss2(): ?string {
+        return $this->fetchString("language", ".+");
+    }
 }

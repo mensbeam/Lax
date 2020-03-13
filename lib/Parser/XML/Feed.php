@@ -83,7 +83,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->meta->url = $this->url;
         $feed->sched = $this->getSchedule();
         $feed->id = $this->getId();
-        //$feed->lang = $this->getLang();
+        $feed->lang = $this->getLang();
         //$feed->url = $this->getUrl();
         //$feed->link = $this->getLink();
         //$feed->title = $this->getTitle();
@@ -113,6 +113,10 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             $sched->base = $this->getSchedBaseRss1();
         }
         return $sched;
+    }
+
+    public function getLang(): ?string {
+        return $this->getLangXML() ?? $this->getLangDC() ?? $this->getLangRss2();
     }
 
     public function getUrl(): ?Url {
@@ -150,10 +154,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
-    }
-
-    public function getLang(): ?string {
-        return null;
     }
 
     public function getIcon(): ?Url {

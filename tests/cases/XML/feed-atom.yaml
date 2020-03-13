@@ -39,3 +39,18 @@ Bogus ID before good:
         format: atom
         version: '1.0'
         id: 'http://example.com/'
+
+Feed language:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"/>
+    output:
+        format: atom
+        version: '1.0'
+        lang: en
+
+Bogus feed language:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:lang=""/>
+    output:
+        format: atom
+        version: '1.0'

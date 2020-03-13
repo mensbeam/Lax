@@ -177,7 +177,6 @@ Skip all hours:
             expired: true
             skip: 16777215 # 0b111111111111111111111111
 
-
 Skip all days and hours:
     input: >
         <rss><channel>
@@ -222,3 +221,12 @@ Skip all days and hours:
         sched:
             expired: true
             skip: 2147483647 # 0b1111111111111111111111111111111
+
+Feed language:
+    input: >
+        <rss><channel>
+            <language>ja</language>
+        </channel></rss>
+    output:
+        format: rss
+        lang: ja

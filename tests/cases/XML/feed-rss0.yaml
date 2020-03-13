@@ -24,3 +24,13 @@ Minimal feed without channel 2:
     output:
         format: rdf
         version: '0.90'
+
+Feed language: # demonstrate walking up the DOM
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/" xml:lang="fr">
+            <channel xml:lang=""/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        lang: fr
