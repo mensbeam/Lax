@@ -74,7 +74,7 @@ abstract class Construct {
      */
     protected function fetchDate(string $query, ?bool $multi = null, \DOMNode $context = null) {
         $out = [];
-        foreach((array) $this->fetchString($query, null, $multi, $context) as $d) {
+        foreach((array) $this->fetchString($query, null, true, $context) as $d) {
             if ($d = $this->parseDate($d ?? "")) {
                 if (!$multi) {
                     return $d;

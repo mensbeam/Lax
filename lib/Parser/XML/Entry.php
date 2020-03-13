@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML;
 
+use MensBeam\Lax\Entry as EntryStruct;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
@@ -27,21 +28,8 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     /** Parses the feed to extract sundry metadata */
-    protected function parse(\DOMElement $data, \MensBeam\Lax\Feed $feed): \MensBeam\Lax\Entry {
-        $entry = new \MensBeam\Lax\Entry;
-        $entry->id = $this->getId();
-        $entry->link = $this->getLink();
-        $entry->relatedLink = $this->getRelatedLink();
-        $entry->title = $this->getTitle();
-        $entry->people = $this->getPeople();
-        $entry->author = $this->people->primary() ?? $this->feed->author;
-        $entry->dateModified = $this->getDateModified();
-        $entry->dateCreated = $this->getDateCreated();
-        // do a second pass on missing data we'd rather fill in
-        $entry->title = strlen($this->title) ? $this->title : $this->link;
-        // do extra stuff just to test it
-        $entry->categories = $this->getCategories();
-        return $entry;
+    protected function parse(\DOMElement $data, \MensBeam\Lax\Feed $feed): EntryStruct {
+        return new EntryStruct;
     }
 
     /** General function to fetch the entry title */

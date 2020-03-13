@@ -101,6 +101,20 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
     }
 
+    public function getSchedule(): Schedule {
+        $sched = new Schedule;
+        $sched->interval = $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
+        $sched->skip = $this->getSchedSkipRss2();
+        $sched->expired = $this->getExpiredPod();
+        if (is_null($sched->expired) && (($sched->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($sched->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
+            $sched->expired = true;
+        }
+        if ($sched->interval) {
+            $sched->base = $this->getSchedBaseRss1();
+        }
+        return $sched;
+    }
+
     public function getUrl(): ?Url {
         return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod();
     }
@@ -136,20 +150,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
-    }
-
-    public function getSchedule(): Schedule {
-        $sched = new Schedule;
-        $sched->interval = $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
-        $sched->skip = $this->getSchedSkipRss2();
-        $sched->expired = $this->getExpiredPod();
-        if (is_null($sched->expired) && (($sched->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($sched->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
-            $sched->expired = true;
-        }
-        if ($sched->interval) {
-            $sched->base = $this->getSchedBaseRss1();
-        }
-        return $sched;
     }
 
     public function getLang(): ?string {

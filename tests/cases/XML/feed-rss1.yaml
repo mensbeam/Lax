@@ -134,3 +134,19 @@ Syndication schedule 5:
         version: '1.0'
         sched:
             interval: P1M
+
+Syndication schedule base 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
+            <channel>
+                <sy:updatePeriod>daily</sy:updatePeriod>
+                <sy:updateBase>bogus</sy:updateBase>
+                <sy:updateBase>2020-03-01T20:21:12-04:00</sy:updateBase>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        sched:
+            interval: PT24H
+            base: '2020-03-01T20:21:12-04:00'
