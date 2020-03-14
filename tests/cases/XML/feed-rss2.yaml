@@ -9,7 +9,7 @@ Channel GUID:
     input: >
         <rss>
             <channel>
-                <guid>http://example.com/</guid>
+                <guid isPermalink="false">http://example.com/</guid>
             </channel>
         </rss>
     output:
@@ -20,7 +20,7 @@ Channel GUID with whitespace:
     input: >
         <rss>
             <channel>
-                <guid>
+                <guid isPermalink="false">
                     http://example.com/
                 </guid>
             </channel>
@@ -33,7 +33,7 @@ Root GUID: # Any elements on the RSS2 root element should be ignored
     input: >
         <rss>
             <channel/>
-            <guid>http://example.com/</guid>
+            <guid isPermalink="false">http://example.com/</guid>
         </rss>
     output:
         format: rss
@@ -43,7 +43,7 @@ Bogus GUID before good:
         <rss>
             <channel>
                 <guid/>
-                <guid>http://example.com/</guid>
+                <guid isPermalink="false">http://example.com/</guid>
             </channel>
         </rss>
     output:
@@ -230,3 +230,63 @@ Feed language:
     output:
         format: rss
         lang: ja
+
+Feed link:
+    input: >
+        <rss><channel>
+              <link/>
+              <link>http://[example.net]/</link>
+              <link>http://example.com/</link>
+        </channel></rss>
+    output:
+        format: rss
+        link: 'http://example.com/'
+
+Feed link via GUID 1:
+    input: >
+        <rss><channel>
+              <guid>http://example.com/</guid>
+        </channel></rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+        link: 'http://example.com/'
+
+Feed link via GUID 2:
+    input: >
+        <rss><channel>
+              <guid isPermalink='true'>http://example.com/</guid>
+        </channel></rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+        link: 'http://example.com/'
+
+GUID not a link:
+    input: >
+        <rss><channel>
+              <guid isPermalink='maybe not'>http://example.com/</guid>
+        </channel></rss>
+    output:
+        format: rss
+        id: 'http://example.com/'
+
+Explicit link preferred:
+    input: >
+        <rss><channel>
+              <guid>http://example.net/</guid>
+              <link>http://example.com/</link>
+        </channel></rss>
+    output:
+        format: rss
+        id: 'http://example.net/'
+        link: 'http://example.com/'
+
+GUID not a url:
+    input: >
+        <rss><channel>
+              <guid>http://[example.com]/</guid>
+        </channel></rss>
+    output:
+        format: rss
+        id: 'http://[example.com]/'

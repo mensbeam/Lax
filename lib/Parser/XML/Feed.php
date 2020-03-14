@@ -85,7 +85,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->id = $this->getId();
         $feed->lang = $this->getLang();
         $feed->url = $this->getUrl();
-        //$feed->link = $this->getLink();
+        $feed->link = $this->getLink();
         //$feed->title = $this->getTitle();
         //$feed->summary = $this->getSummary();
         //$feed->dateModified = $this->getDateModified();
@@ -123,12 +123,12 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod();
     }
 
-    public function getTitle(): ?Text {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
-    }
-
     public function getLink(): ?Url {
         return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2();
+    }
+
+    public function getTitle(): ?Text {
+        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
     }
 
     public function getSummary(): ?Text {

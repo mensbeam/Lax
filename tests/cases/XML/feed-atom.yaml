@@ -65,3 +65,101 @@ Canonical URL:
         format: atom
         version: '1.0'
         url: 'http://example.com/'
+
+Feed link 1:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="alternate" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 2: # default relation is "alternate"
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 3: # default relation is "alternate"
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 4: # other relations are ignored
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="bogus" href="http://example.net/"/>
+          <link href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 5: # XHTML is preferred
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.net/"/>
+          <link href="http://example.com/" type="application/xhtml+xml; charset=utf-8"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 6: # HTML is even more preferred
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.net/"/>
+          <link href="http://example.org/" type="application/xhtml+xml; charset=utf-8"/>
+          <link href="http://example.com/" type="TEXT/HTML; charset=utf-8"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 7: # No type is better than an unacceptable type
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.net/" type="image/png"/>
+          <link href="http://example.org/" type="application/xml"/>
+          <link href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 8: # Bad URLs are ignored
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.com/" type="application/xhtml+xml; charset=utf-8"/>
+          <link href="http://[example.org]/" type="text/html; charset=utf-8"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'
+
+Feed link 9: # The first matching relation wins
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="http://example.com/" type="text/html"/>
+          <link href="http://example.org/" type="text/html"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        link: 'http://example.com/'

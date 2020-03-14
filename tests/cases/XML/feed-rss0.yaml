@@ -54,3 +54,17 @@ Canonical URL: # this is not actually a feature of RSS 0.90, but is consistent w
         format: rdf
         version: '0.90'
         url: 'http://example.com/'
+
+Feed link:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+              <link/>
+              <link>http://[example.net]/</link>
+              <link>http://example.com/</link>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        link: 'http://example.com/'

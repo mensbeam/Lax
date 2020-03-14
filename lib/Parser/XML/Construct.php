@@ -213,4 +213,16 @@ abstract class Construct {
     protected function getLangRss2(): ?string {
         return $this->fetchString("language", ".+");
     }
+
+    protected function getLinkAtom(): ?Url {
+        return $this->fetchAtomRelation("alternate", ["text/html", "application/xhtml+xml"]);
+    }
+
+    protected function getLinkRss2(): ?Url {
+        return $this->fetchUrl("link") ?? $this->fetchUrl("guid[not(@isPermalink) or @isPermalink='true']");
+    }
+
+    protected function getLinkRss1(): ?Url {
+        return $this->fetchUrl("rss1:link|rss0:link");
+    }
 }
