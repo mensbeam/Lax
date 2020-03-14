@@ -163,3 +163,16 @@ Feed link 9: # The first matching relation wins
         format: atom
         version: '1.0'
         link: 'http://example.com/'
+
+Relative feed link:
+    doc_url: 'http://example.com/path/'
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link href="/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        meta:
+            url: 'http://example.com/path/'
+        link: ['/', 'http://example.com/path/']

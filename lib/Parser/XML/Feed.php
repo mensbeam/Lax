@@ -44,7 +44,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         if (!$this->document->loadXML($this->data, self::LIBXML_OPTIONS)) {
             throw new Exception("notXML");
         }
-        $this->document->documentURI = (string) $this->url;
+        $this->document->documentURI = $this->url;
         $this->xpath = new XPath($this->document);
         $this->subject = $this->document->documentElement;
         $ns = $this->subject->namespaceURI;

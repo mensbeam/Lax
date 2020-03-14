@@ -155,7 +155,7 @@ abstract class Construct {
         }, $mediaTypes)))));
         $rels = $this->fetchAtomRelations($rel, $context);
         if ($rels && !$mediaTypes) {
-            return new Url($rels[0]->getAttribute("href"), );
+            return new Url($rels[0]->getAttribute("href"), $rels[0]->baseURI);
         }
         $result = array_reduce($rels, function($best, $cur) use ($mediaTypes) {
             $t = trim($cur->getAttribute("type"));
@@ -175,7 +175,7 @@ abstract class Construct {
             }
             return $best;
         });
-        return $result ? new Url($result[0]->getAttribute("href")) : null;
+        return $result ? new Url($result[0]->getAttribute("href"), $result[0]->baseURI) : null;
     }
 
     /** Primitive to fetch an Atom feed/entry identifier */
