@@ -290,3 +290,12 @@ GUID not a url:
     output:
         format: rss
         id: 'http://[example.com]/'
+
+Relative feed link:
+    input: >
+        <rss><channel xml:base="http://example.com/path/">
+              <link>/</link>
+        </channel></rss>
+    output:
+        format: rss
+        link: ['/', 'http://example.com/path/']
