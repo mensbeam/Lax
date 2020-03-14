@@ -25,7 +25,6 @@ iPod expiration marker 2:
         sched:
             expired: true
 
-
 iPod expiration marker 3:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
@@ -35,3 +34,15 @@ iPod expiration marker 3:
         </rss>
     output:
         format: rss
+
+iPod canonical URL:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <channel>
+                <itunes:new-feed-url/>
+                <itunes:new-feed-url>http://example.com/</itunes:new-feed-url>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        url: 'http://example.com/'

@@ -54,3 +54,14 @@ Bogus feed language:
     output:
         format: atom
         version: '1.0'
+
+Canonical URL:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <link rel="self"/>
+          <link rel="self" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        url: 'http://example.com/'

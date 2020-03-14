@@ -86,7 +86,7 @@ PCRE;
         return ($uri instanceof self) ? $uri : new self((string) $uri);
     }
 
-    public function __construct(string $url, ?UriInterface $baseUrl = null) {
+    public function __construct(string $url, string $baseUrl = null) {
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
             foreach (["scheme", "path", "query", "fragment"] as $part) {
@@ -106,7 +106,7 @@ PCRE;
                 }
             }
             if ($baseUrl && !$this->scheme) {
-                $this->resolve(self::fromUri($baseUrl));
+                $this->resolve(new static($baseUrl));
             }
             foreach (["scheme", "path", "query", "fragment"] as $part) {
                 $this->$part = $this->$part ?? "";

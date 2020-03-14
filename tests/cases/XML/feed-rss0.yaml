@@ -44,3 +44,13 @@ Feed language 2: # demonstrate walking up the DOM
         format: rdf
         version: '0.90'
         lang: fr
+
+Canonical URL: # this is not actually a feature of RSS 0.90, but is consistent with RSS 1.0's use of RDF
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/" >
+            <channel rdf:about="http://example.com/"/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        url: 'http://example.com/'

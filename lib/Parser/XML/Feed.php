@@ -22,7 +22,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     protected $data;
     /** @var string */
     protected $contentType;
-    /** @var \MensBeam\Lax\Url */
+    /** @var string */
     protected $url;
     /** @var \DOMElement */
     protected $subject;
@@ -34,7 +34,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $this->data = $data;
         $this->contentType = $contentType;
         if (strlen($url ?? "")) {
-            $this->url = new Url($url);
+            $this->url = $url;
         }
     }
 
@@ -80,11 +80,11 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     /** Parses the feed to extract data */
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
-        $feed->meta->url = $this->url;
+        $feed->meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
         $feed->sched = $this->getSchedule();
         $feed->id = $this->getId();
         $feed->lang = $this->getLang();
-        //$feed->url = $this->getUrl();
+        $feed->url = $this->getUrl();
         //$feed->link = $this->getLink();
         //$feed->title = $this->getTitle();
         //$feed->summary = $this->getSummary();
@@ -253,5 +253,17 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ][strtolower($d)] ?? 0;
         }
         return $out ?: null;
+    }
+
+    protected function getUrlAtom(): ?Url {
+        return $this->fetchAtomRelation("self");
+    }
+
+    protected function getUrlRss1(): ?Url {
+        return $this->fetchUrl("(self::rss1:channel|self::rss0:channel)/@rdf:about");
+    }
+
+    protected function getUrlPod(): ?Url {
+        return $this->fetchUrl("apple:new-feed-url");
     }
 }

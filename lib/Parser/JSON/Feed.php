@@ -38,7 +38,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
         $this->data = $data;
         $this->contentType = $contentType;
         if (strlen($url ?? "")) {
-            $this->url = new Url($url);
+            $this->url = $url;
         }
     }
 
@@ -64,7 +64,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
     /** Parses the feed to extract data */
     public function parse(FeedStruct $feed = null): FeedStruct {
         $feed = $this->init($feed ?? new FeedStruct);
-        $feed->meta->url = $this->url;
+        $feed->meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
         $feed->sched = $this->getSchedule();
         $feed->id = $this->getId();
         $feed->lang = $this->getLang();

@@ -82,6 +82,102 @@ abstract class Construct {
         return $out ?: null;
     }
 
+    /** Returns the first valid URL matching an XPath query. Relative URLs are resolved when possible
+     * 
+     * @param string $query The XPath query of the node to return
+     * @param \DOMNode $context The context node for the XPath query
+     */
+    protected function fetchUrl(string $query, \DOMNode $context = null): ?Url {
+        foreach ($this->xpath->query($query, $context ?? $this->subject) as $node) {
+            $url = trim($node->textContent);
+            if (strlen($url)) {
+                try {
+                    return new Url($url, $node->baseURI);
+                } catch (\InvalidArgumentException $e) {
+                    // don't return a result that doesn't evaluate to a valid URL of some sort
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Returns a node-list of Atom link elements with the desired relation or equivalents.
+     *
+     * Links without an href attribute are excluded.
+     *
+     * @see https://tools.ietf.org/html/rfc4287#section-4.2.7.2
+     */
+    protected function fetchAtomRelations(string $rel = "", \DOMNode $context = null): array {
+        // normalize the relation
+        $custom = false;
+        $rel = trim($rel);
+        if ($rel === "") {
+            $rel = "alternate";
+        } elseif (strpos(strtolower($rel), "http://www.iana.org/assignments/relation/") === 0) {
+            $rel = substr($rel, 41);
+        } elseif (preg_match("<^[a-z\.\-]+$>i", $rel)) {
+            $rel = strtolower($rel);
+        } else {
+            $custom = true;
+            $url = (string) new Url($rel);
+        }
+        // look at all the links that have a non-empty href attribute
+        $out = [];
+        foreach ($this->xpath->query("atom:link[normalize-space(@href)]", $context ?? $this->subject) as $l) {
+            try {
+                new Url($l->getAttribute("href"));
+            } catch (\InvalidArgumentException $e) {
+                // reject any links which do not have valid URLs
+                continue;
+            }
+            $r = trim($l->getAttribute("rel"));
+            if ($custom) {
+                if ($url === (string) new Url($r)) {
+                    $out[] = $l;
+                }
+            } else {
+                $r = trim(strtolower(rawurldecode($r)));
+                $r = (strpos($r, "http://www.iana.org/assignments/relation/") === 0) ? substr($r, 41) : $r;
+                $r = !strlen($r) ? "alternate" : $r;
+                if ($r === $rel) {
+                    $out[] = $l;
+                }
+            }
+        }
+        return $out;
+    }
+
+    /** Returns the first Atom link URL which matches the desired relation, with nearest desired media type, or no media type if none match */
+    protected function fetchAtomRelation(string $rel = "", array $mediaTypes = [], \DOMNode $context = null): ?Url {
+        // tidy ther list of media types; this orders them worst (0)to best (highest index) and then creates a hashtable
+        $mediaTypes = array_flip(array_reverse(array_values(array_unique(array_map(function(string $t) {
+            return strtolower(trim($t));
+        }, $mediaTypes)))));
+        $rels = $this->fetchAtomRelations($rel, $context);
+        if ($rels && !$mediaTypes) {
+            return new Url($rels[0]->getAttribute("href"), );
+        }
+        $result = array_reduce($rels, function($best, $cur) use ($mediaTypes) {
+            $t = trim($cur->getAttribute("type"));
+            // absence of media type is acceptable if no better match yet exists
+            if (!strlen($t)) {
+                if (!$best) {
+                    return [$cur, -1]; // any match will rank higher than -1
+                }
+            }
+            $t = $this->parseMediaType($t);
+            if ($t) {
+                $rank = $mediaTypes[$t] ?? null;
+                if (!is_null($rank) && (!$best || $rank > $best[1])) {
+                    // if the media type is acceptable and there is currently no candidate or the candidate ranks lower, use the current link
+                    return [$cur, $rank];
+                }
+            }
+            return $best;
+        });
+        return $result ? new Url($result[0]->getAttribute("href")) : null;
+    }
+
     /** Primitive to fetch an Atom feed/entry identifier */
     protected function getIdAtom(): ?string {
         return $this->fetchString("atom:id", ".+");

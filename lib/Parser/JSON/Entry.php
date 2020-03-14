@@ -29,7 +29,7 @@ class Entry implements \MensBeam\Lax\Parser\Entry {
     public function __construct(\stdClass $data, FeedStruct $feed) {
         $this->data = $data;
         $this->feed = $feed;
-        $this->url = $feed->meta->url ?? null;
+        $this->url = $feed->meta->url ? (string) $feed->meta->url : null;
     }
 
     protected function init(EntryStruct $entry): EntryStruct {

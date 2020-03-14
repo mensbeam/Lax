@@ -202,7 +202,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
 
     private function makeUrl($url): ?Url {
         if (is_array($url)) {
-            return new Url($url[0] ?? "", ($url[1] ?? null) ? new Url($url[1]) : null);
+            return new Url($url[0] ?? "", $url[1] ?? null);
         } else {
             return new Url($url);
         }
