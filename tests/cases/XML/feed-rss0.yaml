@@ -68,3 +68,30 @@ Feed link:
         format: rdf
         version: '0.90'
         link: 'http://example.com/'
+
+Feed title 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+              <title> Loose  text</title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        title:
+            loose: 'Loose  text'
+
+Feed title 2:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+              <title xml:base="https://example.com/"> Loose  text</title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        title:
+            loose: 'Loose  text'
+            htmlBase: 'https://example.com/'

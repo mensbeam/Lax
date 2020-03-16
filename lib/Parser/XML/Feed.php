@@ -86,7 +86,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->lang = $this->getLang();
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
-        //$feed->title = $this->getTitle();
+        $feed->title = $this->getTitle();
         //$feed->summary = $this->getSummary();
         //$feed->dateModified = $this->getDateModified();
         //$feed->icon = $this->getIcon();

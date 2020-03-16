@@ -101,6 +101,25 @@ abstract class Construct {
         return null;
     }
 
+    protected function fetchText(string $query, string $format, \DOMNode $context = null): ?Text {
+        foreach ($this->xpath->query($query, $context ?? $this->subject) as $node) {
+            $data = trim($node->textContent);
+            if (strlen($data)) {
+                $out = new Text;
+                if ($format === "plain") {
+                    $data = $this->trimText($data);
+                } elseif ($format === "html" || $format === "loose") {
+                    $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
+                } elseif ($format === "xhtml") { // @codeCoverageIgnore
+                    $out->xhtmlBase = strlen($node->baseURI) ? $node->baseURI : null; // @codeCoverageIgnore
+                }
+                $out->$format = $data;
+                return $out;
+            }
+        }
+        return null;
+    }
+
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
      *
      * Links without an href attribute are excluded.
@@ -178,6 +197,45 @@ abstract class Construct {
         return $result ? new Url($result[0]->getAttribute("href"), $result[0]->baseURI) : null;
     }
 
+    protected function fetchAtomText(string $query, \DOMNode $context = null): ?Text {
+        $out = new Text;
+        $populated = false;
+        foreach ($this->xpath->query($query, $context ?? $this->subject) as $node) {
+            if ($node->hasAttribute("src")) {
+                // ignore any external content
+                continue;
+            }
+            // get the content type; assume "text" if not provided
+            $type = trim($node->getAttribute("type"));
+            $type = $this->parseMediaType((!strlen($type)) ? "text" : $type);
+            if ($type === "text" || $type === "text/plain") {
+                if (is_null($out->plain)) {
+                    $plain = $this->trimText($node->textContent);
+                    if (strlen($plain)) {
+                        $out->plain = $plain;
+                        $populated = true;
+                    }
+                }
+            } elseif ($type === "html" || $type === "text/html") {
+                if (is_null($out->html)) {
+                    $html = trim($node->textContent);
+                    if (strlen($html)) {
+                        $out->html = $html;
+                        $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
+                        $populated = true;
+                    }
+                }
+            } elseif ($type === "xhtml" || $type === "application/xhtml+xml") {
+                if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("xhtml:div", $node))) {
+                    $out->xhtml = $xhtml->ownerDocument->saveXML($xhtml);
+                    $out->xhtmlBase = strlen($xhtml->baseURI) ? $xhtml->baseURI : null;
+                    $populated = true;
+                }
+            }
+        }
+        return $populated ? $out : null;
+    }
+
     /** Primitive to fetch an Atom feed/entry identifier */
     protected function getIdAtom(): ?string {
         return $this->fetchString("atom:id", ".+");
@@ -225,4 +283,25 @@ abstract class Construct {
     protected function getLinkRss1(): ?Url {
         return $this->fetchUrl("rss1:link|rss0:link");
     }
+
+    protected function getTitleAtom(): ?Text {
+        return $this->fetchAtomText("atom:title");
+    }
+
+    protected function getTitleRss1(): ?Text {
+        return $this->fetchText("rss1:title|rss0:title", "loose");
+    }
+
+    protected function getTitleRss2(): ?Text {
+        return $this->fetchText("title", "loose");
+    }
+
+    protected function getTitleDC(): ?Text {
+        return $this->fetchText("dc:title", "plain");
+    }
+
+    protected function getTitlePod(): ?Text {
+        return $this->fetchText("apple:title", "plain");
+    }
+    
 }

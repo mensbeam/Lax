@@ -299,3 +299,24 @@ Relative feed link:
     output:
         format: rss
         link: ['/', 'http://example.com/path/']
+
+Feed title 1:
+    input: >
+        <rss><channel>
+            <title> Loose  text</title>
+        </channel></rss>
+    output:
+        format: rss
+        title:
+            loose: 'Loose  text'
+
+Feed title 2:
+    input: >
+        <rss><channel>
+            <title xml:base="https://example.com/"> Loose  text</title>
+        </channel></rss>
+    output:
+        format: rss
+        title:
+            loose: 'Loose  text'
+            htmlBase: 'https://example.com/'

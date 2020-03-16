@@ -203,3 +203,43 @@ Feed link:
         format: rdf
         version: '1.0'
         link: 'http://example.com/'
+
+Feed title 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+              <title> Loose  text</title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        title:
+            loose: 'Loose  text'
+
+Feed title 2:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+              <title xml:base="https://example.com/"> Loose  text</title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        title:
+            loose: 'Loose  text'
+            htmlBase: 'https://example.com/'
+
+DC title:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+              <dc:title xml:base="https://example.com/"> Plain  text</dc:title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        title:
+            plain: 'Plain text'

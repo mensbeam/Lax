@@ -46,3 +46,16 @@ iPod canonical URL:
     output:
         format: rss
         url: 'http://example.com/'
+
+iPod title:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <channel>
+                <itunes:title/>
+                <itunes:title> Plain  text</itunes:title>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        title:
+            plain: 'Plain text'

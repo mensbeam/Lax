@@ -186,3 +186,147 @@ Relative feed link with xml:base:
         format: atom
         version: '1.0'
         link: ['/', 'http://example.com/path/']
+
+Feed title as implied plain text 1:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title>Example  title</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 'Example title'
+
+Feed title as implied plain text 2:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type=" ">Example  title</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 'Example title'
+
+Feed title as explicit plain text 1:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="text">Example  title</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 'Example title'
+
+Feed title as explicit plain text 2:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="text/plain">  Example  title</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 'Example title'
+
+Feed title as HTML 1:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="html">  There    &amp;amp;   Then</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 
+            html: 'There    &amp;   Then'
+
+Feed title as HTML 2:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://example.com/">
+          <title type="text/html">  There    &amp;amp;   Then</title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 
+            html: 'There    &amp;   Then'
+            htmlBase: 'http://example.com/'
+
+Feed title as XHTML 1:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="xhtml">
+              <div xmlns="http://www.w3.org/1999/xhtml"> There  &amp; Then   </div>
+          </title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 
+            xhtml: '<div xmlns="http://www.w3.org/1999/xhtml"> There  &amp; Then   </div>'
+
+Feed title as XHTML 2:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="application/xhtml+xml">
+              <div xmlns="http://www.w3.org/1999/xhtml" xml:base="http://example.com/"> There  &amp; Then   </div>
+          </title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 
+            xhtml: '<div xmlns="http://www.w3.org/1999/xhtml" xml:base="http://example.com/"> There  &amp; Then   </div>'
+            xhtmlBase: 'http://example.com/'
+
+Feed title as XHTML 3:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="application/xhtml+xml">
+              <div xmlns="http://www.w3.org/1999/xhtml" xml:base="http://example.com/"/>
+          </title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title: 
+            xhtml: '<div xmlns="http://www.w3.org/1999/xhtml" xml:base="http://example.com/"/>'
+            xhtmlBase: 'http://example.com/'
+
+Feed title in multiple formats:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://example.com/">
+          <title type="text/plain">  Example  title</title>
+          <title type="html">  There    &amp;amp;   Then</title>
+          <title type="xhtml">
+              <div xmlns="http://www.w3.org/1999/xhtml"> There  &amp; Then   </div>
+          </title>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        title:
+            plain: 'Example title'
+            html: 'There    &amp;   Then'
+            htmlBase: 'http://example.com/'
+            xhtml: '<div xmlns="http://www.w3.org/1999/xhtml"> There  &amp; Then   </div>'
+            xhtmlBase: 'http://example.com/'
+
+Ignored text constructs:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+          <title type="text/plain"/>
+          <title type="text/html"/>
+          <title type="text/plain">  </title>
+          <title type="text/html">  </title>
+          <title type="xhtml"/>
+          <title type="xhtml"><div/></title>
+          <title type="xhtml"><body xmlns="http://www.w3.org/1999/xhtml"/></title>
+          <title type="xhtml"><div>Bogus</div></title>
+          <title type="xhtml"><body xmlns="http://www.w3.org/1999/xhtml">Bogus</body></title>
+          <title type="application/octet-stream">RXhhbXBsZSB0aXRsZQo=</title>
+          <title type="/">RXhhbXBsZSB0aXRsZQo=</title>
+          <title src="http://example.com/"/>
+          <title src=""/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
