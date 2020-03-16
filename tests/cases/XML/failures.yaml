@@ -14,3 +14,8 @@ Non-feed RDF document:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/"/>
     exception: notXMLFeed
+
+Non-feed Atom document:
+    input: >
+        <entry xmlns="http://www.w3.org/2005/Atom"/>
+    exception: notXMLFeed
