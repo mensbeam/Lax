@@ -15,6 +15,10 @@ use MensBeam\Lax\Url;
 abstract class Construct {
     use \MensBeam\Lax\Parser\Construct;
 
+    protected const TEXT_LOOSE = "loose";
+    protected const TEXT_PLAIN = "plain";
+    protected const TEXT_HTML = "html";
+
     /** @var \DOMDocument */
     protected $document;
     /** @var \DOMXPath */
@@ -110,8 +114,6 @@ abstract class Construct {
                     $data = $this->trimText($data);
                 } elseif ($format === "html" || $format === "loose") {
                     $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
-                } elseif ($format === "xhtml") { // @codeCoverageIgnore
-                    $out->xhtmlBase = strlen($node->baseURI) ? $node->baseURI : null; // @codeCoverageIgnore
                 }
                 $out->$format = $data;
                 return $out;
@@ -289,19 +291,19 @@ abstract class Construct {
     }
 
     protected function getTitleRss1(): ?Text {
-        return $this->fetchText("rss1:title|rss0:title", "loose");
+        return $this->fetchText("rss1:title|rss0:title", self::TEXT_LOOSE);
     }
 
     protected function getTitleRss2(): ?Text {
-        return $this->fetchText("title", "loose");
+        return $this->fetchText("title", self::TEXT_LOOSE);
     }
 
     protected function getTitleDC(): ?Text {
-        return $this->fetchText("dc:title", "plain");
+        return $this->fetchText("dc:title", self::TEXT_PLAIN);
     }
 
     protected function getTitlePod(): ?Text {
-        return $this->fetchText("apple:title", "plain");
+        return $this->fetchText("apple:title", self::TEXT_PLAIN);
     }
     
 }

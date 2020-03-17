@@ -87,7 +87,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->url = $this->getUrl();
         $feed->link = $this->getLink();
         $feed->title = $this->getTitle();
-        //$feed->summary = $this->getSummary();
+        $feed->summary = $this->getSummary();
         //$feed->dateModified = $this->getDateModified();
         //$feed->icon = $this->getIcon();
         //$feed->image = $this->getImage();
@@ -132,8 +132,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getSummary(): ?Text {
-        // unlike most other data, Atom is not preferred, because Atom doesn't really have feed summaries
-        return $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod() ?? $this->getSummaryAtom();
+        return $this->getSummaryAtom() ?? $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod();
     }
 
     public function getCategories(): CategoryCollection {
@@ -265,5 +264,25 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     protected function getUrlPod(): ?Url {
         return $this->fetchUrl("apple:new-feed-url");
+    }
+
+    protected function getSummaryAtom(): ?Text {
+        return $this->fetchAtomText("atom:summary") ?? $this->fetchAtomText("atom:subtitle"); 
+    }
+
+    protected function getSummaryRss2(): ?Text {
+        return $this->fetchText("description", self::TEXT_LOOSE);
+    }
+
+    protected function getSummaryRss1(): ?Text {
+        return $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE);
+    }
+
+    protected function getSummaryDC(): ?Text {
+        return $this->fetchText("dc:description", self::TEXT_PLAIN);
+    }
+
+    protected function getSummaryPod(): ?Text {
+        return $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN) ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);
     }
 }

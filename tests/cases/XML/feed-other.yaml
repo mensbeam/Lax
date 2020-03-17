@@ -59,3 +59,27 @@ iPod title:
         format: rss
         title:
             plain: 'Plain text'
+
+iPod summary: # Apple's own documentation doesn't mention a namespaced summary element, but Google's does
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <channel>
+                <itunes:summary> Plain  text</itunes:summary>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        summary:
+            plain: 'Plain text'
+
+Google Play summary:
+    input: >
+        <rss xmlns:play="http://www.google.com/schemas/play-podcasts/1.0">
+            <channel>
+                <play:description> Plain  text</play:description>
+            </channel>
+        </rss>
+    output:
+        format: rss
+        summary:
+            plain: 'Plain text'

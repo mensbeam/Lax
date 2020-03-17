@@ -243,3 +243,29 @@ DC title:
         version: '1.0'
         title:
             plain: 'Plain text'
+
+Feed summary:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+              <description>Loose text</description>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        summary:
+            loose: 'Loose text'
+
+DC summary:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+              <dc:description>Plain text</dc:description>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        summary:
+            plain: 'Plain text'

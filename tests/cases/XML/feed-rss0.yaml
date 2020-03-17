@@ -95,3 +95,16 @@ Feed title 2:
         title:
             loose: 'Loose  text'
             htmlBase: 'https://example.com/'
+
+Feed summary:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+              <description>Loose text</description>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        summary:
+            loose: 'Loose text'

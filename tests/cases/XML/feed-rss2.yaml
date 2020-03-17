@@ -320,3 +320,13 @@ Feed title 2:
         title:
             loose: 'Loose  text'
             htmlBase: 'https://example.com/'
+
+Feed summary:
+    input: >
+        <rss><channel>
+            <description>Loose text</description>
+        </channel></rss>
+    output:
+        format: rss
+        summary:
+            loose: 'Loose text'
