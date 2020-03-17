@@ -76,6 +76,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         foreach ($output as $k => $v) {
             if (in_array($k, ["title", "summary"])) {
                 $f->$k = $this->makeText($v);
+            } elseif ($k === "dateModified") {
+                $f->$k = new Date($v, new \DateTimeZone("UTC"));
             } elseif ($k === "people") {
                 $c = new PersonCollection;
                 foreach ($v as $m) {

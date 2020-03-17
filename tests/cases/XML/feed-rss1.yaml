@@ -194,9 +194,9 @@ Feed link:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <channel>
-              <link/>
-              <link>http://[example.net]/</link>
-              <link>http://example.com/</link>
+                <link/>
+                <link>http://[example.net]/</link>
+                <link>http://example.com/</link>
             </channel>
         </rdf:RDF>
     output:
@@ -208,7 +208,7 @@ Feed title 1:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <channel>
-              <title> Loose  text</title>
+                <title> Loose  text</title>
             </channel>
         </rdf:RDF>
     output:
@@ -221,7 +221,7 @@ Feed title 2:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <channel>
-              <title xml:base="https://example.com/"> Loose  text</title>
+                <title xml:base="https://example.com/"> Loose  text</title>
             </channel>
         </rdf:RDF>
     output:
@@ -235,7 +235,7 @@ DC title:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
-              <dc:title xml:base="https://example.com/"> Plain  text</dc:title>
+                <dc:title xml:base="https://example.com/"> Plain  text</dc:title>
             </channel>
         </rdf:RDF>
     output:
@@ -248,7 +248,7 @@ Feed summary:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <channel>
-              <description>Loose text</description>
+                <description>Loose text</description>
             </channel>
         </rdf:RDF>
     output:
@@ -261,7 +261,7 @@ DC summary:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
-              <dc:description>Plain text</dc:description>
+                <dc:description>Plain text</dc:description>
             </channel>
         </rdf:RDF>
     output:
@@ -269,3 +269,29 @@ DC summary:
         version: '1.0'
         summary:
             plain: 'Plain text'
+
+DC date:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:date>2020-03-03T00:00:00Z</dc:date>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Multiple DC dates:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:date>2020-03-03T00:00:00Z</dc:date>
+                <dc:date>2020-03-03T00:00:00-04:00</dc:date>
+                <dc:date>2020-03-03T01:00:00Z</dc:date>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00-04:00'

@@ -330,3 +330,43 @@ Feed summary:
         format: rss
         summary:
             loose: 'Loose text'
+
+Feed publication date:
+    input: >
+        <rss><channel>
+            <pubDate>2020-03-03T00:00:00Z</pubDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-03T00:00:00Z'
+
+Feed build date:
+    input: >
+        <rss><channel>
+            <lastBuildDate>2020-03-03T00:00:00Z</lastBuildDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-03T00:00:00Z'
+
+Multiple dates 1:
+    input: >
+        <rss><channel>
+            <pubDate>2020-03-03T00:00:00Z</pubDate>
+            <pubDate>2020-03-03T00:00:00-04:00</pubDate>
+            <lastBuildDate>2020-03-03T00:00:00Z</lastBuildDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-03T00:00:00-04:00'
+
+Multiple dates 2:
+    input: >
+        <rss><channel>
+            <pubDate>2020-03-03T00:00:00Z</pubDate>
+            <lastBuildDate>2020-03-03T00:00:00-04:00</lastBuildDate>
+            <pubDate>2020-03-03T00:00:00Z</pubDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-03T00:00:00-04:00'

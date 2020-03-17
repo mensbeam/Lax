@@ -122,6 +122,7 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
      * JSON Feed does not have categories at the feed level, so this always returns and empty collection
      */
     public function getCategories(): CategoryCollection {
+        // TODO: the cast extension does add (iTunes) categories to feeds
         return new CategoryCollection;
     }
 

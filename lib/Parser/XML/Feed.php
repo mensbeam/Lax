@@ -88,7 +88,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->link = $this->getLink();
         $feed->title = $this->getTitle();
         $feed->summary = $this->getSummary();
-        //$feed->dateModified = $this->getDateModified();
+        $feed->dateModified = $this->getDateModified();
         //$feed->icon = $this->getIcon();
         //$feed->image = $this->getImage();
         //$feed->people = $this->getPeople();
@@ -135,6 +135,14 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return $this->getSummaryAtom() ?? $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod();
     }
 
+    public function getDateModified(): ?Date {
+        /*  fetching a date works differently from other data as only Atom has
+            well-defined semantics here. Thus the semantics of all the other
+            formats are equal, and we want the latest date, whatever it is.
+        */
+        return $this->fetchDate("atom:updated", self::DATE_LATEST) ?? $this->fetchDate("dc:date|pubDate|lastBuildDate", self::DATE_LATEST);
+    }
+
     public function getCategories(): CategoryCollection {
         return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
     }
@@ -145,10 +153,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $editors = $this->getEditorsRss2() ?? new PersonCollection;
         $webmasters = $this->getWebmastersPod() ?? $this->getWebmastersRss2() ?? new PersonCollection;
         return $authors->merge($contributors, $editors, $webmasters);
-    }
-
-    public function getDateModified(): ?Date {
-        return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
     }
 
     public function getEntries(FeedStruct $feed = null): array {
@@ -168,6 +172,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return $this->fetchString("apple:complete", "(?-i:Yes)") ? true : null; // case-sensitive pattern
     }
 
+    /** Fetches the "time-to-live" value (a number of minutes before the feed should be re-fetched) from an RSS 2.0 feed */
     protected function getSchedIntervalRss2(): ?\DateInterval {
         $ttl = (int) $this->fetchString("ttl", "\d+");
         if ($ttl) {
@@ -176,6 +181,12 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return null;
     }
 
+    /** Fetches the schedule interval from an RSS feed; this is necessarily approximate:
+     * 
+     * The interval is defined in the syndication RSS extension as fractions of a period, but PHP only supports integer intervals, so we perform integer divison on the nearest subdivision of a period, returning at least one.
+     * 
+     * For example, "four times monthly" first assumes a month is 30 days, and divides this by four to yield seven days.
+     */
     protected function getSchedIntervalRss1(): ?\DateInterval {
         $period = $this->fetchString("sched:updatePeriod", "(?:year|month|week|dai|hour)ly");
         if ($period) {

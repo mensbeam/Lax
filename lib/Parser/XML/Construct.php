@@ -19,6 +19,11 @@ abstract class Construct {
     protected const TEXT_PLAIN = "plain";
     protected const TEXT_HTML = "html";
 
+    protected const DATE_ANY = 0;
+    protected const DATE_LATEST = 1;
+    protected const DATE_EARLIEST = 2;
+    protected const DATE_ALL = 3;
+
     /** @var \DOMDocument */
     protected $document;
     /** @var \DOMXPath */
@@ -68,22 +73,39 @@ abstract class Construct {
      * Returns null if no suitable nodes were found  
      * 
      * @param string $query The XPath query of the nodes to return
-     * @param bool|null $multi Whether to return multiple results as an array (true) or one result as a date object (false, default)
+     * @param bool|null $mode Whether to return the first valid date found (DATE_ANY), the earliest chronologically (DATE_EARLIEST), latest chronologically (DATE_LATEST), or all valid dates (DAATE_ALL) in a sorted array
      * @param \DOMNode $context The context node for the XPath query
      * @return \MensBeam\Lax\Date|array|null
      */
-    protected function fetchDate(string $query, ?bool $multi = null, \DOMNode $context = null) {
+    protected function fetchDate(string $query, int $mode = self::DATE_ANY, \DOMNode $context = null) {
         $out = [];
+        $tz = new \DateTimeZone("UTC");
+        assert(in_array($mode, [self::DATE_ANY, self::DATE_ALL, self::DATE_EARLIEST, self::DATE_LATEST]));
         foreach((array) $this->fetchString($query, null, true, $context) as $d) {
             if ($d = $this->parseDate($d ?? "")) {
-                if (!$multi) {
+                if ($mode === self::DATE_ANY) {
                     return $d;
                 } else {
-                    $out[] = $d;
+                    // add the date to the output only if it is a unique moment in time so far
+                    $ts = $d->setTimezone($tz)->format("Y-m-d\TH:i:s.u\Z");
+                    if (!isset($out[$ts])) {
+                        $out[$ts] = $d;
+                    }
                 }
             }
         }
-        return $out ?: null;
+        // sort the dates earliest to latest and produce an indexed array
+        ksort($out);
+        $out = array_values($out);
+        // return based on requested mode
+        switch ($mode) {
+            case self::DATE_ALL:
+                return $out;
+            case self::DATE_EARLIEST:
+                return $out ? $out[0] : null;
+            case self::DATE_LATEST:
+                return $out ? array_pop($out) : null;
+        }
     }
 
     /** Returns the first valid URL matching an XPath query. Relative URLs are resolved when possible
