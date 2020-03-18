@@ -395,3 +395,43 @@ Bogus feed date:
     output:
         format: atom
         version: '1.0'
+
+Icon URL:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <icon>http://example.com/</icon>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        icon: 'http://example.com/'
+
+Icon relation URL:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <link rel="icon" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        icon: 'http://example.com/'
+
+Shortcut icon relation URL:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <link rel="shortcut icon" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        icon: 'http://example.com/'
+
+Reversed shortcut icon relation URL:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <link rel="icon shortcut" href="http://example.com/"/>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        icon: 'http://example.com/'
