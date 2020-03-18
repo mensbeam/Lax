@@ -144,12 +144,13 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getSummary(): ?Text {
-        return $this->fetchAtomText("atom:summary")                                                                                             // Atom summary (non-standard)
-            ?? $this->fetchAtomText("atom:subtitle")                                                                                            // Atom subtitle
-            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)                                                                             // Dublin Core description
-            ?? $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE)                                                          // RSS 0.90 or RSS 1.0 description
-            ?? $this->fetchText("description", self::TEXT_LOOSE)                                                                                // RSS 2.0 description
-            ?? $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN) ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);   // iTunes podcast summary or Google Play podcast description  
+        return $this->fetchAtomText("atom:summary")                                     // Atom summary (non-standard)
+            ?? $this->fetchAtomText("atom:subtitle")                                    // Atom subtitle
+            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)                     // Dublin Core description
+            ?? $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE)  // RSS 0.90 or RSS 1.0 description
+            ?? $this->fetchText("description", self::TEXT_LOOSE)                        // RSS 2.0 description
+            ?? $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN)    // iTunes podcast summary or Google Play podcast description
+            ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);                    // iTunes podcast subtitle
     }
 
     public function getDateModified(): ?Date {
@@ -168,6 +169,14 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? $this->fetchAtomRelation("icon shortcut");   // Atom icon relation URL (non-standard Internet Explorewr usage, reversed)
     }
 
+    public function getImage(): ?Url {
+        return $this->fetchUrl("atom:logo")                         // Atom logo URL
+            ?? $this->fetchUrl("(rss0:image|rss1:image)/url")       // RSS 0.90 or RSS 1.0 channel image
+            ?? $this->fetchUrl("(/rss0:image|/rss1:image)/url")     // RSS 0.90 or RSS 1.0 root image
+            ?? $this->fetchUrl("image/url")                         // RSS 2.0 channel image
+            ?? $this->fetchURL("(apple:image|gplay:image)/@href");  // iTunes or Google Play podcast image
+    }
+
     public function getCategories(): CategoryCollection {
         return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
     }
@@ -182,10 +191,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
-    }
-
-    public function getImage(): ?Url {
-        return null;
     }
 
     /** Fetches the "complete" flag from an iTunes podcast */
