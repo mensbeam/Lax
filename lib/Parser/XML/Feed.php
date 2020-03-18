@@ -90,7 +90,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->summary = $this->getSummary();
         $feed->dateModified = $this->getDateModified();
         $feed->icon = $this->getIcon();
-        //$feed->image = $this->getImage();
+        $feed->image = $this->getImage();
         //$feed->people = $this->getPeople();
         //$feed->categories = $this->getCategories();
         //$feed->entries = $this->getEntries($feed);
@@ -170,11 +170,11 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getImage(): ?Url {
-        return $this->fetchUrl("atom:logo")                         // Atom logo URL
-            ?? $this->fetchUrl("(rss0:image|rss1:image)/url")       // RSS 0.90 or RSS 1.0 channel image
-            ?? $this->fetchUrl("(/rss0:image|/rss1:image)/url")     // RSS 0.90 or RSS 1.0 root image
-            ?? $this->fetchUrl("image/url")                         // RSS 2.0 channel image
-            ?? $this->fetchURL("(apple:image|gplay:image)/@href");  // iTunes or Google Play podcast image
+        return $this->fetchUrl("atom:logo")                                                 // Atom logo URL
+            ?? $this->fetchUrl("rss0:image/rss0:url|rss1:image/rss1:url")                   // RSS 0.90 or RSS 1.0 channel image
+            ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url|/rdf:RDF/rss1:image/rss1:url") // RSS 0.90 or RSS 1.0 root image
+            ?? $this->fetchUrl("image/url")                                                 // RSS 2.0 channel image
+            ?? $this->fetchUrl("(apple:image|gplay:image)/@href");                          // iTunes or Google Play podcast image
     }
 
     public function getCategories(): CategoryCollection {

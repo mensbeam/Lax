@@ -59,9 +59,9 @@ Feed link:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
             <channel>
-              <link/>
-              <link>http://[example.net]/</link>
-              <link>http://example.com/</link>
+                <link/>
+                <link>http://[example.net]/</link>
+                <link>http://example.com/</link>
             </channel>
         </rdf:RDF>
     output:
@@ -73,7 +73,7 @@ Feed title 1:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
             <channel>
-              <title> Loose  text</title>
+                <title> Loose  text</title>
             </channel>
         </rdf:RDF>
     output:
@@ -86,7 +86,7 @@ Feed title 2:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
             <channel>
-              <title xml:base="https://example.com/"> Loose  text</title>
+                <title xml:base="https://example.com/"> Loose  text</title>
             </channel>
         </rdf:RDF>
     output:
@@ -100,7 +100,7 @@ Feed summary:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
             <channel>
-              <description>Loose text</description>
+                <description>Loose text</description>
             </channel>
         </rdf:RDF>
     output:
@@ -108,3 +108,47 @@ Feed summary:
         version: '0.90'
         summary:
             loose: 'Loose text'
+
+Feed channel image:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+                <image>
+                    <url>http://example.com/</url>
+                </image>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        image: 'http://example.com/'
+
+Feed root image:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel/>
+            <image>
+                <url>http://example.com/</url>
+            </image>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        image: 'http://example.com/'
+
+Feed channel and root images:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <image>
+                <url>http://example.net/</url>
+            </image>
+            <channel>
+                <image>
+                    <url>http://example.com/</url>
+                </image>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        image: 'http://example.com/'

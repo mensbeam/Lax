@@ -370,3 +370,14 @@ Multiple dates 2:
     output:
         format: rss
         dateModified: '2020-03-03T00:00:00-04:00'
+
+Channel image:
+    input: >
+        <rss><channel>
+            <image>
+                <url>http://example.com/</url>
+            </image>
+        </channel></rss>
+    output:
+        format: rss
+        image: 'http://example.com/'

@@ -83,3 +83,21 @@ Google Play summary:
         format: rss
         summary:
             plain: 'Plain text'
+
+iTunes image:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:image href="http://example.com/"/>
+        </channel></rss>
+    output:
+        format: rss
+        image: 'http://example.com/'
+
+Google Play image:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:image href="http://example.com/"/>
+        </channel></rss>
+    output:
+        format: rss
+        image: 'http://example.com/'

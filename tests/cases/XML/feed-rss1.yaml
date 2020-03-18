@@ -295,3 +295,47 @@ Multiple DC dates:
         format: rdf
         version: '1.0'
         dateModified: '2020-03-03T00:00:00-04:00'
+
+Feed channel image:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+                <image>
+                    <url>http://example.com/</url>
+                </image>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
+
+Feed root image:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel/>
+            <image>
+                <url>http://example.com/</url>
+            </image>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
+
+Feed channel and root images:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <image>
+                <url>http://example.net/</url>
+            </image>
+            <channel>
+                <image>
+                    <url>http://example.com/</url>
+                </image>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
