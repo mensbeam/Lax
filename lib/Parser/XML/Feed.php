@@ -92,7 +92,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->icon = $this->getIcon();
         $feed->image = $this->getImage();
         //$feed->people = $this->getPeople();
-        //$feed->categories = $this->getCategories();
+        $feed->categories = $this->getCategories();
         //$feed->entries = $this->getEntries($feed);
         return $feed;
     }
@@ -105,14 +105,14 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getSchedule(): Schedule {
         $sched = new Schedule;
-        $sched->interval = $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
+        $sched->interval =  $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
         $sched->skip = $this->getSchedSkipRss2();
         $sched->expired = $this->getExpiredPod();
         if (is_null($sched->expired) && (($sched->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($sched->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
             $sched->expired = true;
         }
         if ($sched->interval) {
-            $sched->base = $this->getSchedBaseRss1();
+            $sched->base = $this->fetchDate("sched:updateBase", self::DATE_ANY);
         }
         return $sched;
     }
@@ -178,7 +178,11 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getCategories(): CategoryCollection {
-        return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
+        return $this->getCategoriesAtom() 
+            ?? $this->getCategoriesRss2() 
+            ?? $this->getCategoriesPod() 
+            ?? $this->getCategoriesDC() 
+            ?? new CategoryCollection;
     }
 
     public function getPeople(): PersonCollection {
@@ -232,11 +236,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         }
         return null;
     }
-
-    protected function getSchedBaseRss1(): ?Date {
-        return $this->fetchDate("sched:updateBase");
-    }
-
 
     /** Computes the "skip-schedule" of an RSS feed, the set of days and hours during which a feed should not be fetched */
     protected function getSchedSkipRss2(): ?int {

@@ -6,6 +6,8 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML;
 
+use MensBeam\Lax\Category\Category;
+use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Text;
@@ -77,7 +79,7 @@ abstract class Construct {
      * @param \DOMNode $context The context node for the XPath query
      * @return \MensBeam\Lax\Date|array|null
      */
-    protected function fetchDate(string $query, int $mode = self::DATE_ANY, \DOMNode $context = null) {
+    protected function fetchDate(string $query, int $mode, \DOMNode $context = null) {
         $out = [];
         $tz = new \DateTimeZone("UTC");
         assert(in_array($mode, [self::DATE_ANY, self::DATE_ALL, self::DATE_EARLIEST, self::DATE_LATEST]));
@@ -327,5 +329,56 @@ abstract class Construct {
     protected function getTitlePod(): ?Text {
         return $this->fetchText("apple:title", self::TEXT_PLAIN);
     }
-    
+
+    protected function getCategoriesAtom(): ?CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->xpath->query("atom:category[@term]") as $node) {
+            $c = new Category;
+            $c->domain = $this->trimText($node->getAttribute("scheme"));
+            $c->label = $this->trimText($node->getAttribute("label"));
+            $c->name = $this->trimText($node->getAttribute("term"));
+            if (strlen($c->name)) {
+                $out[] = $c;
+            }
+        }
+        return count($out) ? $out : null;
+    }
+
+    protected function getCategoriesRss2(): ?CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->xpath->query("category") as $node) {
+            $c = new Category;
+            $c->domain = $this->trimText($node->getAttribute("domain"));
+            $c->name = $this->trimText($node->textContent);
+            if (strlen($c->name)) {
+                $out[] = $c;
+            }
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation */
+    protected function getCategoriesDC(): ?CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->fetchString("dc:subject", null, true) ?? [] as $text) {
+            if (strlen($text)) {
+                $c = new Category;
+                $c->name = $text;
+                $out[] = $c;
+            }
+        }
+        return count($out) ? $out : null;
+    }
+
+    protected function getCategoriesPod(): ?CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->xpath->query("apple:category|gplay:category") ?? [] as $node) {
+            $c = new Category;
+            $c->name = $this->trimText($node->getAttribute("text"));
+            if (strlen($c->name)) {
+                $out[] = $c;
+            }
+        }
+        return count($out) ? $out : null;
+    }    
 }

@@ -84,6 +84,16 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                     $c[] = $this->makePerson($m);
                 }
                 $f->$k = $c;
+            } elseif ($k === "categories") {
+                $c = new CategoryCollection;
+                foreach ($v as $m) {
+                    $o = new Category;
+                    foreach ($m as $kk => $vv) {
+                        $o->$kk = $vv;
+                    }
+                    $c[] = $o;
+                }
+                $f->$k = $c;
             } elseif ($k === "entries") {
                 $c = [];
                 foreach ($v as $m) {
