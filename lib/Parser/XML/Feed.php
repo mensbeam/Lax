@@ -89,7 +89,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->title = $this->getTitle();
         $feed->summary = $this->getSummary();
         $feed->dateModified = $this->getDateModified();
-        //$feed->icon = $this->getIcon();
+        $feed->icon = $this->getIcon();
         //$feed->image = $this->getImage();
         //$feed->people = $this->getPeople();
         //$feed->categories = $this->getCategories();
@@ -98,7 +98,9 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getId(): ?string {
-        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2();
+        return $this->getIdAtom()   // Atom ID
+            ?? $this->getIdDC()     // Dublin Core ID
+            ?? $this->getIdRss2();  // RSS GUID
     }
 
     public function getSchedule(): Schedule {
@@ -116,23 +118,38 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getLang(): ?string {
-        return $this->getLangXML() ?? $this->getLangDC() ?? $this->getLangRss2();
+        return $this->getLangXML()      // xml:lang attribute
+            ?? $this->getLangDC()       // Dublin Core language
+            ?? $this->getLangRss2();    // RSS language
     }
 
     public function getUrl(): ?Url {
-        return $this->getUrlAtom() ?? $this->getUrlRss1() ?? $this->getUrlPod();
+        return $this->fetchAtomRelation("self")                                         // Atom 'self' relation URL
+            ?? $this->fetchUrl("(self::rss1:channel|self::rss0:channel)/@rdf:about")    // RDF-about URL from RSS 0.90 or RSS 1.0
+            ?? $this->fetchUrl("apple:new-feed-url");                                   // iTunes podcast canonical URL
     }
 
     public function getLink(): ?Url {
-        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2();
+        return $this->getLinkAtom()     // Atom link
+            ?? $this->getLinkRss1()     // RSS 0.90 or RSS 1.0 link
+            ?? $this->getLinkRss2();    // RSS 2.0 link
     }
 
     public function getTitle(): ?Text {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod();
+        return $this->getTitleAtom()    // Atom title
+            ?? $this->getTitleRss1()    // RSS 0.90 or RSS 1.0 title
+            ?? $this->getTitleRss2()    // RSS 2.0 title
+            ?? $this->getTitleDC()      // Dublin Core title
+            ?? $this->getTitlePod();    // iTunes podcast title
     }
 
     public function getSummary(): ?Text {
-        return $this->getSummaryAtom() ?? $this->getSummaryDC() ?? $this->getSummaryRss1() ?? $this->getSummaryRss2() ?? $this->getSummaryPod();
+        return $this->fetchAtomText("atom:summary")                                                                                             // Atom summary (non-standard)
+            ?? $this->fetchAtomText("atom:subtitle")                                                                                            // Atom subtitle
+            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)                                                                             // Dublin Core description
+            ?? $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE)                                                          // RSS 0.90 or RSS 1.0 description
+            ?? $this->fetchText("description", self::TEXT_LOOSE)                                                                                // RSS 2.0 description
+            ?? $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN) ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);   // iTunes podcast summary or Google Play podcast description  
     }
 
     public function getDateModified(): ?Date {
@@ -140,7 +157,15 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             well-defined semantics here. Thus the semantics of all the other
             formats are equal, and we want the latest date, whatever it is.
         */
-        return $this->fetchDate("atom:updated", self::DATE_LATEST) ?? $this->fetchDate("dc:date|pubDate|lastBuildDate", self::DATE_LATEST);
+        return $this->fetchDate("atom:updated", self::DATE_LATEST) 
+            ?? $this->fetchDate("dc:date|pubDate|lastBuildDate", self::DATE_LATEST);
+    }
+
+    public function getIcon(): ?Url {
+        return $this->fetchUrl("atom:icon")                 // Atom icon URL
+            ?? $this->fetchAtomRelation("icon")             // Atom icon relation URL
+            ?? $this->fetchAtomRelation("shortcut icon")    // Atom icon relation URL (non-standard Internet Explorewr usage)
+            ?? $this->fetchAtomRelation("icon shortcut");   // Atom icon relation URL (non-standard Internet Explorewr usage, reversed)
     }
 
     public function getCategories(): CategoryCollection {
@@ -157,10 +182,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getEntries(FeedStruct $feed = null): array {
         return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
-    }
-
-    public function getIcon(): ?Url {
-        return null;
     }
 
     public function getImage(): ?Url {
@@ -263,37 +284,5 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ][strtolower($d)] ?? 0;
         }
         return $out ?: null;
-    }
-
-    protected function getUrlAtom(): ?Url {
-        return $this->fetchAtomRelation("self");
-    }
-
-    protected function getUrlRss1(): ?Url {
-        return $this->fetchUrl("(self::rss1:channel|self::rss0:channel)/@rdf:about");
-    }
-
-    protected function getUrlPod(): ?Url {
-        return $this->fetchUrl("apple:new-feed-url");
-    }
-
-    protected function getSummaryAtom(): ?Text {
-        return $this->fetchAtomText("atom:summary") ?? $this->fetchAtomText("atom:subtitle"); 
-    }
-
-    protected function getSummaryRss2(): ?Text {
-        return $this->fetchText("description", self::TEXT_LOOSE);
-    }
-
-    protected function getSummaryRss1(): ?Text {
-        return $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE);
-    }
-
-    protected function getSummaryDC(): ?Text {
-        return $this->fetchText("dc:description", self::TEXT_PLAIN);
-    }
-
-    protected function getSummaryPod(): ?Text {
-        return $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN) ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);
     }
 }
