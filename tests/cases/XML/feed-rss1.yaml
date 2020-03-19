@@ -339,3 +339,18 @@ Feed channel and root images:
         format: rdf
         version: '1.0'
         image: 'http://example.com/'
+
+Categories by way of DC subjects:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:subject>Category, sort  of</dc:subject>
+                <dc:subject>blah</dc:subject>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        categories:
+            - name: 'Category, sort of'
+            - name: 'blah'

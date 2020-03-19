@@ -332,7 +332,6 @@ Feed summary 2:
         summary:
             html: 'Subtitle text'
 
-
 Ignored text constructs:
     input: >
         <feed xmlns="http://www.w3.org/2005/Atom">
