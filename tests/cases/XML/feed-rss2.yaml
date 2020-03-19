@@ -381,3 +381,17 @@ Channel image:
     output:
         format: rss
         image: 'http://example.com/'
+
+Category:
+    input: >
+        <rss><channel>
+            <category>Category the  first  </category>
+            <category domain="ook  eek">Category the  second  </category>
+            <category/>
+        </channel></rss>
+    output:
+        format: rss
+        categories:
+            - name: 'Category the first'
+            - name: 'Category the second'
+              domain: 'ook eek'

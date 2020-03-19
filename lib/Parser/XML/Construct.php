@@ -346,7 +346,7 @@ abstract class Construct {
 
     protected function getCategoriesRss2(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("rss2:category") as $node) {
+        foreach ($this->xpath->query("rss2:category", $this->subject) as $node) {
             $c = new Category;
             $c->domain = $this->trimText($node->getAttribute("domain"));
             $c->name = $this->trimText($node->textContent);
@@ -372,7 +372,7 @@ abstract class Construct {
 
     protected function getCategoriesTunes(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("apple:category") ?? [] as $node) {
+        foreach ($this->xpath->query("apple:category", $this->subject) ?? [] as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {
@@ -384,7 +384,7 @@ abstract class Construct {
 
     protected function getCategoriesGPlay(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("gplay:category") ?? [] as $node) {
+        foreach ($this->xpath->query("gplay:category", $this->subject) ?? [] as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {
