@@ -307,7 +307,7 @@ abstract class Construct {
     }
 
     protected function getLinkRss1(): ?Url {
-        return $this->fetchUrl("rss1:link|rss0:link");
+        return $this->fetchUrl("rss1:link") ?? $this->fetchUrl("rss0:link");
     }
 
     protected function getTitleAtom(): ?Text {
@@ -315,7 +315,7 @@ abstract class Construct {
     }
 
     protected function getTitleRss1(): ?Text {
-        return $this->fetchText("rss1:title|rss0:title", self::TEXT_LOOSE);
+        return $this->fetchText("rss1:title", self::TEXT_LOOSE) ?? $this->fetchText("rss0:title", self::TEXT_LOOSE);
     }
 
     protected function getTitleRss2(): ?Text {
@@ -370,9 +370,9 @@ abstract class Construct {
         return count($out) ? $out : null;
     }
 
-    protected function getCategoriesPod(): ?CategoryCollection {
+    protected function getCategoriesTunes(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("apple:category|gplay:category") ?? [] as $node) {
+        foreach ($this->xpath->query("apple:category") ?? [] as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {
@@ -380,5 +380,17 @@ abstract class Construct {
             }
         }
         return count($out) ? $out : null;
-    }    
+    }
+
+    protected function getCategoriesGPlay(): ?CategoryCollection {
+        $out = new CategoryCollection;
+        foreach ($this->xpath->query("gplay:category") ?? [] as $node) {
+            $c = new Category;
+            $c->name = $this->trimText($node->getAttribute("text"));
+            if (strlen($c->name)) {
+                $out[] = $c;
+            }
+        }
+        return count($out) ? $out : null;
+    }
 }

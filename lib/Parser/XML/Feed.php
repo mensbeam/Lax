@@ -124,9 +124,10 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getUrl(): ?Url {
-        return $this->fetchAtomRelation("self")                                         // Atom 'self' relation URL
-            ?? $this->fetchUrl("(self::rss1:channel|self::rss0:channel)/@rdf:about")    // RDF-about URL from RSS 0.90 or RSS 1.0
-            ?? $this->fetchUrl("apple:new-feed-url");                                   // iTunes podcast canonical URL
+        return $this->fetchAtomRelation("self")                     // Atom 'self' relation URL
+            ?? $this->fetchUrl("self::rss1:channel/@rdf:about")     // RDF-about URL from RSS 0.90 or RSS 1.0
+            ?? $this->fetchUrl("self::rss0:channel/@rdf:about")     // RDF-about URL from RSS 0.90 or RSS 1.0
+            ?? $this->fetchUrl("apple:new-feed-url");               // iTunes podcast canonical URL
     }
 
     public function getLink(): ?Url {
@@ -144,13 +145,15 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getSummary(): ?Text {
-        return $this->fetchAtomText("atom:summary")                                     // Atom summary (non-standard)
-            ?? $this->fetchAtomText("atom:subtitle")                                    // Atom subtitle
-            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)                     // Dublin Core description
-            ?? $this->fetchText("rss1:description|rss0:description", self::TEXT_LOOSE)  // RSS 0.90 or RSS 1.0 description
-            ?? $this->fetchText("description", self::TEXT_LOOSE)                        // RSS 2.0 description
-            ?? $this->fetchText("apple:summary|gplay:description", self::TEXT_PLAIN)    // iTunes podcast summary or Google Play podcast description
-            ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);                    // iTunes podcast subtitle
+        return $this->fetchAtomText("atom:summary")                     // Atom summary (non-standard)
+            ?? $this->fetchAtomText("atom:subtitle")                    // Atom subtitle
+            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)     // Dublin Core description
+            ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)   // RSS 1.0 description
+            ?? $this->fetchText("rss0:description", self::TEXT_LOOSE)   // RSS 0.90 description
+            ?? $this->fetchText("description", self::TEXT_LOOSE)        // RSS 2.0 description
+            ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)  // Google Play podcast description
+            ?? $this->fetchText("apple:summary", self::TEXT_PLAIN)      // iTunes podcast summary
+            ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);    // iTunes podcast subtitle
     }
 
     public function getDateModified(): ?Date {
@@ -170,17 +173,21 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getImage(): ?Url {
-        return $this->fetchUrl("atom:logo")                                                 // Atom logo URL
-            ?? $this->fetchUrl("rss0:image/rss0:url|rss1:image/rss1:url")                   // RSS 0.90 or RSS 1.0 channel image
-            ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url|/rdf:RDF/rss1:image/rss1:url") // RSS 0.90 or RSS 1.0 root image
-            ?? $this->fetchUrl("image/url")                                                 // RSS 2.0 channel image
-            ?? $this->fetchUrl("(apple:image|gplay:image)/@href");                          // iTunes or Google Play podcast image
+        return $this->fetchUrl("atom:logo")                     // Atom logo URL
+            ?? $this->fetchUrl("rss1:image/rss1:url")           // RSS 1.0 channel image
+            ?? $this->fetchUrl("/rdf:RDF/rss1:image/rss1:url")  // RSS 1.0 root image
+            ?? $this->fetchUrl("rss0:image/rss0:url")           // RSS 0.90 channel image
+            ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url")  // RSS 0.90 root image
+            ?? $this->fetchUrl("image/url")                     // RSS 2.0 channel image
+            ?? $this->fetchUrl("gplay:image/@href")             // Google Play podcast image
+            ?? $this->fetchUrl("apple:image/@href");            // iTunes podcast image
     }
 
     public function getCategories(): CategoryCollection {
         return $this->getCategoriesAtom() 
             ?? $this->getCategoriesRss2() 
-            ?? $this->getCategoriesPod() 
+            ?? $this->getCategoriesGPlay() 
+            ?? $this->getCategoriesTunes() 
             ?? $this->getCategoriesDC() 
             ?? new CategoryCollection;
     }
