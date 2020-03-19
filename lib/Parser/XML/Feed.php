@@ -53,6 +53,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             $this->subject = $this->fetchElement("channel") ?? $this->subject;
             $feed->format = "rss";
             $feed->version = $this->document->documentElement->hasAttribute("version") ? $this->document->documentElement->getAttribute("version") : null;
+            $this->xpath->rss2 = true;
         } elseif ($ns === XPath::NS['rdf'] && $name === "RDF") {
             $feed->format = "rdf";
             $channel = $this->fetchElement("rss1:channel|rss0:channel");
@@ -150,7 +151,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? $this->fetchText("dc:description", self::TEXT_PLAIN)     // Dublin Core description
             ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)   // RSS 1.0 description
             ?? $this->fetchText("rss0:description", self::TEXT_LOOSE)   // RSS 0.90 description
-            ?? $this->fetchText("description", self::TEXT_LOOSE)        // RSS 2.0 description
+            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE)        // RSS 2.0 description
             ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)  // Google Play podcast description
             ?? $this->fetchText("apple:summary", self::TEXT_PLAIN)      // iTunes podcast summary
             ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);    // iTunes podcast subtitle
@@ -162,7 +163,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             formats are equal, and we want the latest date, whatever it is.
         */
         return $this->fetchDate("atom:updated", self::DATE_LATEST) 
-            ?? $this->fetchDate("dc:date|pubDate|lastBuildDate", self::DATE_LATEST);
+            ?? $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_LATEST);
     }
 
     public function getIcon(): ?Url {
@@ -178,7 +179,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? $this->fetchUrl("/rdf:RDF/rss1:image/rss1:url")  // RSS 1.0 root image
             ?? $this->fetchUrl("rss0:image/rss0:url")           // RSS 0.90 channel image
             ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url")  // RSS 0.90 root image
-            ?? $this->fetchUrl("image/url")                     // RSS 2.0 channel image
+            ?? $this->fetchUrl("rss2:image/rss2:url")           // RSS 2.0 channel image
             ?? $this->fetchUrl("gplay:image/@href")             // Google Play podcast image
             ?? $this->fetchUrl("apple:image/@href");            // iTunes podcast image
     }
@@ -211,7 +212,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     /** Fetches the "time-to-live" value (a number of minutes before the feed should be re-fetched) from an RSS 2.0 feed */
     protected function getSchedIntervalRss2(): ?\DateInterval {
-        $ttl = (int) $this->fetchString("ttl", "\d+");
+        $ttl = (int) $this->fetchString("rss2:ttl", "\d+");
         if ($ttl) {
             return new \DateInterval("PT{$ttl}M");
         }
@@ -247,7 +248,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     /** Computes the "skip-schedule" of an RSS feed, the set of days and hours during which a feed should not be fetched */
     protected function getSchedSkipRss2(): ?int {
         $out = 0;
-        foreach($this->fetchString("skipHours/hour", "\d+", true) ?? [] as $h) {
+        foreach($this->fetchString("rss2:skipHours/rss2:hour", "\d+", true) ?? [] as $h) {
             $out |= [
                 Schedule::HOUR_0,
                 Schedule::HOUR_1,
@@ -276,7 +277,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
                 Schedule::HOUR_0,
             ][(int) $h] ?? 0;
         }
-        foreach($this->fetchString("skipDays/day", null, true) ?? [] as $d) {
+        foreach($this->fetchString("rss2:skipDays/rss2:day", null, true) ?? [] as $d) {
             $out |= [
                 "monday"    => Schedule::DAY_MON,
                 "tuesday"   => Schedule::DAY_TUE,

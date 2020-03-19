@@ -272,7 +272,7 @@ abstract class Construct {
      * Using RSS' <guid> for feed identifiers is non-standard, but harmless
      */
     protected function getIdRss2(): ?string {
-        return $this->fetchString("guid", ".+");
+        return $this->fetchString("rss2:guid", ".+");
     }
 
     /** Primitive to fetch a Dublin Core feed/entry identifier */
@@ -295,7 +295,7 @@ abstract class Construct {
     }
 
     protected function getLangRss2(): ?string {
-        return $this->fetchString("language", ".+");
+        return $this->fetchString("rss2:language", ".+");
     }
 
     protected function getLinkAtom(): ?Url {
@@ -303,7 +303,7 @@ abstract class Construct {
     }
 
     protected function getLinkRss2(): ?Url {
-        return $this->fetchUrl("link") ?? $this->fetchUrl("guid[not(@isPermalink) or @isPermalink='true']");
+        return $this->fetchUrl("rss2:link") ?? $this->fetchUrl("rss2:guid[not(@isPermalink) or @isPermalink='true']");
     }
 
     protected function getLinkRss1(): ?Url {
@@ -319,7 +319,7 @@ abstract class Construct {
     }
 
     protected function getTitleRss2(): ?Text {
-        return $this->fetchText("title", self::TEXT_LOOSE);
+        return $this->fetchText("rss2:title", self::TEXT_LOOSE);
     }
 
     protected function getTitleDC(): ?Text {
@@ -346,7 +346,7 @@ abstract class Construct {
 
     protected function getCategoriesRss2(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("category") as $node) {
+        foreach ($this->xpath->query("rss2:category") as $node) {
             $c = new Category;
             $c->domain = $this->trimText($node->getAttribute("domain"));
             $c->name = $this->trimText($node->textContent);
