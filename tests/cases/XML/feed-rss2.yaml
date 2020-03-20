@@ -395,3 +395,25 @@ Category:
             - name: 'Category the first'
             - name: 'Category the second'
               domain: 'ook eek'
+
+Authors, editors, and webmasters:
+    input: >
+        <rss><channel>
+            <author>jane.doe@example.com (Jane Doe)</author>
+            <author>john.doe@example.com</author>
+            <managingEditor>Larry</managingEditor>
+            <webMaster>Curly</webMaster>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: author
+            - name: 'john.doe@example.com'
+              mail: 'john.doe@example.com'
+              role: author
+            - name: Larry
+              role: editor
+            - name: Curly
+              role: webmaster
