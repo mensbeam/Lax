@@ -194,10 +194,26 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getPeople(): PersonCollection {
-        $authors = $this->getAuthorsAtom() ?? $this->getAuthorsDC() ?? $this->getAuthorsPod() ?? $this->getAuthorsRss2() ?? new PersonCollection;
-        $contributors = $this->getContributorsAtom() ?? $this->getContributorsDC() ?? new PersonCollection;
-        $editors = $this->getEditorsRss2() ?? new PersonCollection;
-        $webmasters = $this->getWebmastersPod() ?? $this->getWebmastersRss2() ?? new PersonCollection;
+        $authors = 
+            $this->fetchAtomPeople("atom:author", "author")     // Atom authors
+            ?? $this->fetchPeople("dc:creator", "author")       // Dublin Core creators
+            ?? $this->fetchPeople("rss2:author", "author")      // RSS 2.0 authors
+            ?? $this->fetchPodPerson("gplay", "author")         // Google Play author
+            ?? $this->fetchPodPerson("apple", "author")         // iTunes author
+            ?? new PersonCollection;
+        $contributors = 
+            $this->fetchAtomPeople("atom:contributor", "contributor")   // Atom contributors
+            ?? $this->fetchPeople("dc:contributor", "contributor")      // Dublin Core contributors
+            ?? new PersonCollection;
+        $editors = 
+            $this->fetchPeople("rss2:managingEditor", "editor")     // RSS 2.0 editors
+            ?? $this->fetchPeople("dc:publisher", "editor")         // Dublin Core publishers
+            ?? new PersonCollection;
+        $webmasters = 
+            $this->fetchPeople("rss2:webMaster", "webmaster")   // RSS 2.0 authors
+            ?? $this->fetchPodPerson("gplay", "webmaster")      // Google Play author
+            ?? $this->fetchPodPerson("apple", "webmaster")      // iTunes author
+            ?? new PersonCollection;
         return $authors->merge($contributors, $editors, $webmasters);
     }
 

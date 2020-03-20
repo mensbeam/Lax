@@ -34,14 +34,13 @@ trait Construct {
      * Accepts IDN hosts and Unicode localparts
      */
     protected function validateMail(string $addr): bool {
-        $out = preg_match("/^(.+?)@([^@]+)$/", $addr, $match);
-        if (!$out) {
+        if (!preg_match("/^(.+?)@([^@]+)$/", $addr, $match)) {
             return false;
         }
         $local = $match[1];
         $domain = $match[2];
         // PHP's filter_var does not accept IDN hosts, so we have to perform an IDNA transformation first
-        $domain = idn_to_ascii($domain, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46); // settings for IDNA2008 algorithm (I think)
+        $domain = idn_to_ascii($domain, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
         if ($domain !== false) {
             $addr = "$local@$domain";
             return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);

@@ -146,6 +146,65 @@ abstract class Construct {
         return null;
     }
 
+    /** Finds and parses RSS person-texts and returns a collection of person objects
+     *
+     * Each can have a name, e-mail address, or both
+     *
+     * The following forms will yield both a name and address:
+     *
+     * - user@example.com (Full Name)
+     * - Full Name <user@example.com>
+     * - Full Name <mailto:user@example.com>
+     */
+    protected function fetchPeople(string $query, string $role): ?PersonCollection {
+        $out = new PersonCollection;
+        foreach ($this->fetchString($query, ".+", true) ?? [] as $person) {
+            if (!strlen($person)) {
+                continue;
+            }
+            $p = new Person;
+            if (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
+                if ($this->validateMail($match[1])) {
+                    $p->name = trim($match[2]);
+                    $p->mail = $match[1];
+                } else {
+                    $p->name = $person;
+                }
+            } elseif (preg_match("/^((?:\S|\s(?!<))+) <(?:mailto:)?([^>]+)>$/", $person, $match)) { // tests "Full Name <user@example.com>" form
+                if ($this->validateMail($match[2])) {
+                    $p->name = trim($match[1]);
+                    $p->mail = $match[2];
+                } else {
+                    $p->name = $person;
+                }
+            } elseif ($this->validateMail($person)) {
+                $p->name = $person;
+                $p->mail = $person;
+            } else {
+                $p->name = $person;
+            }
+            $p->role = $role;
+            $out[] = $p;
+        }
+        return count($out) ? $out : null;
+    }
+
+    /** Returns at most a single person: podcasts implicitly have only one author or webmaster */
+    protected function fetchPodPerson(string $prefix, string $role): ?PersonCollection {
+        assert(in_array($prefix, ["apple", "gplay"]));
+        assert(in_array($role, ["author", "webmaster"]));
+        $prefix = ($role === "webmaster") ? "$prefix:owner/$prefix" : $prefix;
+        $out = new PersonCollection;
+        $p = new Person;
+        $p->name = $this->fetchString("$prefix:author", ".+") ?? "";
+        $p->mail = $this->fetchString("$prefix:email", "[^@]+@.+");
+        $p->role = $role;
+        if (strlen($p->name)) {
+            $out[] = $p;
+        }
+        return count($out) ? $out : null;
+    }
+
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
      *
      * Links without an href attribute are excluded.
@@ -260,6 +319,23 @@ abstract class Construct {
             }
         }
         return $populated ? $out : null;
+    }
+
+    /** Finds and parses Atom person-constructs, and returns a collection of Person objects */
+    protected function fetchAtomPeople(string $query, string $role): ?PersonCollection {
+        $nodes = $this->xpath->query($query, $this->subject);
+        $out = new PersonCollection;
+        foreach ($nodes as $node) {
+            $p = new Person;
+            $p->mail = $this->fetchString("atom:email", $node);;
+            $p->name = $this->fetchString("atom:name", $node) ?? $p->mail;
+            $p->url = $this->fetchUrl("atom:uri", $node);
+            $p->role = $role;
+            if (strlen($p->name ?? "")) {
+                $out[] = $p;
+            }
+        }
+        return count($out) ? $out : null;
     }
 
     /** Primitive to fetch an Atom feed/entry identifier */
