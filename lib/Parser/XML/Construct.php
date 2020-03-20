@@ -372,10 +372,17 @@ abstract class Construct {
 
     protected function getCategoriesTunes(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("apple:category", $this->subject) ?? [] as $node) {
+        foreach ($this->xpath->query("apple:category", $this->subject) as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {
+                foreach ($this->xpath->query("apple:category", $node) as $sub) {
+                    $sname = $this->trimText($sub->getAttribute("text"));
+                    if (strlen($sname)) {
+                        $c->subcategory = $sname;
+                        break;
+                    }
+                }
                 $out[] = $c;
             }
         }
@@ -384,7 +391,7 @@ abstract class Construct {
 
     protected function getCategoriesGPlay(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("gplay:category", $this->subject) ?? [] as $node) {
+        foreach ($this->xpath->query("gplay:category", $this->subject) as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {

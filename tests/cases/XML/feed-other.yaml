@@ -1,6 +1,6 @@
 # This file tests extensions primarily designed for RSS 2
 
-iPod expiration marker 1:
+iTunes expiration marker 1:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -12,7 +12,7 @@ iPod expiration marker 1:
         sched:
             expired: true
 
-iPod expiration marker 2:
+iTunes expiration marker 2:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -25,7 +25,7 @@ iPod expiration marker 2:
         sched:
             expired: true
 
-iPod expiration marker 3:
+iTunes expiration marker 3:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -35,7 +35,7 @@ iPod expiration marker 3:
     output:
         format: rss
 
-iPod canonical URL:
+iTunes canonical URL:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -47,7 +47,7 @@ iPod canonical URL:
         format: rss
         url: 'http://example.com/'
 
-iPod title:
+iTunes title:
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -60,7 +60,7 @@ iPod title:
         title:
             plain: 'Plain text'
 
-iPod summary: # Apple's own documentation doesn't mention a namespaced summary element, but Google's does
+iTunes summary: # Apple's own documentation doesn't mention a namespaced summary element, but Google's does
     input: >
         <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
             <channel>
@@ -101,3 +101,41 @@ Google Play image:
     output:
         format: rss
         image: 'http://example.com/'
+
+iTunes categories:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:category text="Arts"/>
+            <itunes:category text="Arts  ">
+                <itunes:category text="  Fashion    &amp; Beauty"/>
+            </itunes:category>
+            <itunes:category text="Arts  ">
+                <itunes:category text="   "/>
+                <itunes:category text="Books"/>
+                <itunes:category text="Design"/>
+            </itunes:category>
+            <itunes:category text="   "/>
+            <itunes:category>Bogus</itunes:category>
+        </channel></rss>
+    output:
+        format: rss
+        categories:
+            - name: Arts
+            - name: Arts
+              subcategory: 'Fashion & Beauty'
+            - name: Arts
+              subcategory: Books
+
+Google Play categories:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:category text="Arts"/>
+            <play:category text="   "/>
+            <play:category>Bogus</play:category>
+            <play:category text="Music"/>
+        </channel></rss>
+    output:
+        format: rss
+        categories:
+            - name: Arts
+            - name: Music
