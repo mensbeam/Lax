@@ -27,7 +27,7 @@ Minimal feed without channel 2:
         format: rdf
         version: '1.0'
 
-DC ID:
+Dublin Core ID:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -39,7 +39,7 @@ DC ID:
         version: '1.0'
         id: 'http://example.com/'
 
-Bogus DC ID before good:
+Bogus Dublin Core ID before good:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -52,7 +52,7 @@ Bogus DC ID before good:
         version: '1.0'
         id: 'http://example.com/'
 
-DC ID with whitespace:
+Dublin Core ID with whitespace:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -167,7 +167,7 @@ Syndication schedule base 1:
             interval: PT24H
             base: '2020-03-01T20:21:12-04:00'
 
-DC language:
+Dublin Core language:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -231,7 +231,7 @@ Feed title 2:
             loose: 'Loose  text'
             htmlBase: 'https://example.com/'
 
-DC title:
+Dublin Core title:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -257,7 +257,7 @@ Feed summary:
         summary:
             loose: 'Loose text'
 
-DC summary:
+Dublin Core summary:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -270,7 +270,7 @@ DC summary:
         summary:
             plain: 'Plain text'
 
-DC date:
+Dublin Core date:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -282,7 +282,7 @@ DC date:
         version: '1.0'
         dateModified: '2020-03-03T00:00:00Z'
 
-Multiple DC dates:
+Multiple Dublin Core dates:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -340,7 +340,7 @@ Feed channel and root images:
         version: '1.0'
         image: 'http://example.com/'
 
-Categories by way of DC subjects:
+Categories by way of Dublin Core subjects:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
@@ -354,3 +354,30 @@ Categories by way of DC subjects:
         categories:
             - name: 'Category, sort of'
             - name: 'blah'
+
+Dublin Core creators and contributors:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:creator>John Doe &lt;john.doe@example.com&gt;</dc:creator>
+                <dc:creator>jane.doe@example.com (Jane Doe)</dc:creator>
+                <dc:contributor>Larry &lt;mailto:larry@example.net&gt;</dc:contributor>
+                <dc:contributor>@example.org (Curly)</dc:contributor>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        people:
+            - name: John Doe
+              mail: 'john.doe@example.com'
+              role: author
+            - name: Jane Doe
+              mail: 'jane.doe@example.com'
+              role: author
+            - name: Larry
+              mail: 'larry@example.net'
+              role: contributor
+            - name: '@example.org (Curly)'
+              role: contributor
+            
