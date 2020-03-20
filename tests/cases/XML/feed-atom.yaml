@@ -463,3 +463,47 @@ Categories:
             - name: ack
               label: 'Ack!'
               domain: '4:3' # Not treated as a URI
+
+Feed authors and contributors:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <author>
+                <name>John Doe</name>
+                <email>john.doe@example.com</email>
+                <uri>http://example.com/</uri>
+            </author>
+            <author>
+                <name>Jane Doe</name>
+                <email>jane.doe@example.com</email>
+                <uri>http://example.net/</uri>
+            </author>
+            <contributor>
+                <name>Larry</name>
+                <email>@example.com</email>
+                <uri>http://example.]/</uri>
+            </contributor>
+            <contributor>
+                <name>Curly</name>
+            </contributor>
+            <contributor>
+                <name/>
+                <email>moe@example.com</email>
+                <uri>http://example.org/</uri>
+            </contributor>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        people:
+            - name: 'John Doe'
+              mail: 'john.doe@example.com'
+              url: 'http://example.com/'
+              role: author
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              url: 'http://example.net/'
+              role: author
+            - name: Larry
+              role: contributor
+            - name: Curly
+              role: contributor

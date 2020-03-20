@@ -92,9 +92,9 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $feed->dateModified = $this->getDateModified();
         $feed->icon = $this->getIcon();
         $feed->image = $this->getImage();
-        //$feed->people = $this->getPeople();
+        $feed->people = $this->getPeople();
         $feed->categories = $this->getCategories();
-        //$feed->entries = $this->getEntries($feed);
+        $feed->entries = $this->getEntries($feed);
         return $feed;
     }
 
@@ -211,14 +211,14 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? new PersonCollection;
         $webmasters = 
             $this->fetchPeople("rss2:webMaster", "webmaster")   // RSS 2.0 authors
-            ?? $this->fetchPodPerson("gplay", "webmaster")      // Google Play author
-            ?? $this->fetchPodPerson("apple", "webmaster")      // iTunes author
+            ?? $this->fetchPodPerson("gplay", "webmaster")      // Google Play webmaster
+            ?? $this->fetchPodPerson("apple", "webmaster")      // iTunes webmaster
             ?? new PersonCollection;
         return $authors->merge($contributors, $editors, $webmasters);
     }
 
     public function getEntries(FeedStruct $feed = null): array {
-        return $this->getEntriesAtom() ?? $this->getEntriesRss1() ?? $this->getEntriesRss2() ?? [];
+        return [];
     }
 
     /** Fetches the "complete" flag from an iTunes podcast */

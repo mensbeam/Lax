@@ -327,11 +327,12 @@ abstract class Construct {
         $out = new PersonCollection;
         foreach ($nodes as $node) {
             $p = new Person;
-            $p->mail = $this->fetchString("atom:email", $node);;
-            $p->name = $this->fetchString("atom:name", $node) ?? $p->mail;
+            $mail = $this->fetchString("atom:email", null, null, $node) ?? "";
+            $p->mail = $this->validateMail($mail) ? $mail : null;
+            $p->name = $this->fetchString("atom:name", ".+", null, $node);
             $p->url = $this->fetchUrl("atom:uri", $node);
             $p->role = $role;
-            if (strlen($p->name ?? "")) {
+            if (!is_null($p->name)) {
                 $out[] = $p;
             }
         }
