@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML;
 
 use MensBeam\Lax\Parser\Exception;
+use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Feed as FeedStruct;
@@ -198,8 +199,8 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             $this->fetchAtomPeople("atom:author", "author")     // Atom authors
             ?? $this->fetchPeople("dc:creator", "author")       // Dublin Core creators
             ?? $this->fetchPeople("rss2:author", "author")      // RSS 2.0 authors
-            ?? $this->fetchPodPerson("gplay", "author")         // Google Play author
-            ?? $this->fetchPodPerson("apple", "author")         // iTunes author
+            ?? $this->fetchPeople("gplay:author", "author")     // Google Play authors
+            ?? $this->fetchPeople("apple:author", "author")     // iTunes authors
             ?? new PersonCollection;
         $contributors = 
             $this->fetchAtomPeople("atom:contributor", "contributor")   // Atom contributors
@@ -211,8 +212,8 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? new PersonCollection;
         $webmasters = 
             $this->fetchPeople("rss2:webMaster", "webmaster")   // RSS 2.0 authors
-            ?? $this->fetchPodPerson("gplay", "webmaster")      // Google Play webmaster
-            ?? $this->fetchPodPerson("apple", "webmaster")      // iTunes webmaster
+            ?? $this->getOwnersTunes()                          // iTunes webmaster
+            ?? $this->fetchPeople("gplay:email", "webmaster")   // Google Play webmaster
             ?? new PersonCollection;
         return $authors->merge($contributors, $editors, $webmasters);
     }
@@ -312,5 +313,21 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ][strtolower($d)] ?? 0;
         }
         return $out ?: null;
+    }
+
+    /** Returns at most a single person: podcasts implicitly have only one author or webmaster */
+    protected function getOwnersTunes(): ?PersonCollection {
+        $out = new PersonCollection;
+        foreach ($this->xpath->query("apple:owner", $this->subject) as $node) {
+            $p = new Person;
+            $mail = $this->fetchString("apple:email", null, null, $node) ?? "";
+            $p->mail = $this->validateMail($mail) ? $mail : null;
+            $p->name = $this->fetchString("apple:name", ".+", null, $node) ?? $mail;
+            $p->role = "webmaster";
+            if (strlen($p->name)) {
+                $out[] = $p;
+            }
+        }
+        return count($out) ? $out : null;
     }
 }

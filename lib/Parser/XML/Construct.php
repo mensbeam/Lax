@@ -189,23 +189,6 @@ abstract class Construct {
         return count($out) ? $out : null;
     }
 
-    /** Returns at most a single person: podcasts implicitly have only one author or webmaster */
-    protected function fetchPodPerson(string $prefix, string $role): ?PersonCollection {
-        assert(in_array($prefix, ["apple", "gplay"]));
-        assert(in_array($role, ["author", "webmaster"]));
-        $prefix = ($role === "webmaster") ? "$prefix:owner/$prefix" : $prefix;
-        $out = new PersonCollection;
-        $p = new Person;
-        $mail = $this->fetchString("$prefix:email") ?? "";
-        $p->mail = $this->validateMail($mail) ? $mail : null;
-        $p->name = $this->fetchString("$prefix:name", ".+") ?? "";
-        $p->role = $role;
-        if (strlen($p->name)) {
-            $out[] = $p;
-        }
-        return count($out) ? $out : null;
-    }
-
     /** Returns a node-list of Atom link elements with the desired relation or equivalents.
      *
      * Links without an href attribute are excluded.
