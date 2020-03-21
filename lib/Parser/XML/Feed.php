@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser\XML;
 
+use MensBeam\Lax\Parser\XML\Entry as EntryParser;
 use MensBeam\Lax\Parser\Exception;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
@@ -218,8 +219,15 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         return $authors->merge($contributors, $editors, $webmasters);
     }
 
-    public function getEntries(FeedStruct $feed = null): array {
-        return [];
+    public function getEntries(FeedStruct $feed): array {
+        $out = [];
+        foreach ($this->xpath->query("atom:entry|rss2:item|rss0:item|rss1:item|/rdf:RDF/rss0:item|/rdf:RDF/rss1:item", $this->subject) as $node) {
+            $entry = (new EntryParser($node, $this->xpath, $feed))->parse();
+            if (!$this->empty($entry)) {
+                $out[] = $entry;
+            }
+        }
+        return $out;
     }
 
     /** Fetches the "complete" flag from an iTunes podcast */

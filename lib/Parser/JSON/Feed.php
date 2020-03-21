@@ -138,9 +138,8 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
         return $this->fetchUrl("icon");
     }
 
-    public function getEntries(FeedStruct $feed = null): array {
+    public function getEntries(FeedStruct $feed): array {
         $out = [];
-        $feed = $feed ?? new FeedStruct;
         foreach ($this->fetchMember("items", "array") ?? [] as $data) {
             $entry = (new EntryParser($data, $feed))->parse();
             if (!strlen((string) $entry->id)) {
