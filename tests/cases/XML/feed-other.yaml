@@ -139,3 +139,211 @@ Google Play categories:
         categories:
             - name: Arts
             - name: Music
+
+iTunes author 1:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:author>Jane Doe</itunes:author>
+            <itunes:email>jane.doe@example.com</itunes:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: author
+
+iTunes author 2:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:author>Jane Doe</itunes:author>
+            <itunes:email>bogus@example].com</itunes:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              role: author
+
+iTunes author 3:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:author/>
+            <itunes:author>Jane Doe</itunes:author>
+            <itunes:email>jane.doe@example.com</itunes:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: author
+
+iTunes author 4:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:author/>
+            <itunes:email>jane.doe@example.com</itunes:email>
+        </channel></rss>
+    output:
+        format: rss
+
+iTunes owner 1:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:owner>
+                <itunes:name>Jane Doe</itunes:name>
+                <itunes:email>jane.doe@example.com</itunes:email>
+            </itunes:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: webmaster
+
+iTunes owner 2:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:owner>
+                <itunes:name>Jane Doe</itunes:name>
+                <itunes:email>bogus@example].com</itunes:email>
+            </itunes:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              role: webmaster
+
+iTunes owner 3:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:owner>
+                <itunes:name/>
+                <itunes:name>Jane Doe</itunes:name>
+                <itunes:email>jane.doe@example.com</itunes:email>
+            </itunes:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: webmaster
+
+iTunes owner 4:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <itunes:owner>
+                <itunes:name/>
+                <itunes:email>jane.doe@example.com</itunes:email>
+            </itunes:owner>
+        </channel></rss>
+    output:
+        format: rss
+
+Google Play author 1:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:author>Jane Doe</play:author>
+            <play:email>jane.doe@example.com</play:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: author
+
+Google Play author 2:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:author>Jane Doe</play:author>
+            <play:email>bogus@example].com</play:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              role: author
+
+Google Play author 3:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:author/>
+            <play:author>Jane Doe</play:author>
+            <play:email>jane.doe@example.com</play:email>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: author
+
+Google Play author 4:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:author/>
+            <play:email>jane.doe@example.com</play:email>
+        </channel></rss>
+    output:
+        format: rss
+
+Google Play owner 1:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:owner>
+                <play:author>Jane Doe</play:author>
+                <play:email>jane.doe@example.com</play:email>
+            </play:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: webmaster
+
+Google Play owner 2:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:owner>
+                <play:author>Jane Doe</play:author>
+                <play:email>bogus@example].com</play:email>
+            </play:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              role: webmaster
+
+Google Play owner 3:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:owner>
+                <play:author/>
+                <play:author>Jane Doe</play:author>
+                <play:email>jane.doe@example.com</play:email>
+            </play:owner>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: 'Jane Doe'
+              mail: 'jane.doe@example.com'
+              role: webmaster
+
+Google Play owner 4:
+    input: >
+        <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0"><channel>
+            <play:owner>
+                <play:author/>
+                <play:email>jane.doe@example.com</play:email>
+            </play:owner>
+        </channel></rss>
+    output:
+        format: rss

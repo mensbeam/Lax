@@ -196,8 +196,9 @@ abstract class Construct {
         $prefix = ($role === "webmaster") ? "$prefix:owner/$prefix" : $prefix;
         $out = new PersonCollection;
         $p = new Person;
-        $p->name = $this->fetchString("$prefix:author", ".+") ?? "";
-        $p->mail = $this->fetchString("$prefix:email", "[^@]+@.+");
+        $mail = $this->fetchString("$prefix:email") ?? "";
+        $p->mail = $this->validateMail($mail) ? $mail : null;
+        $p->name = $this->fetchString("$prefix:name", ".+") ?? "";
         $p->role = $role;
         if (strlen($p->name)) {
             $out[] = $p;
