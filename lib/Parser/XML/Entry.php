@@ -24,73 +24,81 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
 
     public function parse(EntryStruct $entry = null): EntryStruct {
         $entry = $entry ?? new EntryStruct;
-        //$entry->lang = $this->getLang();
-        //$entry->id = $this->getId();
-        //$entry->link = $this->getLink();
-        //$entry->relatedLink = $this->getRelatedLink();
-        //$entry->title = $this->getTitle();
-        //$entry->dateModified = $this->getDateModified();
-        //$entry->dateCreated = $this->getDateCreated();
-        //$entry->content = $this->getContent();
-        //$entry->summary = $this->getSummary();
-        //$entry->banner = $this->getBanner();
-        //$entry->people = $this->getPeople();
-        //$entry->categories = $this->getCategories();
-        //$entry->enclosures = $this->getEnclosures();
+        $entry->lang = $this->getLang();
+        $entry->id = $this->getId();
+        $entry->link = $this->getLink();
+        $entry->relatedLink = $this->getRelatedLink();
+        $entry->title = $this->getTitle();
+        $entry->dateModified = $this->getDateModified();
+        $entry->dateCreated = $this->getDateCreated();
+        $entry->content = $this->getContent();
+        $entry->summary = $this->getSummary();
+        $entry->banner = $this->getBanner();
+        $entry->people = $this->getPeople();
+        $entry->categories = $this->getCategories();
+        $entry->enclosures = $this->getEnclosures();
         return $entry;
     }
 
-    public function getTitle(): ?Text {
-        return $this->getTitleAtom() ?? $this->getTitleRss1() ?? $this->getTitleRss2() ?? $this->getTitleDC() ?? $this->getTitlePod() ?? "";
-    }
-
-    public function getCategories(): CategoryCollection {
-        return $this->getCategoriesAtom() ?? $this->getCategoriesRss2() ?? $this->getCategoriesDC() ?? $this->getCategoriesPod() ?? new CategoryCollection;
+    public function getLang(): ?string {
+        return $this->getLangXML()      // xml:lang attribute
+            ?? $this->getLangDC()       // Dublin Core language
+            ?? $this->getLangRss2();    // RSS language
     }
 
     public function getId(): ?string {
-        return $this->getIdAtom() ?? $this->getIdDC() ?? $this->getIdRss2() ?? "";
-    }
-
-    public function getPeople(): PersonCollection {
-        $authors = $this->getAuthorsAtom() ?? $this->getAuthorsDC() ?? $this->getAuthorsPod() ?? $this->getAuthorsRss2() ?? $this->feed->people->filterForRole("author");
-        $contributors = $this->getContributorsAtom() ?? $this->getContributorsDC() ?? new PersonCollection;
-        return $authors->merge($contributors);
-    }
-
-    public function getDateModified(): ?Date {
-        return $this->getDateModifiedAtom() ?? $this->getDateModifiedDC() ?? $this->getDateModifiedRss2();
-    }
-
-    public function getDateCreated(): ?Date {
-        return $this->getDateModifiedAtom();
+        return $this->fetchString("atom:id", ".+")          // Item identifier
+            ?? $this->fetchString("dc:identifier", ".+")    // Dublin Core identifier
+            ?? $this->fetchString("rss2:guid", ".+");       // RSS 2.0 GUID
     }
 
     public function getLink(): ?Url {
-        return $this->getLinkAtom() ?? $this->getLinkRss1() ?? $this->getLinkRss2() ?? "";
+        return $this->getLinkAtom()     // Atom link
+            ?? $this->getLinkRss1()     // RSS 0.90 or RSS 1.0 link
+            ?? $this->getLinkRss2();    // RSS 2.0 link
     }
 
     public function getRelatedLink(): ?Url {
-        return $this->getRelatedLinkAtom() ?? "";
+        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"]);
+    }
+
+    public function getTitle(): ?Text {
+        return $this->getTitleAtom()    // Atom title
+            ?? $this->getTitleRss1()    // RSS 0.90 or RSS 1.0 title
+            ?? $this->getTitleRss2()    // RSS 2.0 title
+            ?? $this->getTitleDC()      // Dublin Core title
+            ?? $this->getTitlePod();    // iTunes podcast title
+    }
+
+    public function getDateModified(): ?Date {
+        return null;
+    }
+
+    public function getDateCreated(): ?Date {
+        return null;
+    }
+
+    public function getContent(): ?Text {
+        return null;
+    }
+
+    public function getSummary(): ?Text {
+        return null;
     }
 
     public function getBanner(): ?Url {
         return null;
     }
 
-    public function getContent(): ?Text {
-        return new Text;
+    public function getPeople(): PersonCollection {
+        return new PersonCollection;
+    }
+
+    public function getCategories(): CategoryCollection {
+        return new CategoryCollection;
     }
 
     public function getEnclosures(): EnclosureCollection {
         return new EnclosureCollection;
-    }
-
-    public function getLang(): ?string {
-        return null;
-    }
-
-    public function getSummary(): ?Text {
-        return new Text;
     }
 }
