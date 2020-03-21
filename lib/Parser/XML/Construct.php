@@ -159,9 +159,6 @@ abstract class Construct {
     protected function fetchPeople(string $query, string $role): ?PersonCollection {
         $out = new PersonCollection;
         foreach ($this->fetchString($query, ".+", true) ?? [] as $person) {
-            if (!strlen($person)) {
-                continue;
-            }
             $p = new Person;
             if (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
                 if ($this->validateMail($match[1])) {
