@@ -1,0 +1,42 @@
+Empty entry:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+            <entry>Bogus text</entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        lang: en
+
+Entry identifier:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <id>ook</id>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - id: 'ook'
+
+Entry language:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+            <entry xml:lang="fr">
+                <id>ook</id>
+            </entry>
+            <entry>
+                <id>eek</id>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        lang: en
+        entries:
+            - id: 'ook'
+              lang: fr
+            - id: eek
+              lang: en

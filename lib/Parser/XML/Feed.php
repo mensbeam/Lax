@@ -223,7 +223,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
         $out = [];
         foreach ($this->xpath->query("atom:entry|rss2:item|rss0:item|rss1:item|/rdf:RDF/rss0:item|/rdf:RDF/rss1:item", $this->subject) as $node) {
             $entry = (new EntryParser($node, $this->xpath, $feed))->parse();
-            if (!$this->empty($entry)) {
+            if (!$this->empty($entry, ["lang"])) {
                 $out[] = $entry;
             }
         }

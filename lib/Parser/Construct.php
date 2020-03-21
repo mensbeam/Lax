@@ -97,9 +97,9 @@ trait Construct {
         return null;
     }
 
-    protected function empty($o): bool {
-        return !array_filter((array) $o, function($v) {
-            return !is_null($v) && (!$v instanceof Collection || sizeof($v) > 0);
-        });
+    protected function empty($o, array $ignore = []): bool {
+        return !array_filter((array) $o, function($v, $k) use($ignore) {
+            return !in_array($k, $ignore) && !is_null($v) && (!$v instanceof Collection || sizeof($v) > 0);
+        }, \ARRAY_FILTER_USE_BOTH);
     }
 }
