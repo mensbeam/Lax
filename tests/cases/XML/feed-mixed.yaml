@@ -1,0 +1,72 @@
+# These tests validate that format mixing works, where it is particularly relevant
+# It is assumed these tests will not be exhaustive
+
+Atom modification date in RSS: # Atom is considered authoritative
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom">
+            <atom:updated>2020-03-03T00:00:00Z</atom:updated>
+            <lastBuildDate>2020-03-04T00:00:00Z</lastBuildDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core date in RSS 1: # All else than Atom is equal
+    input: >
+        <rss><channel xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <dc:date>2020-03-03T00:00:00Z</dc:date>
+            <lastBuildDate>2020-03-04T00:00:00Z</lastBuildDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-04T00:00:00Z'
+
+Dublin Core date in RSS 2: # All else than Atom is equal
+    input: >
+        <rss><channel xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <dc:date>2020-03-04T00:00:00Z</dc:date>
+            <lastBuildDate>2020-03-03T00:00:00Z</lastBuildDate>
+        </channel></rss>
+    output:
+        format: rss
+        dateModified: '2020-03-04T00:00:00Z'
+
+Mixed authors: # People of the same class don't mix
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom">
+            <author>John Doe</author>
+            <atom:author>
+                <atom:name>Jane Doe</atom:name>
+            </atom:author>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: Jane Doe
+              role: author
+
+Mixed people: # People of differentr classes do mix
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom">
+            <webMaster>John Doe</webMaster>
+            <atom:author>
+                <atom:name>Jane Doe</atom:name>
+            </atom:author>
+        </channel></rss>
+    output:
+        format: rss
+        people:
+            - name: Jane Doe
+              role: author
+            - name: John Doe
+              role: webmaster
+
+RSS2 element in other formats: # These are never honoured
+    input: >
+        <atom:feed xmlns:atom="http://www.w3.org/2005/Atom">
+            <lastBuildDate>2020-03-03T00:00:00Z</lastBuildDate>
+            <author>John Doe</author>
+        </atom:feed>
+    output:
+        format: atom
+        version: '1.0'
