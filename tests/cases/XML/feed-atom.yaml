@@ -129,7 +129,7 @@ Feed link 6: # HTML is even more preferred
         version: '1.0'
         link: 'http://example.com/'
 
-Feed link 7: # No type is better than an unacceptable type
+Feed link 7: # No type is better than a non-preferred type
     input: >
         <feed xmlns="http://www.w3.org/2005/Atom">
           <link href="http://example.net/" type="image/png"/>

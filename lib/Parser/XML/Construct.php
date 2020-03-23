@@ -232,7 +232,7 @@ abstract class Construct {
         return $out;
     }
 
-    /** Returns the first Atom link URL which matches the desired relation, with nearest desired media type, or no media type if none match */
+    /** Returns the first Atom link URL which matches the desired relation, with nearest desired media type */
     protected function fetchAtomRelation(string $rel = "", array $mediaTypes = [], \DOMNode $context = null): ?Url {
         // tidy ther list of media types; this orders them worst (0)to best (highest index) and then creates a hashtable
         $mediaTypes = array_flip(array_reverse(array_values(array_unique(array_map(function(string $t) {
@@ -245,16 +245,14 @@ abstract class Construct {
         $result = array_reduce($rels, function($best, $cur) use ($mediaTypes) {
             $t = trim($cur->getAttribute("type"));
             // absence of media type is acceptable if no better match yet exists
-            if (!strlen($t)) {
-                if (!$best) {
-                    return [$cur, -1]; // any match will rank higher than -1
-                }
+            if (!strlen($t) && (!$best || $best[1] < -1)) {
+                return [$cur, -1]; // any preferred type will rank higher than -1
             }
             $t = $this->parseMediaType($t);
             if ($t) {
-                $rank = $mediaTypes[$t] ?? null;
-                if (!is_null($rank) && (!$best || $rank > $best[1])) {
-                    // if the media type is acceptable and there is currently no candidate or the candidate ranks lower, use the current link
+                $rank = $mediaTypes[$t] ?? -2; // even no type will rank higher than a non-preferred type
+                if (!$best || $rank > $best[1]) {
+                    // if there is currently no candidate or the candidate ranks lower, use the current link
                     return [$cur, $rank];
                 }
             }
