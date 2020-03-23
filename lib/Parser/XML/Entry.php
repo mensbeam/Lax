@@ -54,14 +54,25 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getLink(): ?Url {
-        return $this->getLinkAtom()                 // Atom link
-            ?? $this->getLinkRss1()                 // RSS 0.90 or RSS 1.0 link
-            ?? $this->getLinkAndRelatedRss2()[0];   // RSS 2.0 GUID or link, as URL
+        $link = $this->getLinkAtom() ?? $this->getLinkRss1(); // somme kind of unambigulous link
+        if (!$link) {
+            /* If there is no reliable related link, attempt to discern 
+               both a link and related link from RSS 2.0 metadata, 
+               and use the former; otherwise use whichever is available
+            */
+            $candidates = $this->getLinkAndRelatedRss2();
+            if (!$this->getRelatedLinkDefinitive()) {
+                $link = $candidates[0];
+            } else {
+                $link = $candidates[1] ?? $candidates[0];
+            }
+        }
+        return $link;
     }
 
     public function getRelatedLink(): ?Url {
-        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"])  // Atom related relation
-            ?? $this->getLinkAndRelatedRss2()[1];                                           // RSS 2.0 link if different from GUID;
+        return $this->getRelatedLinkDefinitive()
+            ?? $this->getLinkAndRelatedRss2()[1];
     }
 
     public function getTitle(): ?Text {
@@ -113,6 +124,11 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
 
     public function getEnclosures(): EnclosureCollection {
         return new EnclosureCollection;
+    }
+
+    protected function getRelatedLinkDefinitive(): ?url {
+        // Only Atom related links are definitive for now
+        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"]);  // Atom related relation
     }
 
     /** Returns an indexed array containing the entry link (or null)

@@ -31,3 +31,65 @@ Language:
         entries:
             - id: blah
               lang: fr
+
+Entry link:
+    input: >
+        <rss><channel>
+            <item>
+                <guid isPermalink="true">http://example.com/</guid>
+            </item>
+            <item>
+                <guid>http://example.com/</guid>
+            </item>
+            <item>
+                <link>http://example.com/</link>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - id: 'http://example.com/'
+              link: 'http://example.com/'
+            - id: 'http://example.com/'
+              link: 'http://example.com/'
+            - link: 'http://example.com/'
+
+Related link:
+    input: >
+        <rss><channel>
+            <item>
+                <guid isPermalink="true">http://example.com/</guid>
+                <link>http://example.net/</link>
+            </item>
+            <item>
+                <guid>http://example.com/</guid>
+                <link>http://example.net/</link>
+            </item>
+            <item>
+                <guid isPermalink="false">http://example.com/</guid>
+                <link>http://example.net/</link>
+            </item>
+            <item>
+                <guid>http://example.com/</guid>
+                <link>http://example.com/</link>
+            </item>
+            <item>
+                <guid>http://example.com/</guid>
+                <link>http://example.com/blah</link>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - id: 'http://example.com/'
+              link: 'http://example.com/'
+              relatedLink: 'http://example.net/'
+            - id: 'http://example.com/'
+              link: 'http://example.com/'
+              relatedLink: 'http://example.net/'
+            - id: 'http://example.com/'
+              link: 'http://example.net/'
+            - id: 'http://example.com/'
+              link: 'http://example.com/'
+            - id: 'http://example.com/'
+              link: 'http://example.com/blah'

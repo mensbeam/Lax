@@ -1,0 +1,18 @@
+# These tests validate that format mixing works, where it is particularly relevant
+# It is assumed these tests will not be exhaustive
+
+Atom related link in RSS 2.0: # A reliable related link overrides the RSS 2.0 guessing game
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom">
+            <item>
+                <guid>http://example.com/</guid>
+                <link>http://example.org/</link>
+                <atom:link rel="related" href="http://example.net/"/>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - id: 'http://example.com/'
+              link: 'http://example.org/'
+              relatedLink: 'http://example.net/'
