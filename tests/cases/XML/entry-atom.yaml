@@ -40,3 +40,57 @@ Entry language:
               lang: fr
             - id: eek
               lang: en
+
+Entry link:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <link rel="alternate" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link rel="alternate" type="application/xhtml+xml" href="http://example.net/"/>
+                <link rel="alternate" type="text/html" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link rel="alternate" type="image/svg+xml" href="http://example.net/"/>
+                <link rel="alternate" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link type="image/svg+xml" href="http://example.com/"/>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - link: 'http://example.com/'
+            - link: 'http://example.com/'
+            - link: 'http://example.com/'
+            - link: 'http://example.com/'
+
+Related link:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <link rel="related" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link rel="related" type="application/xhtml+xml" href="http://example.net/"/>
+                <link rel="related" type="text/html" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link rel="related" type="image/svg+xml" href="http://example.net/"/>
+                <link rel="related" href="http://example.com/"/>
+            </entry>
+            <entry>
+                <link rel="related" type="image/svg+xml" href="http://example.com/"/>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'

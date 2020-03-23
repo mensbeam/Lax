@@ -4,7 +4,27 @@ Empty entry:
             <channel>
                 <item/>
             </channel>
+            <item/>
         </rdf:RDF>
     output:
         format: rdf
         version: '0.90'
+
+Entry link:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <channel>
+                <item>
+                    <link>http://example.com/</link>
+                </item>
+            </channel>
+            <item>
+                <link>http://example.com/</link>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        entries:
+            - link: 'http://example.com/'
+            - link: 'http://example.com/'
