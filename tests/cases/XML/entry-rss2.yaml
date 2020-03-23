@@ -1,0 +1,33 @@
+Empty entry:
+    input: >
+        <rss><channel>
+            <item/>
+        </channel></rss>
+    output:
+        format: rss
+
+GUID:
+    input: >
+        <rss><channel>
+            <item>
+                <guid isPermalink="false">blah</guid>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - id: blah
+
+Language:
+    input: >
+        <rss><channel>
+            <item>
+                <guid isPermalink="false">blah</guid>
+                <language>fr</language>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - id: blah
+              lang: fr

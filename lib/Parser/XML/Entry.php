@@ -47,19 +47,21 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getId(): ?string {
-        return $this->fetchString("atom:id", ".+")          // Item identifier
-            ?? $this->fetchString("dc:identifier", ".+")    // Dublin Core identifier
-            ?? $this->fetchString("rss2:guid", ".+");       // RSS 2.0 GUID
+        return $this->fetchString("atom:id", ".+")                  // Atom identifier
+            ?? $this->fetchString("dc:identifier", ".+")            // Dublin Core identifier
+            ?? $this->fetchString("self::rss1:item/@rdf:about")     // RSS 1.0 RDF identifier
+            ?? $this->fetchString("rss2:guid", ".+");               // RSS 2.0 GUID, as string
     }
 
     public function getLink(): ?Url {
-        return $this->getLinkAtom()     // Atom link
-            ?? $this->getLinkRss1()     // RSS 0.90 or RSS 1.0 link
-            ?? $this->getLinkRss2();    // RSS 2.0 link
+        return $this->getLinkAtom()                 // Atom link
+            ?? $this->getLinkRss1()                 // RSS 0.90 or RSS 1.0 link
+            ?? $this->getLinkAndRelatedRss2()[0];   // RSS 2.0 GUID or link, as URL
     }
 
     public function getRelatedLink(): ?Url {
-        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"]);
+        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"])  // Atom related relation
+            ?? $this->getLinkAndRelatedRss2()[1];                                           // RSS 2.0 link if different from GUID;
     }
 
     public function getTitle(): ?Text {
@@ -71,11 +73,22 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getDateModified(): ?Date {
-        return null;
+        /*  fetching a date works differently from other data as only Atom has
+            well-defined semantics here. Thus the semantics of all the other
+            formats are equal, and we want the latest date, whatever it is.
+        */
+        return $this->fetchDate("atom:updated", self::DATE_LATEST)                              // Atom update date
+            ?? $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_LATEST);  // Latest other datee
     }
 
     public function getDateCreated(): ?Date {
-        return null;
+        /*  fetching a date works differently from other data as only Atom has
+            well-defined semantics here. Thus the semantics of all the other
+            formats are equal, and we want the earliest date, but only if 
+            there are at least two
+        */
+        return $this->fetchDate("atom:created", self::DATE_EARLIEST)    // Atom creation date
+            ?? $this->getAssumedDateCreated();                          // Earliest other date
     }
 
     public function getContent(): ?Text {
@@ -100,5 +113,32 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
 
     public function getEnclosures(): EnclosureCollection {
         return new EnclosureCollection;
+    }
+
+    /** Returns an indexed array containing the entry link (or null)
+     * and the entry related link (or null)
+     * 
+     * This follows the suggestion in RSS 2.0 that if the permalink-GUID 
+     * and link differ, then the latter is a related link. For our purposes
+     * they are considered to differ if they point to different hosts or 
+     * have different schemes
+     */
+    protected function getLinkAndRelatedRss2(): array {
+        $link = $this->fetchUrl("rss2:link");
+        $guid = $this->fetchUrl("rss2:guid[not(@isPermalink) or @isPermalink='true']");
+        if ($link && $guid) {
+            if ($link->getScheme() !== $guid->getScheme() || $link->getAuthority() !== $guid->getAuthority()) {
+                return [$guid, $link];
+            }
+        }
+        return [$link ?? $guid, null];
+    }
+
+    protected function getAssumedDateCreated(): ?Date {
+        $dates = $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_ALL);
+        if (sizeof($dates) > 1) {
+            return $dates[0];
+        }
+        return null;
     }
 }

@@ -127,9 +127,9 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getUrl(): ?Url {
-        return $this->fetchAtomRelation("self")                     // Atom 'self' relation URL
-            ?? $this->fetchUrl("self::rss1:channel/@rdf:about")     // RDF-about URL from RSS 0.90 or RSS 1.0
-            ?? $this->fetchUrl("apple:new-feed-url");               // iTunes podcast canonical URL
+        return $this->fetchAtomRelation("self", ["application/atom+xml"])   // Atom 'self' relation URL
+            ?? $this->fetchUrl("self::rss1:channel/@rdf:about")             // RDF-about URL from RSS 0.90 or RSS 1.0
+            ?? $this->fetchUrl("apple:new-feed-url");                       // iTunes podcast canonical URL
     }
 
     public function getLink(): ?Url {

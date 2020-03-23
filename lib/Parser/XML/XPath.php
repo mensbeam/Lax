@@ -16,8 +16,8 @@ class XPath extends \DOMXpath {
         'sched' => "http://purl.org/rss/1.0/modules/syndication/",      // Syndication schedule extension           http://purl.org/rss/1.0/modules/syndication/
         'enc'   => "http://purl.org/rss/1.0/modules/content/",          // Explicitly encoded content extension     http://purl.org/rss/1.0/modules/content/
         'media' => "http://search.yahoo.com/mrss/",                     // Embedded media extension                 http://www.rssboard.org/media-rss
-        'rdf'   => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",       // Resource Description Framework
-        'xhtml' => "http://www.w3.org/1999/xhtml",                      // XHTML
+        'rdf'   => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",       // Resource Description Framework           https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/
+        'xhtml' => "http://www.w3.org/1999/xhtml",                      // XHTML                                    https://html.spec.whatwg.org/
         'apple' => "http://www.itunes.com/dtds/podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
         'gplay' => "http://www.google.com/schemas/play-podcasts/1.0",   // Google Play podcasts                     https://support.google.com/googleplay/podcasts/answer/6260341
     ];

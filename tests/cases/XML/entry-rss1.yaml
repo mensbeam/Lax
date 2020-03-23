@@ -1,0 +1,54 @@
+# For the purposes of testing Dublin Core metadata is considered a part of RSS 1.0
+
+Empty entry:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+                <item/>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+
+RDF identifier:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <item rdf:about="blah"/>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - id: blah
+
+Dublin Core identifier:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <item rdf:about="bloo">
+                    <dc:identifier>blah</dc:identifier>
+                </item>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - id: blah
+
+Dublin Core identifier and language:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <item rdf:about="blah">
+                <dc:language>fr</dc:language>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - id: blah
+              lang: fr
