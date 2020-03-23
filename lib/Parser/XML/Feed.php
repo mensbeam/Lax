@@ -129,7 +129,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     public function getUrl(): ?Url {
         return $this->fetchAtomRelation("self")                     // Atom 'self' relation URL
             ?? $this->fetchUrl("self::rss1:channel/@rdf:about")     // RDF-about URL from RSS 0.90 or RSS 1.0
-            ?? $this->fetchUrl("self::rss0:channel/@rdf:about")     // RDF-about URL from RSS 0.90 or RSS 1.0
             ?? $this->fetchUrl("apple:new-feed-url");               // iTunes podcast canonical URL
     }
 
@@ -153,7 +152,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             ?? $this->fetchText("dc:description", self::TEXT_PLAIN)     // Dublin Core description
             ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)   // RSS 1.0 description
             ?? $this->fetchText("rss0:description", self::TEXT_LOOSE)   // RSS 0.90 description
-            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE)        // RSS 2.0 description
+            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE)   // RSS 2.0 description
             ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)  // Google Play podcast description
             ?? $this->fetchText("apple:summary", self::TEXT_PLAIN)      // iTunes podcast summary
             ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);    // iTunes podcast subtitle
@@ -176,14 +175,18 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getImage(): ?Url {
-        return $this->fetchUrl("atom:logo")                     // Atom logo URL
-            ?? $this->fetchUrl("rss1:image/rss1:url")           // RSS 1.0 channel image
-            ?? $this->fetchUrl("/rdf:RDF/rss1:image/rss1:url")  // RSS 1.0 root image
-            ?? $this->fetchUrl("rss0:image/rss0:url")           // RSS 0.90 channel image
-            ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url")  // RSS 0.90 root image
-            ?? $this->fetchUrl("rss2:image/rss2:url")           // RSS 2.0 channel image
-            ?? $this->fetchUrl("gplay:image/@href")             // Google Play podcast image
-            ?? $this->fetchUrl("apple:image/@href");            // iTunes podcast image
+        return $this->fetchUrl("atom:logo")                             // Atom logo URL
+            ?? $this->fetchUrl("rss1:image/@rdf:resource")              // RSS 1.0 channel image RDF resource
+            ?? $this->fetchUrl("rss1:image/rss1:url")                   // RSS 1.0 channel image
+            ?? $this->fetchUrl("rss1:image/@rdf:about")                 // RSS 1.0 channel image about-URL
+            ?? $this->fetchUrl("/rdf:RDF/rss1:image/@rdf:resource")     // RSS 1.0 root image RDF resource
+            ?? $this->fetchUrl("/rdf:RDF/rss1:image/rss1:url")          // RSS 1.0 root image
+            ?? $this->fetchUrl("/rdf:RDF/rss1:image/@rdf:about")        // RSS 1.0 root image about-URL
+            ?? $this->fetchUrl("rss0:image/rss0:url")                   // RSS 0.90 channel image
+            ?? $this->fetchUrl("/rdf:RDF/rss0:image/rss0:url")          // RSS 0.90 root image
+            ?? $this->fetchUrl("rss2:image/rss2:url")                   // RSS 2.0 channel image
+            ?? $this->fetchUrl("gplay:image/@href")                     // Google Play podcast image
+            ?? $this->fetchUrl("apple:image/@href");                    // iTunes podcast image
     }
 
     public function getCategories(): CategoryCollection {

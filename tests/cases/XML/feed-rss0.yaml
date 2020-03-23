@@ -35,7 +35,7 @@ Feed language 1: # demonstrate walking up the DOM
         version: '0.90'
         lang: fr
 
-Feed language 2: # demonstrate walking up the DOM
+Feed language 2:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/" xml:lang=" ">
             <channel xml:lang="fr"/>
@@ -45,7 +45,7 @@ Feed language 2: # demonstrate walking up the DOM
         version: '0.90'
         lang: fr
 
-Canonical URL: # this is not actually a feature of RSS 0.90, but is consistent with RSS 1.0's use of RDF
+Canonical URL: # this is not a feature of RSS 0.90
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/" >
             <channel rdf:about="http://example.com/"/>
@@ -53,7 +53,6 @@ Canonical URL: # this is not actually a feature of RSS 0.90, but is consistent w
     output:
         format: rdf
         version: '0.90'
-        url: 'http://example.com/'
 
 Feed link:
     input: >

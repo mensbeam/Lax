@@ -323,7 +323,7 @@ Feed root image:
         version: '1.0'
         image: 'http://example.com/'
 
-Feed channel and root images:
+Feed channel and root images: # Channel takes precedence
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
             <image>
@@ -334,6 +334,40 @@ Feed channel and root images:
                     <url>http://example.com/</url>
                 </image>
             </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
+
+Feed channel RDF image resource:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel>
+                <image rdf:resource="http://example.com/"/>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
+
+Feed root image about-URL:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel/>
+            <image rdf:about="http://example.com/"/>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        image: 'http://example.com/'
+
+Feed root RDF image resource:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <channel/>
+            <image rdf:resource="http://example.com/"/>
         </rdf:RDF>
     output:
         format: rdf
