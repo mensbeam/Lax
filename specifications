@@ -1,8 +1,9 @@
 Main specifications:
     Atom 1.0                https://tools.ietf.org/html/rfc4287
+    RSS 2.0.11              http://www.rssboard.org/rss-specification
     RDF Site Summary 1.0    https://web.archive.org/web/20200130223216/http://web.resource.org/rss/1.0/spec
     RDF Site Summary 0.90   http://www.rssboard.org/rss-0-9-0
-    RSS 2.0.11              http://www.rssboard.org/rss-specification
+    RDF Site Summary 1.1    http://inamidst.com/rss1.1/
     JSON Feed v1            https://jsonfeed.org/version/1
     JSON Feed v1.1          https://jsonfeed.org/version/1.1
     h-feed                  http://microformats.org/wiki/h-feed
@@ -21,6 +22,7 @@ Other XML extensions:
     Comment API             https://web.archive.org/web/20081004031716/http://wellformedweb.org/story/9
     Comment Feed            http://sellsbrothers.com/12548
     Atom threads            https://web.archive.org/web/20081115230920/http://www.snellspace.com/wp/?p=194
+    RSS 1.1 XHTML payloads  http://inamidst.com/rss1.1/payload
 
 JSON Feed extensions:
     Cast                    http://help.tryca.st/cast-jsonfeed-support/#cast-json-feed-extension
