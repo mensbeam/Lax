@@ -103,7 +103,10 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getContent(): ?Text {
-        return null;
+        return $this->fetchAtomText("atom:content")                     // Atom content
+            ?? $this->fetchText("enc:encoded", self::TEXT_HTML)         // Explicitly encoded HTML content
+            ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)   //  RSS 1.0 ambiguous text
+            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE);  //  RSS 2.0 ambiguous text
     }
 
     public function getSummary(): ?Text {
