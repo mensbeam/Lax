@@ -16,3 +16,26 @@ Atom related link in RSS 2.0: # A reliable related link overrides the RSS 2.0 gu
             - id: 'http://example.com/'
               link: 'http://example.org/'
               relatedLink: 'http://example.net/'
+
+Update and creation dates:
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <item>
+                <pubDate>2020-03-03T00:00:00Z</pubDate>
+            </item>
+            <item>
+                <atom:created>2020-03-03T00:00:00Z</atom:created>
+                <lastBuildDate>2020-01-01T00:00:00Z</lastBuildDate>
+            </item>
+            <item>
+                <dc:date>2020-03-03T01:00:00+01:00</dc:date>
+                <pubDate>2020-03-03T00:00:00Z</pubDate>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateCreated: '2020-03-03T00:00:00Z'
+              dateModified: '2020-01-01T00:00:00Z'
+            - dateModified: '2020-03-03T01:00:00+01:00'
