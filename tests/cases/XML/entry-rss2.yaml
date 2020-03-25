@@ -10,7 +10,7 @@ GUID:
     input: >
         <rss><channel>
             <item>
-                <guid isPermalink="false">blah</guid>
+                <guid isPermaLink="false">blah</guid>
             </item>
         </channel></rss>
     output:
@@ -22,7 +22,7 @@ Language:
     input: >
         <rss><channel>
             <item>
-                <guid isPermalink="false">blah</guid>
+                <guid isPermaLink="false">blah</guid>
                 <language>fr</language>
             </item>
         </channel></rss>
@@ -36,7 +36,7 @@ Entry link:
     input: >
         <rss><channel>
             <item>
-                <guid isPermalink="true">http://example.com/</guid>
+                <guid isPermaLink="true">http://example.com/</guid>
             </item>
             <item>
                 <guid>http://example.com/</guid>
@@ -58,7 +58,7 @@ Related link:
     input: >
         <rss><channel>
             <item>
-                <guid isPermalink="true">http://example.com/</guid>
+                <guid isPermaLink="true">http://example.com/</guid>
                 <link>http://example.net/</link>
             </item>
             <item>
@@ -66,7 +66,7 @@ Related link:
                 <link>http://example.net/</link>
             </item>
             <item>
-                <guid isPermalink="false">http://example.com/</guid>
+                <guid isPermaLink="false">http://example.com/</guid>
                 <link>http://example.net/</link>
             </item>
             <item>

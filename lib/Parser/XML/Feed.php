@@ -164,7 +164,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             formats are equal, and we want the latest date, whatever it is.
         */
         return $this->fetchDate("atom:updated", self::DATE_LATEST) 
-            ?? $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_LATEST);
+            ?? $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_LATEST);
     }
 
     public function getIcon(): ?Url {

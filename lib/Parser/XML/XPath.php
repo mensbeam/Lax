@@ -13,6 +13,7 @@ class XPath extends \DOMXpath {
         'rss1'  => "http://purl.org/rss/1.0/",                          // RDF site summary 1.0                     http://purl.org/rss/1.0/spec
         'rss0'  => "http://channel.netscape.com/rdf/simple/0.9/",       // RDF Site Summary 0.90                    http://www.rssboard.org/rss-0-9-0
         'dc'    => "http://purl.org/dc/elements/1.1/",                  // Dublin Core metadata                     http://purl.org/rss/1.0/modules/dc/
+        'dct'   => "http://purl.org/dc/terms/",                         // Dublin Core terms                        https://web.archive.org/web/20071222055924/http://web.resource.org/rss/1.0/modules/dcterms/
         'sched' => "http://purl.org/rss/1.0/modules/syndication/",      // Syndication schedule extension           http://purl.org/rss/1.0/modules/syndication/
         'enc'   => "http://purl.org/rss/1.0/modules/content/",          // Explicitly encoded content extension     http://purl.org/rss/1.0/modules/content/
         'media' => "http://search.yahoo.com/mrss/",                     // Embedded media extension                 http://www.rssboard.org/media-rss

@@ -9,7 +9,7 @@ Channel GUID:
     input: >
         <rss>
             <channel>
-                <guid isPermalink="false">http://example.com/</guid>
+                <guid isPermaLink="false">http://example.com/</guid>
             </channel>
         </rss>
     output:
@@ -20,7 +20,7 @@ Channel GUID with whitespace:
     input: >
         <rss>
             <channel>
-                <guid isPermalink="false">
+                <guid isPermaLink="false">
                     http://example.com/
                 </guid>
             </channel>
@@ -33,7 +33,7 @@ Root GUID: # Any elements on the RSS2 root element should be ignored
     input: >
         <rss>
             <channel/>
-            <guid isPermalink="false">http://example.com/</guid>
+            <guid isPermaLink="false">http://example.com/</guid>
         </rss>
     output:
         format: rss
@@ -43,7 +43,7 @@ Bogus GUID before good:
         <rss>
             <channel>
                 <guid/>
-                <guid isPermalink="false">http://example.com/</guid>
+                <guid isPermaLink="false">http://example.com/</guid>
             </channel>
         </rss>
     output:
@@ -255,7 +255,7 @@ Feed link via GUID 1:
 Feed link via GUID 2:
     input: >
         <rss><channel>
-              <guid isPermalink='true'>http://example.com/</guid>
+              <guid isPermaLink='true'>http://example.com/</guid>
         </channel></rss>
     output:
         format: rss
@@ -265,7 +265,7 @@ Feed link via GUID 2:
 GUID not a link:
     input: >
         <rss><channel>
-              <guid isPermalink='maybe not'>http://example.com/</guid>
+              <guid isPermaLink='maybe not'>http://example.com/</guid>
         </channel></rss>
     output:
         format: rss

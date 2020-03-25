@@ -88,8 +88,8 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             well-defined semantics here. Thus the semantics of all the other
             formats are equal, and we want the latest date, whatever it is.
         */
-        return $this->fetchDate("atom:updated", self::DATE_LATEST)                              // Atom update date
-            ?? $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_LATEST);  // Latest other datee
+        return $this->fetchDate("atom:updated", self::DATE_LATEST)                  // Atom update date
+            ?? $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_LATEST);    // Latest other datee
     }
 
     public function getDateCreated(): ?Date {
@@ -98,8 +98,9 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             formats are equal, and we want the earliest date, but only if 
             there are at least two
         */
-        return $this->fetchDate("atom:created", self::DATE_EARLIEST)    // Atom creation date
-            ?? $this->getAssumedDateCreated();                          // Earliest other date
+        return $this->fetchDate("atom:created", self::DATE_EARLIEST)            // Atom creation date
+            ?? $this->fetchDate("dct:created|dc:created", self::DATE_LATEST)    // Dublin Core creation date
+            ?? $this->getAssumedDateCreated();                                  // Earliest other date
     }
 
     public function getContent(): ?Text {
@@ -146,7 +147,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
      */
     protected function getLinkAndRelatedRss2(): array {
         $link = $this->fetchUrl("rss2:link");
-        $guid = $this->fetchUrl("rss2:guid[not(@isPermalink) or @isPermalink='true']");
+        $guid = $this->fetchUrl(self::QUERY_RSS_PERMALINK);
         if ($link && $guid) {
             if ($link->getScheme() !== $guid->getScheme() || $link->getAuthority() !== $guid->getAuthority()) {
                 return [$guid, $link];
@@ -156,7 +157,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     protected function getAssumedDateCreated(): ?Date {
-        $dates = $this->fetchDate("dc:date|rss2:pubDate|rss2:lastBuildDate", self::DATE_ALL);
+        $dates = $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_ALL);
         if (sizeof($dates) > 1) {
             return $dates[0];
         }

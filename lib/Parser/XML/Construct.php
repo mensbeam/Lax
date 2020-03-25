@@ -26,6 +26,9 @@ abstract class Construct {
     protected const DATE_EARLIEST = 2;
     protected const DATE_ALL = 3;
 
+    protected const QUERY_AMBIGUOUS_DATES = "rss2:pubDate|rss2:lastBuildDate|dc:date|dc:available|dc:dateAccepted|dc:dateCopyrighted|dc:dateSubmitted|dc:issued|dc:modified|dc:valid|dct:date|dct:available|dct:dateAccepted|dct:dateCopyrighted|dct:dateSubmitted|dct:issued|dct:modified|dct:valid";
+    protected const QUERY_RSS_PERMALINK = "rss2:guid[not(@isPermaLink) or @isPermaLink='true']";
+
     /** @var \DOMDocument */
     protected $document;
     /** @var \DOMXPath */
@@ -359,7 +362,7 @@ abstract class Construct {
     }
 
     protected function getLinkRss2(): ?Url {
-        return $this->fetchUrl("rss2:link") ?? $this->fetchUrl("rss2:guid[not(@isPermalink) or @isPermalink='true']");
+        return $this->fetchUrl("rss2:link") ?? $this->fetchUrl(self::QUERY_RSS_PERMALINK);
     }
 
     protected function getLinkRss1(): ?Url {
