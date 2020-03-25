@@ -13,7 +13,8 @@ Common XML extensions:
     Encoded content         https://web.archive.org/web/20200130223216/http://web.resource.org/rss/1.0/modules/content/ (updated syntax only)
     Syndication schedule    https://web.archive.org/web/20200130223216/http://web.resource.org/rss/1.0/modules/syndication/
     Google podcast          https://support.google.com/googleplay/podcasts/answer/6260341
-    Apple podcast           https://help.apple.com/itc/podcasts_connect/#/itcb54353390
+    Apple podcast           https://help.apple.com/itc/podcasts_connect/#/itcb54353390 and https://help.apple.com/itc/podcasts_connect/#/itc2b3780e76
+    Media RSS               http://www.rssboard.org/media-rss
 
 Other XML extensions:
     RDF RSS enclosures      https://foz.home.xs4all.nl/mod_enclosure.html
