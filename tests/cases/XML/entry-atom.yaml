@@ -99,8 +99,8 @@ Creation and update dates:
     input: >
         <feed xmlns="http://www.w3.org/2005/Atom">
             <entry>
-                <created>2020-01-01T00:00:00Z</created>
-                <created>2020-03-03T00:00:00Z</created>
+                <published>2020-01-01T00:00:00Z</published>
+                <published>2020-03-03T00:00:00Z</published>
                 <updated>2020-03-03T00:00:00Z</updated>
                 <updated>2020-04-01T00:00:00Z</updated>
             </entry>

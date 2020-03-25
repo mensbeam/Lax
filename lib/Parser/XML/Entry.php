@@ -98,7 +98,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             formats are equal, and we want the earliest date, but only if 
             there are at least two
         */
-        return $this->fetchDate("atom:created", self::DATE_EARLIEST)            // Atom creation date
+        return $this->fetchDate("atom:published", self::DATE_EARLIEST)          // Atom creation date
             ?? $this->fetchDate("dct:created|dc:created", self::DATE_LATEST)    // Dublin Core creation date
             ?? $this->getAssumedDateCreated();                                  // Earliest other date
     }

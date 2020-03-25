@@ -389,7 +389,7 @@ Multiple feed date timezones:
 Bogus feed date:
     input: >
         <feed xmlns="http://www.w3.org/2005/Atom">
-            <created>2020-03-03T00:00:00Z</created>
+            <published>2020-03-03T00:00:00Z</published>
         </feed>
     output:
         format: atom
