@@ -89,3 +89,48 @@ Dublin Core dates:
             - dateCreated: '2020-01-01T00:00:00Z'
               dateModified: '2020-03-03T00:00:00Z'
             - dateModified: '2020-03-03T01:00:00+01:00'
+
+Dublin Core terms dates:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item><dc:available>2020-03-03T00:00:00Z</dc:available></item>
+            <item><dc:created>2020-03-03T00:00:00Z</dc:created></item>
+            <item><dc:date>2020-03-03T00:00:00Z</dc:date></item>
+            <item><dc:dateAccepted>2020-03-03T00:00:00Z</dc:dateAccepted></item>
+            <item><dc:dateCopyrighted>2020-03-03T00:00:00Z</dc:dateCopyrighted></item>
+            <item><dc:dateSubmitted>2020-03-03T00:00:00Z</dc:dateSubmitted></item>
+            <item><dc:issued>2020-03-03T00:00:00Z</dc:issued></item>
+            <item><dc:modified>2020-03-03T00:00:00Z</dc:modified></item>
+            <item><dc:valid>2020-03-03T00:00:00Z</dc:valid></item>
+            <item><term:available>2020-03-03T00:00:00Z</term:available></item>
+            <item><term:created>2020-03-03T00:00:00Z</term:created></item>
+            <item><term:date>2020-03-03T00:00:00Z</term:date></item>
+            <item><term:dateAccepted>2020-03-03T00:00:00Z</term:dateAccepted></item>
+            <item><term:dateCopyrighted>2020-03-03T00:00:00Z</term:dateCopyrighted></item>
+            <item><term:dateSubmitted>2020-03-03T00:00:00Z</term:dateSubmitted></item>
+            <item><term:issued>2020-03-03T00:00:00Z</term:issued></item>
+            <item><term:modified>2020-03-03T00:00:00Z</term:modified></item>
+            <item><term:valid>2020-03-03T00:00:00Z</term:valid></item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateCreated: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateCreated: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'
+            - dateModified: '2020-03-03T00:00:00Z'

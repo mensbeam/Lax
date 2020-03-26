@@ -296,6 +296,174 @@ Multiple Dublin Core dates:
         version: '1.0'
         dateModified: '2020-03-03T00:00:00-04:00'
 
+Dublin Core terms date 1:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:available>2020-03-03T00:00:00Z</dc:available></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 2: # Creation date does not count as modification date
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:created>2020-03-03T00:00:00Z</dc:created></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+
+Dublin Core terms date 3:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:dateAccepted>2020-03-03T00:00:00Z</dc:dateAccepted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 4:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:dateCopyrighted>2020-03-03T00:00:00Z</dc:dateCopyrighted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 5:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:dateSubmitted>2020-03-03T00:00:00Z</dc:dateSubmitted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 6:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:issued>2020-03-03T00:00:00Z</dc:issued></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 7:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:modified>2020-03-03T00:00:00Z</dc:modified></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 8:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><dc:valid>2020-03-03T00:00:00Z</dc:valid></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 9:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:available>2020-03-03T00:00:00Z</term:available></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 10: # Creation date does not count as modification date
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:created>2020-03-03T00:00:00Z</term:created></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+
+Dublin Core terms date 11:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:date>2020-03-03T00:00:00Z</term:date></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 12:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:dateAccepted>2020-03-03T00:00:00Z</term:dateAccepted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 13:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:dateCopyrighted>2020-03-03T00:00:00Z</term:dateCopyrighted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 14:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:dateSubmitted>2020-03-03T00:00:00Z</term:dateSubmitted></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 15:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:issued>2020-03-03T00:00:00Z</term:issued></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 16:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:modified>2020-03-03T00:00:00Z</term:modified></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
+Dublin Core terms date 17:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <channel><term:valid>2020-03-03T00:00:00Z</term:valid></channel>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        dateModified: '2020-03-03T00:00:00Z'
+
 Feed channel image:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
