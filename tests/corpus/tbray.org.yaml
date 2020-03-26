@@ -1,0 +1,1568 @@
+# The personal blog of Tim Bray, one of the few examples of XHTML content in an Atom feed
+
+url: 'https://www.tbray.org/ongoing/ongoing.atom'
+headers:
+  date: 'Thu, 26 Mar 2020 15:01:58 GMT'
+  content-type: 'application/atom+xml'
+  etag: '"21176-5a17cc2fcf408"'
+  last-modified: 'Mon, 23 Mar 2020 02:55:02 GMT'
+body: >
+  <?xml version='1.0' encoding='UTF-8'?>
+  <feed xmlns='http://www.w3.org/2005/Atom'
+        xmlns:thr='http://purl.org/syndication/thread/1.0'
+        xml:lang='en-us'>
+  <title>ongoing by Tim Bray</title>
+  <link rel='hub' href='http://pubsubhubbub.appspot.com/' />
+  <id>https://www.tbray.org/ongoing/</id>
+  <link href='https://www.tbray.org/ongoing/' />
+  <link rel='self' href='https://www.tbray.org/ongoing/ongoing.atom' />
+  <link rel='replies'       thr:count='101'       href='https://www.tbray.org/ongoing/comments.atom' />
+  <logo>rsslogo.jpg</logo>
+  <icon>/favicon.ico</icon>
+  <updated>2020-03-22T19:55:02-07:00</updated>
+  <author><name>Tim Bray</name></author>
+  <subtitle>ongoing fragmented essay by Tim Bray</subtitle>
+  <rights>All content written by Tim Bray and photos by Tim Bray Copyright Tim Bray, some rights reserved, see /ongoing/misc/Copyright</rights>
+  <generator uri='/misc/Colophon'>Generated from XML source code using Perl, Expat, Emacs, Mysql, Ruby, Java, and ImageMagick.  Industrial-strength technology, baby.</generator>
+
+  <entry>
+  <title>Eventing Facets</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/07/Eventing-Facets' />
+  <link rel='replies'        thr:count='2'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/07/Eventing-Facets#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/07/Eventing-Facets</id>
+  <published>2020-03-07T12:00:00-08:00</published>
+  <updated>2020-03-22T12:57:22-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>What happened was, at re:Invent 2019 I gave a talk entitled     <a href='https://www.youtube.com/watch?v=h46IquqjF3E'>Moving to Event-Driven Architecture</a>, discussing a list of     characteristics that distinguish eventing and messaging services.  It was a lot of work pulling the     material together and I’ve learned a couple of things since then; thus, welcome to the     <a href='/ongoing/What/Technology/Software/Eventing/'>Eventing Facets</a> blog series, of which this is the hub. It’s going to     take a while to fill this out</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+      <p>What happened was, at re:Invent 2019 I gave a talk entitled
+      <a href="https://www.youtube.com/watch?v=h46IquqjF3E">Moving to Event-Driven Architecture</a>, discussing a list of
+      characteristics that distinguish eventing and messaging services.  It was a lot of work pulling the
+      material together and I’ve learned a couple of things since then; thus, welcome to the
+      <a href="/ongoing/What/Technology/Software/Eventing/">Eventing Facets</a> blog series, of which this is the hub. It’s going to
+      take a while to fill this out.</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/07/facets.png" alt="On-stage in Vegas" />
+      <h2 id='p-1'>Eventing or messaging?</h2>
+      <p>They’re just labels. If it’s publish-and-subscribe people usually say “event”; if there’s a designated receiver, “message”.
+      But there’s a lot of messy ground in between; and in my experience, the software does more or less the same stuff whichever
+      label’s on the cover.  So I may simultaneously talk about eventing and use the word “message” to describe the byte packages 
+      being shuffled around.</p>
+      <h2 id='p-2'>Disclosure</h2>
+      <p>I work for AWS and am a member of the “Serverless” group that includes Lambda, SQS, SNS, MQ, and EventBridge.  I
+      also support services that make large-scale use of Kinesis. You can expect this to have obvious effects on the perceptions and
+      opinions offered herein.  I’m also reasonably well-acquainted with Rabbit/MQ and Kafka, but without any hands-on.</p>
+      <h2 id='p-3'>Process</h2>
+      <p>For each facet, I’ll introduce it here and write a blog piece or link to an existing one that covers the territory. In the
+      process, I’ll build up a table relating how a list of well-known eventing/messaging services support it, or don’t; I premiered a
+      version of that table in the talk (see the picture above) and more than one person has asked for a copy.</p>
+      <p>OK, here we go.</p>
+      <h2 id='p-4'>Facet: FIFO</h2>
+      <p>When you inject events into the cloud, can you rely on them coming out in the same order?  For details, see
+      <a href="/ongoing/When/202x/2020/03/07/FIFO-Facet">Facet: FIFO</a>.</p>
+      <h2 id='p-7'>Facet: Deduplication</h2>
+      <p>When you fire an event into the cloud, can you be sure it’ll only come out again once?  See
+      <a href="/ongoing/When/202x/2020/03/08/Deduping-Facet">Facet: Deduping</a>.</p>
+      <h2 id='p-8'>Facet: Subscribe or Receive</h2>
+      <p>When there’s an event in the cloud, how many different receivers can receive it?  Just one? See
+      <a href="/ongoing/When/202x/2020/03/09/PubSub-Direct-Facet">Facet:
+      Point-to-Point vs. Pub/Sub</a>.</p>
+      <h2 id='p-14'>Facet: Serverless or Broker</h2>
+      <p>Does your eventing infrastructure look like a cloud service, just an endpoint in the cloud?  Or is it an actual machine, or
+      cluster of machines, that you own and operate and connect to?  For details, see
+      <a href="/ongoing/When/202x/2020/03/10/Serverless-Facet">Facet: Broker vs Serverless</a>.</p>
+      <h2 id='p-15'>Facet: Push or Pull</h2>
+      <p>Do you have to poll the cloud for events, or can you get them pushed to you?  For details, see
+      <a href="/ongoing/When/202x/2020/03/21/Push-Pull-Facet">Facet: Push vs Pull.</a></p>
+      <h2 id='p-9'>Still to come</h2>
+      <p>Here are the ones I know I’m going to write about, and maybe there’ll be more: 
+      <cite>Filtering vs. Firehose</cite>, <cite>Payload Flavors</cite>, <cite>Records vs. Documents</cite>,
+      <cite>Uniform vs Heterogeneous Events</cite>, <cite>Replaying and Sidelining</cite>.  Like I said, this will 
+      take a while.</p>
+      <h2 id='p-5'>Summarizing</h2>
+      <p>Since this table includes references to software that I’ve never actually used, it’s perfectly possible that my research has
+      been imperfect and there are errors.  Please let me know if so and I’ll dig in deeper and correct if necessary.</p>
+      <table >
+        <tr><td class="empty"></td>
+        <th><a href="https://aws.amazon.com/amazon-mq/">ActiveMQ</a></th>
+        <th><a href="https://activemq.apache.org/components/artemis/">Artemis</a></th>
+        <th><a href="https://aws.amazon.com/eventbridge/">Event<br/>Bridge</a></th>
+        <th><a href="https://kafka.apache.org/">Kafka</a></th>
+        <th><a href="https://aws.amazon.com/kinesis/">Kinesis</a></th>
+        <th><a href="https://www.rabbitmq.com/">RabbitMQ</a></th>
+        <th><a href="https://aws.amazon.com/sns">SNS</a></th>
+        <th><a href="https://aws.amazon.com/sqs">SQS</a></th>
+        <th><a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html">SQS<br/>FIFO</a></th></tr>
+        <tr align="center"><th align="right">FIFO?</th><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td></tr>
+        <tr align="center"><th align="right">Dedupe?</th><td>*1</td><td>Yes</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+        <tr align="center"><th align="right">P2P or<br/>Pub/Sub</th><td>Both</td><td>Both</td><td>P/S</td><td>P/S</td><td>P/S</td><td>Both</td><td>P/S</td><td>P2P</td><td>P2P</td></tr>
+        <tr align="center"><th align="right">Serverless<br/>or Broker</th><td>B</td><td>B</td><td>S</td><td>B</td><td>*2</td><td>B</td><td>S</td><td>S</td><td>S</td></tr>
+        <tr align="center"><th align="right">Push<br/>or Pull</th><td>Both</td><td>Both</td><td>Push</td><td>Pull</td><td>*3</td><td>Both</td><td>Push</td><td>Pull</td><td>Pull</td></tr>
+      </table>
+      <h2 id='p-6'>Notes</h2>
+      <p><b>*1:</b> It looks like ActiveMQ can do this but either it isn’t straightforward or doesn’t work out of the box.</p>
+      <p><b>*2:</b> Kinesis is a cloud service but since you have to provision shards, it kind of acts like a broker too.  On the
+      other hand, adding and deleting shards is possible if a bit awkward.</p>
+      <p><b>*3:</b> Kinesis is pull-based, but there’s the
+      <a href="https://docs.aws.amazon.com/streams/latest/dev/developing-consumers-with-kcl-v2.html">Kinesis Client Library</a>, that
+      gives a very push-like feeling.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Facet: Push vs Pull</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/21/Push-Pull-Facet' />
+  <link rel='replies'        thr:count='1'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/21/Push-Pull-Facet#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/21/Push-Pull-Facet</id>
+  <published>2020-03-21T12:00:00-07:00</published>
+  <updated>2020-03-22T12:56:59-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>If you want to process events, you can fetch them from the infrastructure or you can have the infrastructure hand them to you.   Neither idea is crazy</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+    <p>If you want to process events, you can fetch them from the infrastructure or you can have the infrastructure hand them to you.
+    Neither idea is crazy.</p>
+    <p><i>[This is part of the
+    <a href="/ongoing/What/Technology/Software/Eventing/">Event Facets</a> series.]</i></p>
+    <p>When you make a request to fetch data, that’s called “pull”.
+    Which is an off-by-one error; the “u” should be an “o” as in “poll”, because that’s how most network stuff
+    works. I’ve heard old farts of my own vintage claim that on the network, polling is really all there is if you dig in deep
+    enough.
+    But we do use the term “push”, in which<span class='dashes'> —</span> maybe it’s just an illusion<span class='dashes'> —</span> the
+    infrastructure reaches out and hands the event to you.</p>
+    <h2 id='p-1'>For example</h2>
+    <p>I’ll use two AWS services that I work nearby.</p>
+    <p>First,
+    <a href="https://aws.amazon.com/sqs/">SQS</a>, which is pure pull. You make one call to receive a batch of messages,
+    and then another to delete them, once processed.  If they’re being pushed in the front end of the service faster than you’re
+    taking them out, they build up inside, which is usually OK.</p>
+    <img src="https://www.tbray.org/ongoing/When/202x/2020/03/21/pull.png" alt="Pull" />
+    <div class='caption'><p>Pull!<br/>Credit: Petar Milošević /
+    <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA</a></p></div>
+    <img src="https://www.tbray.org/ongoing/When/202x/2020/03/21/push.png" alt="Push" />
+    <div class='caption'><p>Push!<br/>Credit: Rjhartley at English Wikipedia /
+    <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA</a></p></div>
+    <p>In <a href="https://aws.amazon.com/sns/">SNS</a>, by contrast, events are dropped onto a “Topic” and then you subscribe things to the
+    topic. You can subscribe SQS queues, Lambda functions, mobile notifications, and arbitrary HTTP endpoints.  When
+    someone drops messages onto the topic, SNS “pushes” them to all the subscribed parties.</p>
+    <h2 id='p-2'>On webhooks</h2>
+    <p>“Webhook” is just another word for push.
+    I remember when I first heard the idea in the early days of the Web, I thought it was complete magic:  “I’ll just
+    send you something, and the something will include the address where you HTTP POST back to me.”  Asynchronous, loosely-coupled,
+    what’s not to like?</p>
+    <p>There are a lot of webhooks out there. We talk to the
+    <a href="https://aws.amazon.com/eventbridge/integrations/">EventBridge Partners</a> who are injecting their customers’ events into
+    AWS, and one thing we talk about is good ways to get events from customers back to them. The first answer is usually
+    “we do Webhooks”, which means push.</p>
+    <h2 id='p-3'>On being pushy</h2>
+    <p>On the face of it, push delivery sounds seductive.  Particularly when you can back your webhook with something like a Lambda
+    function. And sometimes it works great.  But there are two big problems.</p>
+    <p>The first is scaling. If you’re putting up an endpoint and inviting whoever to push events to it, you’re implicitly making a
+    commitment to have it available, secured, and ready to accept the traffic.  It’s really easy to get a nasty surprise. Particularly
+    if you’re building a public-facing cloud app and it gets popular.  I can guarantee that we have plenty of services here in AWS
+    that can accidentally crush your webhook like a bug with a traffic surge.</p>
+    <p>Then there’s administration. You want data pushed to you, but you want it done securely.  That means whoever’s doing the
+    pushing has to have credentials, and you have to trust them to manage them, and you have to arrange for rotation and
+    invalidation as appropriate, and you really don’t want to be handling support calls of the form “I didn’t change anything and now
+    my pushes are failing with HTTP 403!”</p>
+    <h2 id='p-4'>On pulling</h2>
+    <p>Polling, on the face of it, is a little more work.  If you care about latency, you’re going to have to have a host post a
+    long-poll against the eventing infrastructure, which means you’re going to have to own and manage a host. (If you’re not
+    latency-sensitive, just arrange to fire a Lambda every minute or so to pick up events, way easier.)</p>
+    <p>On the other hand, you need <em>never</em> have a scaling problem, because you control your own polling rate, so you can
+    arrange to only pick up work that you have capacity to handle.</p>
+    <p>On the admin side, everybody already owns the problem of managing their cloud service provider credentials so presumably
+    that’s not extra work.</p>
+    <p>I’m not saying push is never a good idea; just that grizzled old distributed-systems geeks like me have a sort of warm comfy
+    feeling about polling, especially for the core bread-and-butter workloads.</p>
+    <h2 id='p-5'>A small case study</h2>
+    <p>Ssshhh! I’m going to tell an AWS-internals secret.</p>
+    <p>I talk a lot with the SNS team. They have a front-end fleet, a metadata
+    fleet, and then the fleet that actually does the deliveries to the subscriptions.  It turns out that the software that delivers to
+    HTTP-endpoint subscriptions is big, and maybe the most complex part of the whole service.</p>
+    <p>When I learned that I asked one of the
+    engineers why and she told me “Because those are other people’s endpoints. They make a configuration mistake or forget to rotate
+    credentials or send a flood of traffic that’s like eight times what they can handle. And we have to keep running in all those
+    cases.”</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Facet: Broker vs Serverless</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/10/Serverless-Facet' />
+  <link rel='replies'        thr:count='1'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/10/Serverless-Facet#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/10/Serverless-Facet</id>
+  <published>2020-03-10T12:00:00-07:00</published>
+  <updated>2020-03-21T12:17:05-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>Your event infrastructure might be a service in the cloud or might be an actual computer (or cluster) you connect to.  Both     choices are perfectly sensible. The trade-offs?  It’s complicated</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+      <p>Your event infrastructure might be a service in the cloud or might be an actual computer (or cluster) you connect to.  Both
+      choices are perfectly sensible. The trade-offs?  It’s complicated.</p>
+      <p><i>[This is part of the
+      <a href="/ongoing/What/Technology/Software/Eventing/">Event Facets</a> series.]</i></p>
+      <p>At AWS where I work, our mainstream home-grown services (Kinesis, SQS, SNS) are all serverless. I mean, there are servers,
+      lots of ’em, but you can’t see ’em, there’s just an endpoint that you connect to, usually with HTTP, to produce and consume
+      events.  Which should be unsurprising, AWS is built on the proposition that everything should be a service. Here are two:</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/10/sqs.png" alt="SQS" />
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/10/sns.png" alt="SNS" />
+      <p>But there’s another approach, usually referred to as a “message broker”. Brokers are software packages that push around
+      events or messages, and they typically need to be installed and run on servers that you own or rent. Then your app connects to
+      them to send and receive.  Here are two:</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/10/active.png" alt="ActiveMQ" />
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/10/rabbit.png" alt="RabbitMQ" />
+      <p>The trade-offs, well, they’re complicated.</p>
+      <h2 id='p-1'>Serverless?</h2>
+      <p>These services have one huge advantage in that you don’t have to think about scaling.
+      You can pretty well fire as much traffic at them as you want at them, and they’ll find a way to soak it up.  Load forecasting
+      sucks and the penalties for being wrong are severe, so it’s best just to not do it.  Also, with serverless you don’t have to own
+      and monitor and patch and maintain the servers, which is nice.</p>
+      <h2 id='p-2'>Brokers?</h2>
+      <p>First some background: When you work with a broker, you often don’t use HTTP. You nail up a TCP connection and
+      just pump bytes back and forth. For this to work, you obviously need some sort of session and message framing protocol and boy,
+      are there ever a lot of them, for example
+      <a href="https://en.wikipedia.org/wiki/MQTT">MQTT</a>,
+      <a href="https://en.wikipedia.org/wiki/Streaming_Text_Oriented_Messaging_Protocol">STOMP</a>,
+      <a href="https://activemq.apache.org/openwire">OpenWire</a>, and
+      <a href="https://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol">AMQP</a> (watch out for AMQP, it comes in different,
+      incompatible, versions).</p>
+      <p>Often you don’t have to worry about that; you use some combination of a standardized API like
+      <a href="https://en.wikipedia.org/wiki/Java_Message_Service">JMS</a> or a popular library like
+      <a href="https://en.wikipedia.org/wiki/Apache_Camel">Apache Camel</a> and the messaging Just Happens.</p>
+      <p>The fact that you’re using permanent connections mean that you should be able to expect lower latency, because you don’t have
+      the well-known HTTP overheads in setting up and tearing down connections.  On the other hand, it means your software has to deal
+      with the situation when your nailed-up connection breaks, which 100% of network connections eventually do.  (Once again, your
+      library may take care of this for you.)</p>
+      <h2 id='p-3'>Except for…</h2>
+      <p>Let’s start with that scaling advantage that services like SQS and SNS offer.  It’s real. But… maybe you don’t care.  If you
+      load up one of the MQs on a big honkin’ EC2 instance with lots of CPU and memory and threads, you can push an astonishing number
+      of messages/second through it.  Like, maybe ten times the number you’ll ever need to send for the foreseeable future.</p>
+      <p>On the other hand, how about that latency advantage that brokers give you, because of the nailed-up connection?  It’s
+      real. But… on the HTTP side, we have
+      <a href="https://en.wikipedia.org/wiki/Push_technology#Long_polling">HTTP long polling</a>, which can reduce receive latency
+      a lot. And of course an increasing share of HTTP is now
+      <a href="https://en.wikipedia.org/wiki/HTTP/2">HTTP/2</a>, which multiplexes multiple requests on a single long-lived
+      connection.</p>
+      <p>And that’s not all. The next step after HTTP/2 is
+      <a href="https://en.wikipedia.org/wiki/QUIC">QUIC</a>, likely to be rebranded as HTTP/3.  It provides HTTP request semantics
+      using
+      <a href="https://en.wikipedia.org/wiki/User_Datagram_Protocol">UDP</a>, so there are no permanent connections at all, and in
+      principle amazingly low latencies should be possible.</p>
+      <h2 id='p-5'>Reliability?</h2>
+      <p>On the serverless side, the story is excellent.  SNS and SQS use all the usual AWS availability-zone tricks to ensure that
+      even if hosts crash (which by the way they do all the time), data keeps flowing.</p>
+      <p>Brokers have a decent story too, if not quite as rock-solid. ActiveMQ makes it easy to set up broker pairs backed by a single
+      filesystem-based message store, where the backup takes over reasonably quickly on host failure. (Unless of course you’ve built
+      up a huge number of un-received messages, in which case restarts can get very sketchy.)  RabbitMQ runs in clusters, often of
+      size three, and when you lose one you can add a new one back in and it’ll pick up state from the others.  Once again, if you’ve
+      got a huge backlog, you may experience pain.</p>
+      <h2 id='p-4'>In conclusion…</h2>
+      <p>It’s complicated. But you already knew that.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Plague Advice</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/14/Social-Distance' />
+  <link rel='replies'        thr:count='2'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/14/Social-Distance#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/14/Social-Distance</id>
+  <published>2020-03-14T12:00:00-07:00</published>
+  <updated>2020-03-15T08:29:00-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>A couple weeks back “Social Distancing” would’ve been a Big Thinker’s title in <cite>The Times</cite>, about the Downside   Of Facebook.  Now it’s a best practice if you care about flattening the COVID-19 curve and saving grandmothers.  I’m a believer;   recently I   tweeted   <a href='https://twitter.com/timbray/status/1237796651978199040'>Cancel Everything</a> and I meant it.  But this shouldn’t mean   that you can’t go outside; or shop; or photograph</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+    <p>A couple weeks back “Social Distancing” would’ve been a Big Thinker’s title in <cite>The Times</cite>, about the Downside
+    Of Facebook.  Now it’s a best practice if you care about flattening the COVID-19 curve and saving grandmothers.  I’m a believer;
+    recently I   tweeted
+    <a href="https://twitter.com/timbray/status/1237796651978199040">Cancel Everything</a> and I meant it.  But this shouldn’t mean
+    that you can’t go outside; or shop; or photograph.</p>
+    <p>Today we went to the
+    <a href="https://eatlocal.org/markets/riley-park/">Riley Park Winter Farmers Market</a>, eleven blocks away in cold spring
+    sun.</p>
+    <img src="https://www.tbray.org/ongoing/When/202x/2020/03/14/XT302289.png" alt="At the Riley Park Farmers Market" />
+    <div class='caption'><p>It’s way less crowded than the supermarket.<br/>Damn it was cold, 5°C at best. But I bought beets.</p></div>
+    <blockquote>
+      <h2 id='p-6'>Plague Advice</h2>
+      <p>Find a way to support your local merchants to the extent you can while staying safe. Don’t be the one who who didn’t know
+      what you’d got till it was gone.</p>
+    </blockquote>
+    <p>Here in BC we’re not in hard-lockdown where you have to stay inside and order your food. I and many others here put a
+    lot of weight on words from our Provincial Health Officer Dr. Bonnie Henry (no Twitter of her own but she has
+    <a href="https://twitter.com/bonniehenryfans">a fan club)</a>. As of this writing, she says that for now, it’s OK to shop for food
+    and basics, to eat out, and especially to do things that are outside. Farmers markets offer two out of three.</p>
+    <p>Just because that’s OK for us doesn’t mean it’s OK for you.  BC seems to have got lucky with early containment; it helps that
+    anybody with Those Symptoms can have a COVID-19 test for the asking.</p>
+    <p>I suppose the containment will break down
+    at some point and Dr Henry will bring the hard-lockdown hammer.  Because she knows her shit and speaks the truth, she’ll bring the
+    populace along with her.</p>
+    <img src="https://www.tbray.org/ongoing/When/202x/2020/03/14/Bonnie-Harvey.png" alt="" />
+    <div class='caption'><p>Bonnie Henry</p></div>
+    <p>How has Knowing One’s Shit and Speaking Truth become, so often, anything but the default expected behavior?</p>
+    <blockquote>
+      <h2 id='p-1'>Plague Advice</h2>
+      <p>Wherever you are, find your local Dr Henry equivalent and just <em>Do whatever the fuck they say.</em></p>
+    </blockquote>
+    <p>Back to Farmers Markets. There’s more space between you and the staff and the other shoppers. The aisles are wider. There’s no
+    door or doorhandle. No shared shopping carts.  No sharing atmosphere in an enclosed space.</p>
+    <p>Now I see I did one thing wrong: I paid with cash.  These days every greyhaired ponytailed organic-herbs vendor has (in Canada
+    at least) a little goober you can wave your credit card or phone at; no touching required.  Cash is a 
+    notorious germ vector at the best of times, which these really totally aren’t.</p>
+    <blockquote>
+      <h2 id='p-3'>Plague Advice</h2>
+      <p>After you’ve been to the market, don’t touch your face till you get home, then wash the hell out of your hands. Where by “the
+      market” I mean anywhere.</p>
+    </blockquote>
+    <p>At the market there was a stringband, and also a dude in a wheelchair with an N95 facemask and electric guitar, soaring chords
+    with snarly echo.  I left donations in both their open instrument cases; I hope they were careful to wash their hands after
+    handling the cash.</p>
+    <img src="https://www.tbray.org/ongoing/When/202x/2020/03/14/XT302285.png" alt="At the Riley Park Farmers Market" />
+    <blockquote>
+      <h2 id='p-5'>Plague Advice</h2>
+      <p>Support performing artists. Because performances aren’t safe so performers don’t get paid. I have tickets to see Martin Barre,
+      the Cowboy Junkies, and Billie Eilish; none of those performances will happen and I’m not asking for my money back. Go visit the
+      Web sites of the musicians you like and find out how they sell music and merch and buy some already.</p>
+    </blockquote>
+    <p>When I read the stories about the hard-lockdown locales, the policy seems to include no going outside. Sure, don’t enter crowded
+    spaces, including public transit. And don’t crawl malls. But if there’s a green space you can walk to and it’s big enough that
+    people can maintain a respectful distance, I don’t see the downside.</p>
+    <p>The upside is you’ll stay saner.</p>
+    <blockquote>
+      <h2 id='p-7'>Plague Advice</h2>
+      <p>Go (carefully) outside!</p>
+    </blockquote>
+  </div></content></entry>
+
+  <entry>
+  <title>Facet: FIFO</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/07/FIFO-Facet' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/07/FIFO-Facet#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/07/FIFO-Facet</id>
+  <published>2020-03-07T12:00:00-08:00</published>
+  <updated>2020-03-09T22:52:47-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>When you inject events into the cloud, do you care whether they come out in the same order they went in?  If you do, you’ll be     asking for “FIFO” (rhymes with “Fly, foe!”) (stands for “First In First Out”). Some software has it, some doesn’t</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+      <p>When you inject events into the cloud, do you care whether they come out in the same order they went in?  If you do, you’ll be
+      asking for “FIFO” (rhymes with “Fly, foe!”) (stands for “First In First Out”). Some software has it, some doesn’t.</p>
+      <p><i>[This is part of the
+      <a href="/ongoing/What/Technology/Software/Eventing/">Event Facets</a> series.]</i></p>
+      <p>If you think about it carefully, FIFO is only meaningful when you have a single-threaded sender and a single-threaded
+      receiver; with more than one, who gets to say which message was sent (or received) first?</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/07/Caravan_in_the_desert.png" alt="Caravan in the desert, Morocco." />
+      <div class='caption'><p>Real-world FIFO semantics.<br/>Credit: “Caravan in the desert. Morocco, Sahara.”<br/>
+      ©<a href="https://commons.wikimedia.org/wiki/User:Black_Sickle">Sergey 
+      Pesterev</a>/<a href="https://commons.wikimedia.org/wiki/Main_Page">Wikimedia 
+      Commons</a>/<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></p></div>
+      <p>In practice, this means that a FIFO event stream can really only run as fast a single computer can send messages. Assuming
+      there’s any real business significance to the messages, this is pretty slow: hundreds of transactions/second is regarded as
+      extremely fast for a FIFO sequence.</p>
+      <p>It turns out that in a high proportion of cases, what you have is a huge fast data stream that’s partitioned into many
+      sub-streams, and the FIFO operates at the sub-stream level.  Think of the clickstream coming off a big Web site.  You might care
+      about the order of events that are part of an individual session (there could be thousands or millions of sessions), but not whether
+      one session’s events are before or after another’s. </p>
+      <p>This is common enough that you’ll hear people use phrases like “session ordering”.</p>
+      <p>That’s why I like the picture above. There are actually three strongly-ordered mini-caravans, which could arrive at the oasis in
+      any old order while locally preserving strict within-caravan camel ordering.</p>
+      <p>If you look at actual real-world software, there’s usually good support for this big-river-of-ordered-sessions model.  For
+      example, both Kinesis and Kafka have session selection arguments and call them
+      <a href="https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html#partition-key">Partition Keys</a>. Both expose their
+      shards, which are selected by the partition keys and where the FIFO semantics apply. This makes them shine for
+      huge-scale session-oriented pub/sub streaming.</p>
+      <p>SQS FIFO calls its session identifier
+      <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagegroupid-property.html">Message
+      Group IDs</a> and hides the internal shards.</p>
+      <h2 id='p-1'>I always want FIFO, right?</h2>
+      <p>Certainly, if you’re applying transactions to a bank account. But maybe not; 
+      Consider the case of
+      <a href="https://smile.amazon.com/">Amazon.com</a>. Every time you press “buy”, the Web site generates a message saying what you
+      bought, how you paid for it, where, to ship it, and so on, and drops that into the cloud, where it’ll eventually be picked up by
+      the systems that do acquisition and packaging and shipping and accounting and tax and compliance and so on.  But if you think of it,
+      since each of those orders is independent of all the others, the order doesn’t matter that much.</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/07/horse-race.png" alt="2019年のジャパンカップ　スタート後の先行争い" />
+      <div class='caption'><p>Not FIFO.<br/>Credit: “2019年のジャパンカップ　スタート後の先行争い”,<br/>
+      <a href="https://commons.wikimedia.org/wiki/File:2019_japancup_15horses_running.jpg">by nakashi</a>.</p></div>
+      <h2 id='p-1'>FIFO is hard</h2>
+      <p>If your app is like Amazon.com, you should definitely use a service that doesn’t offer FIFO, because it’ll be cheaper and more
+      elastic. It turns out that FIFO isn’t free<span class='dashes'> —</span> it’s not even cheap<span class='dashes'> —</span>  because
+      it’s hard to build and operate.</p>
+      <p>It’s not hard to understand why. A typical big Web service is commonly sharded, which is to say there’s a front-end fleet of
+      hosts handling a flow of requests from many sources, which it deals out to more hosts in the back-end fleet to process.  Sharding
+      lets you handle really any level of traffic.</p>
+      <p>The way it typically works is that incoming requests end up at some sort of “load balancer” to deal the traffic
+      out. Obviously this means you can’t maintain global FIFO ordering; that’s sort of OK for the reasons described just above.
+      If you want to maintain the more typical and useful “session FIFO” semantics, you need to route the messages associated with each
+      session to the same shard.  This practice is called “affinity” and, as I
+      <a href="/ongoing/When/201x/2019/09/25/On-Sharding#p-1">described here</a>, it’s difficult.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Facet: Point-to-Point vs Pub/Sub</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/09/PubSub-Direct-Facet' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/09/PubSub-Direct-Facet#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/09/PubSub-Direct-Facet</id>
+  <published>2020-03-09T12:00:00-07:00</published>
+  <updated>2020-03-09T22:52:35-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>When there’s an event in the cloud, how many different receivers can receive it?  There are two plausible answers: Just one, or     anyone</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+      <p>When there’s an event in the cloud, how many different receivers can receive it?  There are two plausible answers: Just one, or
+      anyone.</p>
+      <p><i>[This is part of the
+      <a href="/ongoing/What/Technology/Software/Eventing/">Event Facets</a> series.]</i></p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/09/postman.png" alt="Postman delivers letter" />
+      <h2 id='p-2'>Point-to-point</h2>
+      <p>The idea is that any given message can only be read by one receiver. You might imagine that, as the old photo above suggests,
+      the sender supplies an address, choosing the receiver. But that’s actually a pretty rare scenario.  What’s much more common is the
+      way that SQS works.</p>
+      <p>In SQS, when you send a message, you have to pick which queue you’re sending it on.  Any number of receivers can be polling the
+      queue, but only one will receive any given message. The API is clever; once you’ve received a message and processed it
+      successfully, you’re supposed to delete it. There’s a time window after you’ve received it during which nobody else can see it. If
+      the message isn’t deleted in time, it’ll pop back into availability. It’s called the “visibility timeout” and there are APIs for
+      setting and adjusting it.</p>
+      <p>Think about a back-end system in one of Amazon.com’s warehouses, picking up order events from the Web site. You want enough
+      event readers in the warehouse to keep it busy, and you want to have each order processed by only one of them; so this flavor of
+      point-to-point is just the ticket.</p>
+      <p>It’s not a rare scenario at all; the Apache Artemis message broker
+      <a href="https://activemq.apache.org/components/artemis/documentation/2.0.0/address-model.html">calls it “anycast”</a>.</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/09/subscribers.png" alt="Publish and Subscribe" />
+      <div class='caption'><p>Credit: Terje Skjerdal from Høvåg, Norway /
+      <a href="https://creativecommons.org/licenses/by/2.0">CC BY</a></p></div>
+      <h2 id='p-3'>Pub/Sub</h2>
+      <p>It’s short for “Publish and Subscribe”, which nobody ever says. This is probably the default mode for most of the software that
+      has the word “event” in its name.  The idea is, you publish your events onto a Bus or a Stream or a Topic or a
+      Queue<span class='dashes'> —</span> there’s no standard terminology. Then receivers subscribe to the whatever-it’s-called and the
+      events on it are in principle available to all of them.</p>
+      <p>There are all sorts of variations in how subscriptions work; push vs pull, filter vs firehose; they’re important enough to
+      deserve their own entries in this series.</p>
+      <p>There are loads and loads of apps in every sector of business that are a good fit for pub/sub. I’d be amazed if there are 
+      readers in a business of any size that doesn’t have some running.</p>
+      <p>At AWS, we have multiple services that do pub/sub: Kinesis, Managed Kafka, MQ, and then my favorite, SNS, which is used by more
+      or less everyone to do more or less anything.  The way it works is, you publish messages to at Topic, and then you subscribe
+      receivers to it. They can be SQS queues, Lambda functions, mobile-device messaging, and arbitrary HTTP endpoints. And you can have
+      as many subscribers as you want, SNS will do the fan-out.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Facet: Deduping</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/03/08/Deduping-Facet' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/03/08/Deduping-Facet#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/03/08/Deduping-Facet</id>
+  <published>2020-03-08T12:00:00-07:00</published>
+  <updated>2020-03-09T22:50:16-07:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Software/Eventing' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Software' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Eventing' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>When you fire an event into the cloud, can you be sure it’ll only come out again once?  It turns out that      sometimes they come out more often than they go in.  This may or may not be a problem in your     application. If it is, there are techniques to help work around it</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+      <p>When you fire an event into the cloud, can you be sure it’ll only come out again once?  It turns out that 
+      sometimes they come out more often than they go in.  This may or may not be a problem in your
+      application. If it is, there are techniques to help work around it.</p>
+      <h2 id='p-1'>“At-least once”</h2>
+      <p>This is a phrase you’ll hear a lot when you hang around with eventing/messaging people, (and cloud people generally).
+      Builders work so hard at making sure everything gets delivered that they can end up doing it more than once.</p>
+      <h2 id='p-2'>How can that happen?</h2>
+      <p>Here’s a scenario: Suppose your software wants to retrieve and process events
+      from a bus or topic or stream or whatever the service is called.  And suppose you retrieve one, then something goes
+      wrong before you can acknowledge it. For
+      example, the host your code’s running on might have failed. Or your code just crashed (<em>mine</em> never has bugs, but
+      they tell me it happens). Or your software is written
+      in Java and unfortunately went into a 45-second stop-the-world garbage-collection stall.</p>
+      <p>When any of these happen, the eventing software will get the idea that you didn’t successfully receive the data, and since
+      its primary purpose in life is to deliver reliably, it will try again. Which means you end up
+      processing it twice.</p>
+      <p>On the way in…</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/08/events-in.png" alt="events in" />
+      <p>…on the way out.</p>
+      <img src="https://www.tbray.org/ongoing/When/202x/2020/03/08/events-out.png" alt="events out, with dupes" />
+      <div class='caption'><p>Production note: For pictures of events in action, I’ve adopted this technique, created by
+      <a href="https://www.notesfromthesound.com/">Colm MacCárthaigh</a>, of using emojois. It’d be a good all-purpose solution except
+      for I’ve found the emjoi repertoire and representation highly nonportable between Mac and Windows.</p></div>
+      <p>Sometimes duplicates aren’t your fault. Suppose one data center gets cut off from all the others in an AWS
+      region. Yes, we try really hard to arrange for multiple redundant connections, but shit happens. A little birdie told that one
+      day a few years ago, a badly-built bridge in Beijing fell down and it had been carrying three different network providers’ fibres.</p>
+      <p>We call this situation a network partition. When it happens, both sides of the partition will try really hard not to
+      lose any data. The details can get complicated, but duplicate messages are a common result.</p>
+      <p>Obviously this could be a problem for your app.</p>
+      <h2 id='p-3'>What to do?</h2>
+      <p>There are situations where you can ignore the problem. Since duplicates are rare, in an analytics app or anything else
+      that’s doing stats, they’re probably not a big deal. But there are lots of situations where they are.</p>
+      <p>If your app has a database that does transactions, you’re probably OK, because you can safely remember when you’ve
+      seen each event’s unique ID, and just discard duplicates.</p>
+      <p>Another useful technique is
+      <a href="https://en.wikipedia.org/wiki/Idempotence">idempotency</a>.  That is to say, structure your application such that API calls
+      can be repeated without changing the result.  An example is anything that can be expressed as a pure HTTP PUT request. You can set
+      a field to a given value as many times as you like without doing any damage.  Designing an app to work this way is
+      tricky. But it’s an option that’s worth investigating, because having idempotent operations tends to produce apps that are
+      robust in the face of all sorts of common failure scenarios.</p>
+      <p>Here’s one thing to note: Duplicates are rare, but when they do happen, they tend to come in clusters (think about that
+      bridge in Beijing).  I don’t know if that fact is useful in the context of your app, but just in case.</p>
+      <p>But there are some apps that just can’t live with dupes.</p>
+      <h2 id='p-4'>“Exactly once”</h2>
+      <p>That‘s the terminology used for software that comes with built-in de-duping. One example would be
+      <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html">SQS FIFO</a>.  Upon
+      encountering this capability, you might ask yourself “why don’t I just use this for everything?”  It turns out, just as with
+      <a href="/ongoing/When/202x/2020/03/07/FIFO-Facet">FIFO</a>, de-duping isn’t free and in fact isn’t particularly cheap.</p>
+      <p>It can also get kind of complicated and there are more details than you might think.  Consider this blog:
+      <a href="https://aws.amazon.com/blogs/developer/how-the-amazon-sqs-fifo-api-works/">How the Amazon SQS FIFO API Works</a>. It
+      dives deep on all the details, which ends up taking over two thousand words.</p>
+      <p>My advice would be to teach your software to live with duplicates, if at all possible. “At least once” systems are just part
+      of the cloud landscape.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>On Soaking the Rich</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/02/19/Soak-the-rich' />
+  <link rel='replies'        thr:count='4'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/02/19/Soak-the-rich#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/02/19/Soak-the-rich</id>
+  <published>2020-02-19T12:00:00-08:00</published>
+  <updated>2020-02-19T20:24:21-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Politics' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Politics' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>The government of   <a href='https://en.wikipedia.org/wiki/British_Columbia'>BC</a>, the Canadian province where I live, just released a new   budget which, among other things, raises tax on high incomes.   <a href='https://www.cbc.ca/news/canada/british-columbia/bc-budget-2020-analysis-1.5467815?cmp=rss'>Here</a> is an overview.   The top marginal tax on incomes over C$220,000 goes from 16.8%   to 20.5%. This is just provincial tax; what with the Feds, the total top marginal rate is now 53%.  Not everyone is delighted.   For example Garth Turner, finance/real-estate blogger, who <a href='https://www.greaterfool.ca/2020/02/19/dr-moneybags/'>emits a   howl of right-wing grief</a>.   I’m comfortable speaking about this since I’m personally affected</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+    <p>The government of
+    <a href="https://en.wikipedia.org/wiki/British_Columbia">BC</a>, the Canadian province where I live, just released a new
+    budget which, among other things, raises tax on high incomes.
+    <a href="https://www.cbc.ca/news/canada/british-columbia/bc-budget-2020-analysis-1.5467815?cmp=rss">Here</a> is an overview.
+    The top marginal tax on incomes over C$220,000 goes from 16.8%
+    to 20.5%. This is just provincial tax; what with the Feds, the total top marginal rate is now 53%.  Not everyone is delighted.
+    For example Garth Turner, finance/real-estate blogger, who <a href="https://www.greaterfool.ca/2020/02/19/dr-moneybags/">emits a
+    howl of right-wing grief</a>.
+    I’m comfortable speaking about this since I’m personally affected.</p>
+    <p><i>[These days, a Canuck buck is worth about $0.75 American.]</i></p>
+    <p>It’s worth noting that our province is led by the
+    <a href="https://www.bcndp.ca/">New Democratic Party</a> (everyone says  “NDP”) who are Social Democrats; by and large
+    pretty moderate by world standards. On the American spectrum they’re red-toothed commies; not too far off
+    what Bernie Sanders would like to see.</p>
+    <h2 id='p-1'>Numbers</h2>
+    <p>Let’s do some math, OK?  Garth Turner points out how awful this will be for people living in super-expensive Vancouver and
+    making a paltry $250K. Hmm, the marginal increase is 3.7% on income over $220K. So those poor $250K people are going
+    to be paying an extra $1110/year.  Garth also excerpts a letter from an aggrieved doctor’s husband who says they’ll be paying an
+    extra $1K a month; by my arithmetic the doctor’s making over $540K taxable, thus taking home over $250K, ignoring the tax dodges
+    available to the self-employed, then there’s the husband’s income.  Maybe I’m missing something, but neither of these calculations yield
+    what feel to me like lifestyle-changing numbers.</p>
+    <p>Side-note: I don’t want to diss Garth too much because he’s a really excellent writer on personal finance in general and
+    real-estate in particular; if you’re in Canada and have money to invest you should totally read him.  Also he’s funny and
+    runs cute dog pictures.  He becomes less interesting as he veers into overly-predictable right-wing tax-grouch tropes.  And,
+    disclosure: I’m
+    <a href="http://www.turnerinvestments.ca/">a customer</a>.</p>
+    <h2 id='p-2'>Saving and spending</h2>
+    <p>Here’s the thing: A high proportion of people subject to the tax hike are taking home more than they need to live on, so the
+    effect of this move is that their savings (and wealth) will grow more slowly.  Most such people
+    retire with enough to live on, and are in their forties or older.  So the tax hike won’t result in any short-term spending
+    decreases to speak of, but starting say ten
+    years from now, a demographic of well-off retirees will have a little less to pump into that future economy.</p>
+    <p>And those slightly-smaller savings, what about them?  They join a world-wide glut of capital, surging around looking for a
+    decent return. Plenty will look for it outside Canada, or in ventures where most of the profits go to money people.</p>
+    <p>On the other hand, the extra $200M or so a year this tax maneuver pulls in will <em>all</em> get spent by the
+    government, the vast majority in paychecks to middle- and working-class civil servants and contractors, who will in
+    turn spend almost all of it in the next twelve months right here in BC.  Maybe I’m missing something, but this policy feels like
+    an economic win/win. The only losers are one-percenters like me; modestly, a decade or two from now.  Maybe I’ll only be able to
+    vacation once a year.</p> 
+    <p>Or is that kind of thinking dangerously socialist?  Here’s some data from <cite>The Economist</cite>:
+    <a href="https://www.economist.com/finance-and-economics/2020/02/13/wage-gains-for-low-earners-have-helped-sustain-americas-economic-expansion">Wage gains for low earners have helped sustain America’s economic expansion</a>.
+    It’s data-rich and convincing. Inequality not only sucks, it’s bloody inefficient and generally bad for the economy.</p>
+    <p>In fact, redistributionist policies might improve the economy enough that the return on my savings will make up for their
+    slightly smaller size.</p>
+    <h2 id='p-3'>Conclusion</h2>
+    <p>Raise the  minimum wage and the marginal tax rates on people like me.  Both as a left-winger and an investor, I
+    approve.</p> 
+  </div></content></entry>
+
+  <entry>
+  <title>Sally Leekie</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/02/14/Valentines-Feast' />
+  <link rel='replies'        thr:count='2'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/02/14/Valentines-Feast#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/02/14/Valentines-Feast</id>
+  <published>2020-02-14T12:00:00-08:00</published>
+  <updated>2020-02-15T11:11:52-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Food and Drink' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Food and Drink' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>Happy Valentines! A day that celebrates love comes, in my mind, second only to the one that celebrates giving thanks. I didn’t do roses or chocolate, but I made dinner for a couple of people I love; one of the dishes was improvised and came out well, so this recipe is my valentine to the world</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>Happy Valentines!
+  A day that celebrates love comes, in my mind, second only to the one that celebrates giving thanks. I
+  didn’t do roses or chocolate, but I made dinner for a couple of people I love; one of the dishes was improvised and came out well,
+  so this recipe is my valentine to the world.</p>
+  <p>The main ingredients are salmon and leeks; thus “Sally Leekie”.</p>
+  <h2 id='p-1'>Ingredients</h2>
+  <ol>
+  <li><p><i>Salmon:</i> We use wild frozen-at-sea Pacific Sockeye, usually obtainable in Vancouver.  750g fed three generously.</p></li>
+  <li><p><i>Leeks:</i> A couple of big ones.</p></li>
+  <li><p><i>Garlic:</i> Confession: For this dish, I used minced garlic out of a jar that I bought in a supermarket; a couple of
+  heaping teaspoons-full.</p></li>
+  <li><p><i>Seasoning:</i> Oregano, Fennel, and black pepper, all served liberally.</p></li>
+  <li><p><i>Oil:</i> Now this is interesting. I started with olive oil because it was at the front of the cupboard, then thought
+  “Leeks? Everyone knows you cook them in butter!” so I added some of that too.  It came out nicely.</p></li>
+  </ol>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/14/IMG_20200214_175257.png" alt="Sauteeing leeks" />
+  <div class='caption'><p>Sauteeing leeks.</p></div>
+  <h2 id='p-2'>Process</h2>
+  <ol>
+  <li><p>I covered the bottom of a sautee pan with oil, tossed in the garlic and seasoning, and heated it to not-quite-bubbling-or-smoking
+  for ten or fifteen minutes.</p></li>
+  <li><p>While this was happening, I chopped the leeks and salmon. If you haven’t done leeks before, you have to cut them
+  <em>lengthwise</em> then take them over to the sink and wash out the mud and gunk that tends to occur; leeks are just not hygenic
+  vegetables. Salmon into bite-size chunks.</p></li>
+  <li><p>I turned up the heat to the point that a few bubbles were occurring, and put the chopped leeks through in three
+  batches. Watch out; they cook down tremendously, so you want to start with more than you need.  Maybe five minutes a batch;
+  until they’ve lost their curl but not their color.
+  I used a bowl in the warming drawer under the oven to accumulate the leeks and keep them warm.</p></li>
+  <li><p>Once the leeks were done I dropped the salmon into the garlicky spiced leek-flavored oil and sauteed that for maybe ten
+  minutes, till all the sides were sealed and it was getting ready to eat.</p></li>
+  <li><p>Finally, I took the leeks out of the warming drawer, tossed them in with the salmon, turned the heat up so there was a bit of
+  smoke, and tossed the mixture together.</p></li>
+  </ol>
+  <p>It looked neat, the salmon pink contrasting with the leek green. There were no leftovers and sincere compliments.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Why Google Did Android</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/02/09/Why-Android' />
+  <link rel='replies'        thr:count='10'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/02/09/Why-Android#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/02/09/Why-Android</id>
+  <published>2020-02-09T12:00:00-08:00</published>
+  <updated>2020-02-09T22:45:48-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Android' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Android' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Business/Google' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Business' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Google' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>What happened was, in the late stages of my career at Sun Microsystems, as we were sliding into Oracle’s loathsome embrace, I had discovered Android.  The programming language was Java, and not a dorky “ME” subset. My employer was <a href='https://www.zdnet.com/article/sun-ceo-explicitly-endorsed-javas-use-in-android-what-do-you-say-now-oracle/'>saying nice things about it</a>, and I’d long craved something I could both carry in my pocket and program.  I discovered it was pretty easy to program and eventually published the <a href='/ongoing/When/200x/2008/12/18/Android-Diary'>Android Diary</a> series in this space, which got pretty lively readership</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>What happened was, in the late stages of my career at Sun Microsystems, as we were sliding into Oracle’s loathsome embrace, I had
+  discovered Android.  The programming language was Java, and not a dorky “ME” subset. My employer was
+  <a href="https://www.zdnet.com/article/sun-ceo-explicitly-endorsed-javas-use-in-android-what-do-you-say-now-oracle/">saying nice
+  things about it</a>, and I’d long craved something I could both carry in my pocket and program.  I discovered it was pretty easy to
+  program and eventually published the
+  <a href="/ongoing/When/200x/2008/12/18/Android-Diary">Android Diary</a> series in this space, which got pretty lively
+  readership.</p>
+  <p>Thus, I shouldn’t have been surprised when, shortly after
+  <a href="/ongoing/When/201x/2010/02/26/Noracle">leaving Sun</a>, I got outreach from Google’s Developer Relations org.  I was
+  receptive and almost immediately I found myself in Mountain View for the famous Google Interview Day. My first session was with
+  <a href="https://en.wikipedia.org/wiki/Vic_Gundotra">Vic Gundotra</a>, who was a major Google V.I.P. at the time.  He opened by
+  saying “I’ve been reading your blog and I think I know a lot about you. What would you like to know about us?”</p>
+  <p>That was easy. I asked “Why is Google doing Android?  Are you serious or is it just a hobby?”  (Because at Sun we’d had a lot of
+  hobbies<span class='dashes'> —</span> sideline technologies that we couldn’t seem to give up<span class='dashes'> —</span> and that
+  sucked and I didn’t want to work on one.)</p>
+  <p>Vic said something like (It’s ten years later and I’m paraphrasing) “The iPhone is really good.  The way things are going,
+  Apple’s going to have a monopoly on Internet-capable mobile devices. That means they’ll be the gatekeepers for everything, including
+  advertising, saying who can and can’t, setting prices, taking a cut. That’s an existential threat to Google. Android doesn’t have to
+  win, to win. It just has to get enough market so there’s a diverse and competitive mobile-advertising market.”</p>
+  <p>I don’t know about you, but I found that totally convincing.  And I suppose a lot of industry insiders are thinking “Well of
+  course everyone knew that!” I didn’t. I made it through the interviews and they offered me the job and I
+  had four good years at Google.</p>
+  <p>I wonder if Vic was right about what would’ve happened if they hadn’t done Android?</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Seasonturn</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/02/08/Seasonturn' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/02/08/Seasonturn#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/02/08/Seasonturn</id>
+  <published>2020-02-08T12:00:00-08:00</published>
+  <updated>2020-02-08T15:02:30-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Arts/Photos' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Arts' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Photos' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>It’s still February, winter obviously, and yet there was a bit of chilly sun today to greet 2020’s crocuses, the photo-introduction of which has become an annual ritual in this space</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>It’s still February, winter obviously, and yet there was a bit of chilly sun today to greet 2020’s crocuses, the
+  photo-introduction of which has become an annual ritual in this space.</p>
+  <p>Here are two shots from January 15th, just twenty-four days ago.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302240.png" alt="January snow, Vancouver" />
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302247.png" alt="January snow, Vancouver" />
+  <p>The snow was considerable but didn’t last long.  The rain’s been extreme even by Vancouver standards, just relentless; we’re all
+  feeling a bit climatically bruised.
+  There could be more snow, but I’m ignoring that. Because of this:</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302249.png" alt="Crocuses" />
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302255.png" alt="Crocuses" />
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302257.png" alt="Crocuses" />
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/08/XT302259.png" alt="Crocuses" />
+  <div class='caption'><p>These photos shot with the recently-acquired<br/>
+  <a href="/ongoing/When/201x/2019/10/06/Old-100mm-lens#p-2">steampunk Pentax M 100/2.8.</a></p></div>
+  <p>This year they’re up a little earlier and there are lots! They’re spreading a little wider, inhabiting parts of the front garden
+  they haven’t previously.  Fine by me.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Bye-bye Time Machine</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/02/04/Bye-Bye-Time-Machine' />
+  <link rel='replies'        thr:count='3'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/02/04/Bye-Bye-Time-Machine#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/02/04/Bye-Bye-Time-Machine</id>
+  <published>2020-02-04T12:00:00-08:00</published>
+  <updated>2020-02-05T22:45:03-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Mac OS X' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Mac OS X' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>I recently switched my backup tool from Apple’s <a href='https://en.wikipedia.org/wiki/Time_Machine_(macOS)'>Time Machine</a> to <a href='https://www.arqbackup.com/'>Arq Backup</a> which for my needs is clearly better. And once I’d realized that, I wondered whose needs would be best served by Time Machine.  To be honest I’m having a hard time with that</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>I recently switched my backup tool from Apple’s
+  <a href="https://en.wikipedia.org/wiki/Time_Machine_(macOS)">Time Machine</a> to
+  <a href="https://www.arqbackup.com/">Arq Backup</a> which for my needs is clearly better.
+  And once I’d realized that, I wondered whose needs would be best served by Time Machine. 
+  To be honest I’m having a hard time with that.</p>
+  <h2 id='p-1'>Time Machine setup</h2>
+  <p>I’d used Time Capsules  and Airports for many years and then switched to a Synology DS416j with mirrored 6TB drives.
+  It took
+  <a href="/ongoing/When/201x/2017/01/31/Synology-Time-Machine-Failure">a little jiggery-pokery</a> to get the Macs and the Synology
+  talking nicely, but then things seemed to work for a while.  But not recently.  At regular intervals Time Machine says something
+  like “Time Machine has  enthrophased the gnocchometric continuum, and <em>you need to back up from scratch again</em>.” Maybe the
+  part before <em>backup from scratch</em> was actually “monophorically phosphorylated the interpretive-dance phlogiston”; can’t quite
+  remember because, whatever it was, that’s how much sense it made.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/04/Arq.png" alt="Arq Backup" class="inline" />
+  <p>We have a pretty fast home network but also really big disks, so <em>start from scratch</em> meant multiple days waiting for that
+  do-over backup to do its job.  This is not a confidence-building experience.</p>
+  <h2 id='p-2'>Arq</h2>
+  <p>On a parallel timeline, at some point I’d asked the world “What’s good Mac backup software?” and a lot of people said “Arq.”  OK
+  then, I signed up and paid and gave it a whirl. Because I’d somewhat lost faith that I had anything useful in terms of Time Machine
+  backups, I went and bought a 2TB USB drive at the nearest drugstore and plugged that in. I have to say the onboarding user
+  experience could be better; Arq’s terminology for what you’re backing up <em>from</em> and <em>to</em> is not as self-explanatory as
+  one might like. But I’m pretty sure I figured out the right incantations.</p>
+  <p>Once running, the Arq user experience is vastly better than Time Machine’s. It tells you what it’s doing, and what it’s doing
+  takes what seems like a reasonable amount of time.  Time Machine never tells you anything actually useful about what it’s doing or
+  (all too often) why it can’t, with the unifying theme being that whatever it does or fails to, the process takes hours.</p>
+  <h2 id='p-3'>But nobody cares about backup!</h2>
+  <p>The only thing anyone cares about is <em>restore</em>.</p>
+  <p>I have verified that I can restore data from Time Machine; the only times I’ve done so have been when migrating from one Mac to
+  another. It works fine but (like everything else about Time Machine) is painfully slow and opaque.  I also have read enough
+  testimonials from Arq users to be convinced that it’ll do the job when I ask.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/02/04/Time-Machine.png" alt="Apple Time Machine" />
+  <h2 id='p-4'>What is Time Machine for??</h2>
+  <p>The hero moment is that Finder view replicated back over a timeline, so you can go find the version of any file at
+  any date and bring it into the present day like, you know, a time machine. Like (I suspect) most people, I was dazzled with the UI
+  the first time I saw it.  But, in all those years the number of times I’ve used that restore mode is: Zero.  As I said above, I’ve
+  done a wholesale restore to a new Mac once or twice: for this purpose the fancy UI is irrelevant. </p>
+  <p>With a little thought, it becomes obvious why I don’t need the timeline.</p>
+  <p>What files on my computer do I care about?</p>
+  <ol>
+  <li><p>Photographs, which I load into Lightroom and (mostly) edit. Lightroom edits non-destructively by recording deltas against the
+  RAW file.  All I really care about is the most-improved version or the original RAW. If I want to try another treatment of the
+  photo, I make a virtual copy.  The net effect of all this is: All I ever care about is the most recent version of any of the
+  files. So the timeline buys me nothing.</p></li>
+  <li><p>Work documents, which we collaborate on and version like hell. We do this mostly with
+  <a href="https://aws.amazon.com/workdocs/">WorkDocs</a>, which keeps all your doc versions somewhere in the cloud. All I really care
+  about is the current working version that might be ahead of what’s in the cloud, so once again, only the latest. So the timeline
+  buys me nothing.</p></li>
+  <li><p>Code, which is hosted in Git, and all I care about is what’s in my own workspace, because it might be noticeably ahead of the
+  last commit. So the timeline buys me nothing.</p></li>
+  <li><p>Blog pieces, which live on both my MacBook and the
+  <a href="https://www.tbray.org/">tbray.org</a> server.  The process of getting them ready to push feels like monotonic improvement;
+  I’ve never felt the slightest urge to dig up an old version. So the timeline buys me nothing.</p></li>
+  </ol>
+  <p>That leaves one category where the timeline might be a winner: Deletion protection. Surely, if I delete some file then regret it,
+  wouldn’t it be handy to scroll the timeline back to just before and pick it up?  I guess this might be true for some people, but
+  there’s this: I never delete anything.  Seriously, if you’re going to erase data you should think hard first, and that thinking is a
+  waste of precious time and brain bandwidth, because data is cheap to keep and the cost of being wrong is high. So the timeline buys
+  me nothing.</p>
+  <p>[Now, there’s an exception. Things you <em>really want to delete</em> because they are evidence of sketchy sex kinks or premature
+  antifascism or whatever. Protip: Put this kind of thing somewhere that isn’t backed up.]</p>
+  <h2 id='p-5'>Conclusion</h2>
+  <p>Arq is great. A little bird told me it’s the product of a one-person operation and not a VC-funded aspirational Bay-Area
+  Unicorn (the Internet needs more of those).
+  Another little bird recently told me Arq got a serious look-over from a pretty elite OpSec group who said “LGTM”
+  (the Internet needs more of those).</p>
+  <p>If you have a Mac and your data-handling practices are like mine,  I advise sending Arq some money.</p>
+  <h2 id='p-6'>Bonus</h2>
+  <p>In 2006 I wrote about
+  <a href="/ongoing/When/200x/2006/01/31/Data-Protection">Protecting Your Data</a>, on mostly the same subject. Dedicated readers may
+  enjoy tracking the evolution of my thinking on this subject.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Decarbonization</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/01/19/Decarbonization' />
+  <link rel='replies'        thr:count='7'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/01/19/Decarbonization#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/01/19/Decarbonization</id>
+  <published>2020-01-19T12:00:00-08:00</published>
+  <updated>2020-01-26T19:42:25-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Decarbonization' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Decarbonization' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>We’re trying to decarbonize our family as much as we can. We’re not kidding ourselves that this will move any global-warming needles.  But sharing the story might, a little bit</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>We’re trying to decarbonize our family as much as we can. We’re not kidding
+  ourselves that this will move any global-warming needles.  But sharing the story might, a little bit.</p>
+  <p>Those who worry a lot about the climate emergency, and who wonder what they might do about it, are advised to have a look at 
+  <a href="https://medium.com/@PaulDJohnston/to-fix-climate-change-stop-being-a-techie-and-start-being-a-human-fcf74fb40480">To fix
+  Climate Change, stop being a techie and start being a human</a>
+  by
+  <a href="https://twitter.com/PaulDJohnston">Paul Johnston</a> (until recently a co-worker).  It’s coldly realistic, noting that
+  the Climate Emergency is <em>not your fault</em> and that you can’t fix it. Only radical large-scale global political action will,
+  and his recommendation is that you find an organization promoting such change that meets your fancy  (there are lots, Paul
+  provides a helpful list) and join it.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/19/GHG-per-capita.png" alt="Global GHG per capita, 2017" />
+  <p>Such intensity of change is possible.  It happened in the middle of the Twentieth century when faced with the threat of global
+  Fascism; Governments unceremoniously fixed wages, told businesses what they could and couldn’t do, and sent millions of young men
+  off to die.</p> 
+  <p>It’s not just possible, it’s inevitable that this level of effort <em>will</em> happen again, when the threat level becomes
+  impossible to ignore. We will doubtless have to conscript <em>en masse</em> to fight floods and fires and plagues; which however is
+  better than attacking positions defended 
+  by machine guns.  The important thing is that it happen sooner rather than later.</p>
+  <p>Thus evangelism is probably the most important human activity just now, which is why people like Greta Thunberg are today the most
+  important people in the world.</p>
+  <h2 id='p-4'>A modest proposal: Decarb</h2>
+  <p>“Decarbonize” has four syllables and “decarbonization” six.  I propose we replace both the noun and the verb with “decarb” which
+  has only two.  Mind you, it’s used in the cannabis community as shorthand for
+  <a href="https://www.leafly.ca/news/cannabis-101/what-is-decarboxylation">decarboxylation</a>, but I bet the world’s stoners would
+  be happy to donate their two syllables to the cause of saving the planet.  Anyhow, I’m gonna start using decarb if only because of
+  the typing it saves.</p>
+  <h2 id='p-2'>So, why personal decarb, then?</h2>
+  <p>Well, it feels good. And<span class='dashes'> —</span> more important<span class='dashes'> —</span> it sends a message.  At some
+  point, if everybody knows somebody who’s decarbing it will help bring the earth’s defenders’ message home, making it real and
+  immediate, not just another titillation in their Facebook feed.</p>
+  <p>There’s a corollary.  Decarbing is, by and large, not terribly unpleasant. The things we need to give up are I think not
+  strongly linked to happiness, and some decarb life choices turn out to be pretty pleasing.</p>
+  <h2 id='p-3'>Caveats and cautions</h2>
+  <p>It’s important that I acknowledge that I’m a hyperoverentitled well-off healthy straight white
+  male. Decarbing is gonna be easier for me than it is for most, because life is easier for me.  I’m willing to throw money at
+  decarb problems before that becomes economically sensible because I have the money to throw; but I hope (and, on the
+  evidence, believe) that pretty well every one of these directions will become increasingly economically plausible across a wider
+  spectrum of incomes and lifestyles.</p>
+  <p>Because of my privileged position and because the target is moving, I’m not going to talk much about the costs of the decarb
+  steps.  And I’m not even sure it’d be helpful; these things depend <em>a lot</em> on where in the world you live and when
+  you start moving forward.</p>
+  <p>Now for a survey of decarb opportunities.</p>
+  <h2 id='p-6'>Decarb: Get gas out of your car</h2>
+  <p>Obviously fossil fuels are a big part of the problem, and automobiles make it worse because they are so appallingly inefficient
+  at turning the available joules into kilometers of travel<span class='dashes'> —</span> most less than 35%.  On the other side of
+  the coin, electric vehicles are a win because they don’t care what time of day or night you charge them up, so they’re a good match
+  for renewable energy sources.</p>
+  <p><b>Family progress report:</b> Mixed.</p>
+  <p>For good news check out my
+  <a href="/ongoing/What/The%20World/Jaguar%20Diary/">Jaguar diary</a>; I smile a little bit every time I cruise past a gas station.
+  I’m here to tell you that automotive decarb isn’t only righteous, it’s fun.</p>
+  <p>On the bad-news side, we still have a 2007 Honda Odyssey van, an overpowered gas-eater. It was super-handy when our kids were
+  young but now both of ’em can get around the city by themselves. 
+  I look forward to taking it off to <a href="https://scrapit.ca/">SCRAP-IT</a>.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/19/IMG_20190112_140913.png" alt="Jaguar I-Pace" />
+  <h2 id='p-5'>Decarb: Get yourself out of cars</h2>
+  <p>Last time I checked, the carbon load presented by a car is only half fuel, more or less; the rest is manufacturing. So we need to build
+  fewer cars which means finding other ways to get places. Public transit and
+  <a href="https://en.wikipedia.org/wiki/Micromobility">micromobility</a> are the obvious alternatives.</p>
+  <p>They’re <em>good</em> alternatives too, if you can manage them.  If you haven’t tried a modern e-bike yet you really owe that to
+  yourself; it’s a life-changer. I think e-bikes are better alternatives than scooters along almost every
+  axis: Safety, comfort, speed, weather-imperviousness.</p>
+  <p>And transit is fine too, but there are lots of places where it’s really not a credible option.</p>
+  <p>Now, there are times when you need to use a car. But not necessarily to <em>own</em> one. It isn’t rocket science: If we share cars
+  then we’ll manufacture fewer. There are taxis and
+  car-shares like Car2Go and friends.  (Uber et al are just taxi companies with apps; and money-losing ones at that.  Their big
+  advantage is that your ride is partly paid for by venture-capital investors who are going to lose their money, so it’s not
+  sustainable.) The car-share picture varies from place to place: Car2Go seems to be exiting North America but here in Vancouver we
+  have
+  <a href="https://evo.ca/">Evo</a> and
+  <a href="https://modo.coop/">Modo</a> and
+  <a href="https://www.zipcar.com/en-ca">Zipcar</a>.</p>
+  <p><b>Family progress report:</b> Pretty good.</p>
+  <p>Since I 
+  <a href="/ongoing/When/201x/2019/06/09/Micromobility">got my e-bike</a>, I just don’t want to drive to work any more and resent it when
+  family logistics force me to.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/19/IMG_20190609_124822-Edit.png" alt="Trek E-Bike" />
+  <p>My wife works from home and my son takes a bus or a skateboard to college.  My daughter still
+  gets driven to school occasionally in some combinations of lousy weather and an extra-heavy load, but uses her bike and the bus and
+  will do so increasingly as the years go by.  I occasionally take the train but it’s slower than the bike and unpleasantly crowded at
+  rush-hour; sometimes when I’ve done that I guiltily grab a car-share to come home. We use car-share a lot for going to concerts and
+  so on because they avoid the parking hassle.</p>
+  <p>Now, due to the hyperoverentitledness noted above, we have the good fortune to live in a central part of the city and 
+  all these commute options are a half-hour or less. This part of decarb is way harder in the suburbs and that’s where many
+  just have to live for purely economic reasons.</p>
+  <h2 id='p-7'>Decarb: Get fossil fuels out of the house</h2>
+  <p>Houses run on some combination of electricity and fossil fuels, mostly natural gas but some heating oil. The biggest win in this
+  space is what
+  <a href="https://en.wikipedia.org/wiki/Amory_Lovins">Amory Lovins</a> memorably christened
+  <a href="https://en.wikipedia.org/wiki/Negawatt_market">negawatts</a><span class='dashes'> —</span> energy saved just by eliminating
+  wastage. In practical terms, this means insulating your house so it’s easier to heat and/or cool, and switching out incandescent
+  lights for modern LEDs.</p>
+  <p>Ubiquitous LEDs are a new thing but they’re not the only new thing.  For heating and cooling,
+  <a href="https://en.wikipedia.org/wiki/Heat_pump">heat pumps</a> are
+  <a href="https://www.cbc.ca/news/technology/greener-heating-1.5429709">increasingly attractive</a>. Their performance advantage over
+  traditional furnaces 
+  <a href="https://en.wikipedia.org/wiki/Heat_pump#Performance_considerations">is complicated</a>. Wikipedia says the proper measure
+  is <i>coefficient of performance (COP)</i>, the ratio of useful heat movement per work input. Obviously a traditional furnace can’t
+  do better than 1.0; a heat pump’s COP is 3 or 4 at a moderate temperature like 10°C and decreases to 1.0 at around 0°C.  So this is
+  a win in a place like Vancouver but maybe not if you’re in Minnesota or Saskatchewan.</p>
+  <p>Heat pump technology also works for your hot-water tank.</p>
+  <p>Another new-ish tech, popular in parts of Europe for some time now, is
+  <a href="https://en.wikipedia.org/wiki/Induction_cooking">induction cooking</a>. It’s more efficient than gas cooking, which is in
+  turn more efficient than a traditional electric cooktop.  For those of you who abandoned electric for gas years ago because it was
+  more responsive, think again: Induction reacts just as fast as gas and boils water way faster.</p>
+  <p>Note that all these technologies are electric, so your decarb advantage depends on how clean your local power is. Here in the
+  Pacific Northwest where it’s mostly hydroelectric, it’s a no-brainer.  But even if you’ve got relatively dirty power the efficiency
+  advantage of the latest tech might put you ahead on the carbon count.</p>
+  <p>Also bear in mind that your local electricity will likely be getting cleaner.  If you track large-scale energy economics,
+  the cost of renewables, even without subsidies, even with the need for storage, has fallen to the point where it not only makes
+  sense to use it for new demand, in some jurisdictions it makes sense to shut down high-carbon generating infrastructure in favor of
+  newer better alternatives.</p>
+  <p><b>Family progress report:</b> Getting there.</p>
+  <p>We had a twenty-year-old gas range which was starting to scare us from time to
+  time, for example when the broiler came on with a boom that rattled the windows.  So early this year we retired it in favor of a 
+  <a href="https://www.cafeappliances.com/appliances/chs900p2ms1/overview">GE Café range, model CCHS900P2MS1</a>.  It makes the old
+  gas stove feel like cave-man technology. Quieter, just as fast, insanely easier to clean, and safer.  On the other hand, it requires
+  cookware with significant ferrous content, which yours maybe doesn’t have; we had to replace a few of ours.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/19/IMG_20200119_094907.png" alt="GE Café CCHS900P2MS1 Induction Range" />
+  <div class='caption'><p>Modern induction range with a traditional cast-iron frying pan, making pancakes.</p></div>
+  <p>Now, as for those negawatts: We live in a wooden Arts-and-Crafts style house built in 1912 and have successively updated the
+  insulation and doors and windows here and there over the years to the point where it’s a whole lot more efficient than it was.  Late
+  last year we went after the last poorly-insulated corner and found ourselves spending several thousand dollars on asbestos
+  remediation.  Then when we had the basement all ripped to shreds we realized it was a good time to put in heat pumps to replace the
+  20-year-old gas furnace and hot-water tank.  This is in progress; as I write, we’re getting by with space heaters and the
+  fireplace; the new system turn-on is promised for tomorrow.</p>
+  <p>One consequence is that we can turn off the natural gas coming into the house, which makes us feel good on the decarb front.
+  And then there’s the earthquake issue; Where we live we’re overdue for The Big One and when it comes, if your house doesn’t fall
+  down on you, another bad outcome is a natural-gas leak blowing you to hell.</p>
+  <p>I’ll report back here on the heat-pump experience once we have some.</p>
+  <h2 id='p-8'>Decarb: Fly less</h2>
+  <p>Yeah, the carbon load from air travel
+  <a href="https://www.nytimes.com/2019/09/19/climate/air-travel-emissions.html">is bad</a>. The first few electric airplanes
+  <a href="https://www.cbc.ca/news/canada/british-columbia/electric-seaplane-float-plane-test-flight-harbour-air-1.5390816">are
+  starting to appear</a>; but no-one believes in electric long-haul flights any time soon.</p>
+  <p><b>Family progress report:</b> bad, used to be worse.</p> 
+  <p>For decades, as the public face of
+  various technologies, I was an egregious sinner, always jetting off to this conference or that customer, always with the platinum
+  frequent-flyer card, often upgraded to biz class.</p>
+  <p>Since I parted ways with Google in 2014 and retreated into back-room engineering, things have been better. But not perfect; we
+  have family in New Zealand and Saskatchewan, and take to the air at least annually. I haven’t any notion what proportion of air-flight
+  carbon has business upstream, what proportion vacations, and what proportion love.  I hope the planet can afford the latter and a few
+  vacations. If something’s gotta go, it’ll be biz travel.</p>
+  <h2 id='p-9'>Decarb: Eat less meat</h2>
+  <p>The numbers for agriculture’s share of global carbon load are all over the place; I see figures from 9% to twice that. The UN
+  <a href="http://www.fao.org/news/story/en/item/197623/icode/">Food and Agricultural Organization says</a> global livestock alone
+  accounts for 14.5% of all anthropogenic GHG emissions.  So if the human population backed away from eating dead animals, it’d move
+  the needle.</p>
+  <p><b>Family progress report:</b> Lousy.</p>
+  <p>We eat more vegetarian food from year to year but the increase is slow; and often meat twice per day.  Meat is tasty and
+  nutritionally 
+  useful but what’s pernicious is that it’s <em>easy</em>; less chopping and other prep required.  In a culture that’s chronically starved
+  for time, this is going to be a heavy lift.</p>
+  <p>We have however cut way back on beef, which is the worst single part of the puzzle.
+  I think it’s probably perfectly OK for a human to enjoy a steak or a burger; say, once per month.</p>
+  <h2 id='p-10'>Decarb: Random sins</h2>
+  <p>You probably shouldn’t have a motorboat (which we do) and if you do you should use it sparingly (which we do).</p>
+  <p>You probably shouldn’t burn wood in a fireplace (which we do) and if you do you should use it sparingly (which we do).</p>
+  <p><i>[To be updated].</i></p>
+  </div></content></entry>
+
+  <entry>
+  <title>Orange Badge</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/01/14/Orange-Badge' />
+  <link rel='replies'        thr:count='2'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/01/14/Orange-Badge#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/01/14/Orange-Badge</id>
+  <published>2020-01-14T12:00:00-08:00</published>
+  <updated>2020-01-19T21:13:49-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Business' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Business' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>One of our admin people walked into my office, saying “Five-year anniversary, new badge, gimme your old one”. Which means I’ve been here five orbits of the sun, my longest job tenure since my seven-year stay last century at <a href='https://www.opentext.com/'>a company I co-founded</a></div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>One of our admin people walked into my office, saying “Five-year anniversary, new badge, gimme your old one”.
+  Which means I’ve been here five orbits of the sun, my longest job tenure since my seven-year stay last century at
+  <a href="https://www.opentext.com/">a company I co-founded</a>.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/14/IMG_20200119_102729.png" alt="Badge" class="inline" />
+  <h2 id='p-2'>Best and worst</h2>
+  <p>Best things? The work is fun and the people are nice. 
+  Of those working here in Vancouver when I showed on up December 1st, 2014, more than 70% remain, which is impressive in high 
+  tech<span class='dashes'> —</span> pretty well any of them can walk down the street to Microsoft or a game company and get a job that week,
+  maybe for more money.</p>
+  <p>Worst things? My progressive friends genuinely think Amazon embodies
+  everything wrong with the civic structure of the twenty-first century world, and can’t understand why I’d stay.</p>
+  <p>Not gonna argue with them, but AWS also embodies most of what’s right. I’d rephrase it like this:
+  Amazon is so highly competent at capitalism that we’ve become a proxy for the whole system; good, bad, and lots of everything in
+  between.</p>
+  <p>I have worked for <i>[pauses, counts]</i> ten employers, private-sector and academic, and consulted for lots more.  By a wide
+  margin AWS is the best-managed (I can’t speak to the other parts of Amazon).</p>
+  <p>You can be a member of any political tribe (except
+  back-to-the-land anarchist) and still believe that management is a task that someone needs to do. Thus, finding ways to do it
+  better is of general interest. And yes, I believe that some of the techniques used here could fruitfully be applied across a wide
+  swathe of the public and nonprofit sectors.  Those techniques aren’t secret: Bar-raising, document-based decision-making,
+  carefully-curated leadership principles, a couple more.</p> 
+  <h2 id='p-3'>If I were dictator</h2>
+  <p>I’d change the regulatory framework in ways that big-tech leadership (including Amazon’s) would
+  probably dislike. But my changes would likely cause those leaders to be less disliked; by the public, I mean.  In 2019 it’s hard to believe
+  that just ten years ago the FAANG companies were more or less universally admired and seen as the nice, warm, fuzzy end of
+  capitalism.</p>
+  <p>At some point, it’s going to be a real problem being management in a sector that’s widely feared and distrusted.  But we in the
+  tech tribe haven’t really internalized much about this yet.</p>
+  <h2 id='p-4'>Planning!</h2>
+  <p>It’s a thing AWS is really good at.  Our hiring, our product milestones, our region builds (OMG the region builds), our
+  big public events, our promotions, our re-orgs, our new-office-space acquisition and occupation. Obviously nobody gets the shape of
+  the local future right 100% of the time or even close, but I’m in awe of what my colleagues accomplish.</p>
+  <p>Others have noted that ideologists of the free market scoff at the notion of a “planned economy”, but that market’s biggest
+  participants plan their own slices of the economy energetically, comprehensively, and all the time.</p>
+  <p>I think there are areas where
+  you want to lay down a regulatory framework and get out of people’s way, and others where you want a firm notion about what a
+  particular team will be doing in a particular month next year.  There’s lots of room to disagree which is which.</p>
+  <h2 id='p-1'>As for me…</h2>
+  <p>In late 2018 I
+  <a href="/ongoing/When/201x/2018/10/25/On-Retirement">wondered out loud</a> about retirement. I still do, after all, 
+  this is the year that the Government of Canada will start sending me money every month just for being old.</p>
+  <p>I’ll for sure never have another “job”.  After I’m done here I can’t see having a relationship
+  with another entity that’s (a) economically motivated or (b) requires full-time-ish engagement.</p>
+  <p>Half the time I think that getting up every morning and going to work amounts to a failure of courage. <i>Ch-ch-changes… Turn and
+  face the strange</i> sang David Bowie, and why shouldn’t I?</p>
+  <p>Maybe the new direction could be internal; there’s a lot of work to be done
+  around
+  <a href="https://techcrunch.com/2019/09/19/amazons-climate-pledge-commits-to-net-zero-carbon-emissions-by-2040-and-100-renewables-by-2030/">the
+  climate pledge</a>, and a lot about the diversity problem we share with the industry.</p>
+  <p>But anyhow it’s a good gig.  And I’ve invested a 40-year career in learning the
+  things I need to know to do this.</p>
+  <p>Beats the hellouta me.  Maybe I’ll surprise myself one of these days.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Jag Diary 11: A Year In</title>
+  <link href='https://www.tbray.org/ongoing/When/202x/2020/01/12/A-year-with-the-Jaguar-I-Pace' />
+  <link rel='replies'        thr:count='5'        type='application/xhtml+xml'        href='/ongoing/When/202x/2020/01/12/A-year-with-the-Jaguar-I-Pace#comments' />
+  <id>https://www.tbray.org/ongoing/When/202x/2020/01/12/A-year-with-the-Jaguar-I-Pace</id>
+  <published>2020-01-12T12:00:00-08:00</published>
+  <updated>2020-01-14T17:06:40-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Jaguar Diary' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Jaguar Diary' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>The I-Pace insurance renewal showed up so I knew a year must have (so quickly!) gone by.  I’d thought I should write something to draw a line under <a href='/ongoing/What/The%20World/Jaguar%20Diary/'>this diary</a>, and then just now the car saved my life, so now’s the time. Not much new information here but maybe a couple of smiles</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>The I-Pace insurance renewal showed up so I knew a year must have (so quickly!) gone by. 
+  I’d thought I should write something to draw a line under
+  <a href="/ongoing/What/The%20World/Jaguar%20Diary/">this diary</a>, and then just now the car saved my life, so now’s the time.
+  Not much new information here but maybe a couple of smiles.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/12/IMG_20190413_175829.png" alt="Jaguar I-Pace" />
+  <p>The insurance<span class='dashes'> —</span> two drivers, good records, no commuting<span class='dashes'> —</span> cost around
+  two and a half thousand Canadian dollars. That year’s other car expenses put together
+  (electricity, replacing a vandalized window) are a tiny fraction of the insurance. Electric cars, even with sports-car
+  performance like the Jag’s, are stupidly cheap to run. I think that as electrics replace fossil vehicles slowly then quickly, the world
+  will need fewer automotive mechanics.  Paint and body and glass shops will be fine, but there’s not much to be done under the
+  hood.</p>
+  <h2 id='p-1'>Riding the rain</h2>
+  <p>Next time you’re driving, consider where the joules that move your car came from. For most of you, the story
+  involves a whole lot of heavy machinery digging holes and pumping sticky black crap out of the planet and then turning it into auto
+  fuel in a process that really fucks up the atmosphere near the refinery, and then requires you to pull into a loveless harshly-lit
+  concrete enclave to stand beside a pump staring blankly while dozens of dollars flow out of your bank account into an oil-and-gas
+  company’s, so you can turn travel hours into outflows of planet-killing CO<sub>2</sub>.</p>
+  <p>Our car is rain-driven. Well, it’s partly snow, but anyhow the clouds come in off the Pacific and
+  crash into the mountain ranges and dump their sun-elevated droplets, frozen or not, and eventually the water flows down and into
+  dammed-off valleys and through turbines, most built decades back, and eventually the electrons end up in the 240V charger behind our
+  house where I plug the car in overnight every week or two and invest less than $10 to fill it up while I sleep.</p>
+  <p>I think I’m winning this one.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/12/IMG_20190504_105212.png" alt="Jaguar I-Pace" />
+  <h2 id='p-4'>Jag encounter</h2>
+  <p>Late last summer in the long dusk of a bright day, we were heading home and I found myself queued up for a tricky west-to-south
+  left turn at a big old intersection (for Vancouver <i>cognoscenti</i>, 12th to Main).</p>
+  <p>The twilight made all the cars and people and buildings look great. Traffic was heavy and the pause was considerable; while hanging
+  out there, I noticed the first northbound car waiting for the light and for me to be gone was a beautiful old silver Jag sedan, I think an 
+  <a href="https://en.wikipedia.org/wiki/Jaguar_XJ">XJ</a>, gleaming like a long low jewel in the slanting sun. I’m inclined to think
+  that our Caesium-blue 
+  electric looked pretty glamorous too just then, from outside. I saw the dude in the other Jag was looking at mine too,
+  then just as the traffic opened I met his eyes and then I curved round him while we shared a big Jaguar smile.</p>
+  <h2 id='p-3'>Snow champ</h2>
+  <p>Did I say above “saved my life”? Quite likely.  Sunday night we had a nasty snowstorm, which causes problems in Vancouver because
+  there are a lot of hills and also a lot of people who rarely if ever drive in snow and are mostly perfectly OK folk but just don’t have a
+  clue how to deal.  We had an old friend over for dinner who came by bus; looking outside after, I said “I better take you home.”</p>
+  <p>Which may have been an error in judgment.  On the hills, the sideways victims included not just the usual over-powered minivans
+  but more than one city bus, so it wasn’t just a casual dusting.</p>
+  <img src="https://www.tbray.org/ongoing/When/202x/2020/01/12/IMG_20190624_174019.png" alt="Jaguar I-Pace" />
+  <p>The Jag weighs over two metric tons (a third or so battery) and has big wide wheels and a snow-and-ice four-wheel mode so
+  it laughs at this stuff.  I was gentle with the juice and slow on the hills and yeah, I had to dodge one swiveling Acura, but it was
+  OK.</p>
+  <p>After I dropped Gareth off downtown, I headed for a left turn onto a big one-way downtown-access road (for Vancouver
+  <i>cognoscenti</i>, Citadel Parade to the Dunsmuir viaduct).  As I approached, the light turned green so I was starting to aim left
+  when this huge van hurtled along the road I was trying to turn onto. He’d clearly sped up to beat the yellow and then foolishly
+  tried too late to stop; he must have been doing 60 km/h or more, and mostly sideways. I hit the brake hard and maybe the ABS
+  implementation is a little rough but that big cat shuddered to a stop <em>right freaking there</em> in the snow, hardly rotating at all. OK,
+  maybe I wouldn’t have died; but it would have been 
+  seriously ugly. <i>Mea culpa</i>; I should have pulled up to a stop at the line, not trusting the green light on such a night.</p>
+  <p>On the way home among the amateur-hour chaos in the snow the music shuffle switched over to Hildegard von Bingen and boy, did
+  that ever hit the spot.</p>
+  <p>The Jaguar I-Pace is a good car. Mind you, pretty well all the modern electrics are; in the big picture, fossil propulsion is
+  done for. But even given all that, it’s really awfully good; at keeping me alive and making me smile.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Horopito</title>
+  <link href='https://www.tbray.org/ongoing/When/201x/2019/12/31/Horopito' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/201x/2019/12/31/Horopito#comments' />
+  <id>https://www.tbray.org/ongoing/When/201x/2019/12/31/Horopito</id>
+  <published>2019-12-31T12:00:00-08:00</published>
+  <updated>2019-12-30T23:16:25-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Places/New Zealand' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Places' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='New Zealand' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>It’s a place <a href='https://goo.gl/maps/r5rX9kH1h9r6CA22A'>near the center of New Zealand’s North Island</a>; we spent the last Christmas of the decade there.  It’s considered remote in NZ which I guess makes it doubly so in the wider world.  Unless you’re planning southern-hemisphere skiing you’re unlikely to go near it, so I felt words and pictures worth sharing</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>It’s a place
+  <a href="https://goo.gl/maps/r5rX9kH1h9r6CA22A">near the center of New Zealand’s North Island</a>; we spent the last
+  Christmas of the decade there.  It’s considered remote in NZ which I guess makes it doubly so in the wider world.  Unless you’re planning
+  southern-hemisphere skiing you’re unlikely to go near it, so I felt words and pictures worth sharing.</p>
+  <p>What happened was, Lauren’s brother and his wife who live in Auckland came to visit us and we took them to
+  <a href="/ongoing/What/The%20World/Cottage%20Life/">our cabin</a>; they liked the country-retreat concept so much that they
+  bought an acre in Horopito and built a house on it. This was finished and moved-into on December 18th and in a flash of insane
+  courage, they invited their three children, two children’s spouses, and five grandchildren along. And us. Lauren and I have been
+  together for more than twenty years and have spent every Christmas with my family, so it was about time hers got a turn.</p>
+  <p>So it was off to New Zealand for us. Now, as an environmentalist loudmouth should I feel bad about jetting between the
+  hemispheres?  I should, and I do. But there’s that twenty-years thing and also Lauren’s Dad is getting to a state of age and health
+  where we may not see him again. We’re obviously going to have to slash the amount of mass jet travel; I would hope that the global
+  carbon budget can sustain trips made mostly for love, but I don’t know. I may never pull that transcontinental trigger again.</p>
+  <p>Horopito was once a lumber boomtown, but the town’s pretty well gone. This post office was closed in 1970.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT302037.png" alt="Horopito Post Office" />
+  <div class='caption'><p>It has been pointed out to me that this picture would be suitable for an indie album cover. Any band
+  that wants to use it may do so but you have to send a few bucks to the little girl, whom I know.</p></div>
+  <p>Horopito isn’t famous for anything but it’s near some well-known things, most notably
+  <a href="https://goo.gl/maps/3jhFMHJ5m3MLqX1k9">Mount Ruapehu</a>, the North Island’s tallest at 2,797m (9,177 ft) .  (Actually,
+  Ruapehu is part of a complex that includes Tongariro and Ngauruhoe (which Peter Jackson had stand in for Mount Doom.))
+  There are any number of glamorous pix of Ruapehu and its posse, but here’s a look out the front of the family property during
+  complicated weather<span class='dashes'> —</span> most NZ weather is complicated.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT302062.png" alt="Mount Ruapeho in clouds" />
+  <p>We took two trips up the mountain.  Here are views from the Whakapapa side:</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT302001.png" alt="View from near Whakapapa" />
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT302015.png" alt="View from near Whakapapa" />
+  <p>And here’s another looking southwest.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT302099.png" alt="View southwest from Ruapehu" />
+  <p>New Zealand is full of nice scenery, whichever way you look.</p>
+  <h2 id='p-1'>Smash Palace!</h2>
+  <p>That’s all you need to say to explain where Horopito is to any New Zealander with even one or two grey hairs.  It’s officially
+  <a href="http://www.horopitomotors.co.nz/">Horopito Motors</a>, “the largest and only vintage car dismantlers in Australasia”.  It’s
+  really impressive in the
+  <a href="https://goo.gl/maps/pVHXwXY7bdEnsTV48">satellite view</a>.  “Smash Palace” refers to a
+  <a href="https://en.wikipedia.org/wiki/Smash_Palace">1981 NZ-made movie</a> in which the wrecking yard features; I’ve actually seen
+  it and it’s not terrible.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/IMG_20191225_153114.png" alt="smash Palace" />
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/IMG_20191225_152914.png" alt="Smash Palace" />
+  <p>Of course, the main point was getting the family together. In a Southern-hemisphere Christmas, the turkey and ham at dinner is
+  served cold, and then after digesting a bit, people retire to the lawn to toss frisbees and rugby balls and generally run
+  around:</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/XT301979.png" alt="Christmas festivities" />
+  <p>One evening the sky was crystal clear and a few of us stargazed. I didn’t take the trouble to figure out how to unleash the Pixel
+  4 astrophotography mode, but I did point it at the southern skies. On that half of the globe, Orion is upside down…</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/IMG_20191227_225742.png" alt="Southern-hemisphere Orian" />
+  <div class='caption'><p>… and looks like a shopping cart.</p></div>
+  <p>Also, what I think is the Southern Cross, first time I’ve seen it. The Pixel didn’t capture the Milky Way, perfectly evident
+  behind the Cross, to the naked eye.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/IMG_20191227_225846.png" alt="Maybe the Southern Cross" />
+  <p>If you have a large loving family to welcome you, I think Horopito is a fine place to visit, and the quality of light is
+  special.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/31/IMG_20191225_204755.png" alt="Clouds over Horopito" />
+  <p>I missed my own ancestral family, meeting for a Prairie Christmas back home in Canada. (But appreciated the fact that I was thirty
+  or so Celsius degrees warmer.) And I’m so thankful and heartwarmed by the hospitality and love, effortlessly given in acre-sized
+  servings by Mary and Martin and the rest of the Wood clan.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>@bluesky</title>
+  <link href='https://www.tbray.org/ongoing/When/201x/2019/12/11/BlueSky' />
+  <link rel='replies'        thr:count='2'        type='application/xhtml+xml'        href='/ongoing/When/201x/2019/12/11/BlueSky#comments' />
+  <id>https://www.tbray.org/ongoing/When/201x/2019/12/11/BlueSky</id>
+  <published>2019-12-11T12:00:00-08:00</published>
+  <updated>2019-12-25T12:29:25-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Life Online' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Life Online' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>At my day job they say “Think big!”, and <a href='https://twitter.com/jack/status/1204766078468911106'>@bluesky</a> is that.  I can’t stop thinking about it, and bloggers can’t help thinking in public.  This work can simultaneously be probably-doomed and obviously-worthwhile</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <!-- Agricultural Extension -->
+  <p>At my day job they say “Think big!”, and
+  <a href="https://twitter.com/jack/status/1204766078468911106">@bluesky</a> is that.  I can’t stop thinking about it, and bloggers
+  can’t help thinking in public.  This work can simultaneously be probably-doomed and obviously-worthwhile.</p>
+  <p>I’m aligned with where Twitter is starting this conversation.
+  First, speaking under my AWS-employee hat: One of our standard soundbites is
+  that people and enterprises should strive to avoid “undifferentiated heavy lifting”, i.e. wrangling software
+  infrastructure.  The basic machinery behind Twitter needs 
+  to keep track of who said what and make it available to others. Let’s go further and grant (as
+  I would) that Twitter exhibits the essential nouns and verbs of text-centric social media: Annotated linking, following, echoing,
+  answering, liking, muting, blocking.  Which all feels to me like undifferentiated heavy lifting.</p>
+  <h2 id='p-2'>Where’s the value?</h2>
+  <p>Twitter’s @bluesky hypothesis is that the real business opportunity in social media is extracting from the planetary-scale
+  tangle a fragment stream that meets the needs of individuals sufficiently well that their attention can be monetized, and 
+  does so without 
+  being a vector for hate, bigotry, and ignorance.</p>
+  <p>It’s easy to be dubious of this claim and still convinced the project is worth pursuing. I’m both: I persist in
+  resisting Twitter’s pleas to replace my people-I-follow-in-order feed with their “top tweets” flavor.  But
+  self-evidently I’m weird; I have the privilege and education and space and time to obsess over certain aspects of life and their
+  truths and falsehoods, and invest in careful curation of my feed. It’s not unreasonable for people who are starved for time and less
+  privileged to pose a simple request to Twitter (or a competitor): “Please inform me about the world quickly, in a way that enriches my
+  life, without leading me into pathological social dysfunction.”</p>
+  <p>The second starting point I share with Twitter: Social media as currently constituted does a terrible job.
+  The platform works better for GamerGaters 
+  than for humanists; better for Donald Trump than for the Dalai Lama; better for incels than for working mothers.  So, what is to be
+  done?  The value of the quest hardly seems open to question.</p>
+  <h2 id='p-3'>What is the Internet?</h2>
+  <p>It isn’t a place or a thing, it’s a lot of computers which implement
+  protocols written down in IETF RFCs (and to a lesser degree other organizations’ publications) that reflect inspiration
+  and evolution and are known to achieve certain effects in practice.  So in the @bluesky launch thread it’s unsurprising to 
+  find belief in protocols as foundational to the project. One of the two documents they quote is
+  <a href="https://knightcolumbia.org/content/protocols-not-platforms-a-technological-approach-to-free-speech">Protocols, Not
+  Platforms: A Technological Approach to Free Speech</a> by
+  <a href="https://knightcolumbia.org/authors/mike-masnick">Mike Masnick</a>.</p>
+  <p>I’ve read Masnick carefully but I’m mostly unconvinced.  He seems still to dream the foundational Internet dream that if we can
+  just put people in touch with each other things will be better. Plus there’s market fundamentalism: Let people choose the products that
+  most please them and this will lead to good outcomes and to products which are relatively free of
+  dysfunction.</p>
+  <p>Which I’d like to believe but don’t.  The free market is obviously a useful macroeconomic tool, but only when its freedom is
+  carefully circumscribed. Every market needs a supporting framework of contract law and of regulation: Against fraud, misrepresentation,
+  theft, Ponzi schemes and of course to promote safety: Aviation safety, electrical safety, chemical safety, nutritional
+  safety, and so on.  Can a protocol support the messy political mechanisms behind our imperfect but essential legal and regulatory
+  frameworks?</p> 
+  <p>The other issue that seems insufficiently considered is organized hostile action. Empirically, we observe powerful
+  well-funded parties launching concerted efforts to bend the path of societal conversation towards Trump or away from Jesus’
+  Good-Samaritan lesson; or to boost Brexit. If a protocol could be effective in resisting this sort of
+  adversary, that would be great.</p>
+  <p>I’m aware of no conclusive evidence that this is either possible or impossible.
+  So I’d be willing to give it a shot.  But I’d also broaden the focus; if there is a social-networking technology out there that
+  can ameliorate the current dysfunction, it seems just as likely to be found in a carefully-thought-through API framework, or in some
+  of
+  <a href="https://writings.stephenwolfram.com/2019/06/testifying-at-the-senate-about-a-i-selected-content-on-the-internet/">Stephen Wolfram’s early-stage proposals</a>
+  (also linked in the @bluesky thread) for a level of indirection in ML-based recommendation algorithms.</p>
+  <h2 id='p-1'>Block what?</h2>
+  <p>Both @jack in his @bluesky thread and
+  <a href="https://twitter.com/paraga/status/1204766189949292552">his CTO following up</a> nodded in the direction of blockchain. Any 
+  regular <span class='o'>ongoing</span> reader 
+  can hear my snorts of derision from anywhere on the globe.  I’m not going to relitigate the argument at this point; the
+  absence of succesful applications of the technology, all these years into it, should have removed the need. But I think the
+  appeal to blockchain is a symptom of a powerful instinct that whatever we do to fix social media, it has to be involve extreme
+  non-optional transparency. (Blockchain does this but unfortunately fails to be useful for other unrelated reasons.)</p>
+  <p>I share this instinct and would go further: A powerful focus on transparency and truth is an absolutely necessary (but of course not
+  sufficient) precondition for addressing social media’s sins.</p>
+  <h2 id='p-1'>Existence proof</h2>
+  <p>There is a successful online community where truth is the common currency: Wikipedia. Yes, it’s flawed in
+  multiple important ways, but its insistence on publishing only what’s backed by evidence, and its rough consensus on what evidence
+  is acceptable, is at the end of the day heartwarming.  Its great flaw is not inaccuracy but inattention; the community of editors is
+  generally insufficiently diverse and specifically mostly-male, and this reflects into Wikipedia’s pages. </p>
+  <p>Wikipedia’s contract with the world is simple:
+  <a href="https://en.wikipedia.org/wiki/Wikipedia:Verifiability/Removal_of_Uncited_Material">Any material that is not verifiable will
+  eventually be removed.</a> So obviously the meaning of “verifiable” matters and is thus a source of controversy.  Healthy,
+  reasonable, sensible controversy. Which we observe to have an imperfect but highly usable result, relatively free of the currient
+  pathologies of other civic discourse.</p>
+  <p>Am I saying that the @bluesky solution comes down to “remove anything not verifiable”?  No, but I’d be inclined to suggest that
+  “verifiable vs not” should be an important input to the @bluesky algorithms and protocols.</p>
+  <h2 id='p-4'>Testing</h2>
+  <p>Suppose the @bluesky team ends up looking at a few big ideas<span class='dashes'> —</span> let’s ignore whether they’re protocols or
+  algorithms or ML models or some other sort of thing.  My first question is “how do you tell if they work?”  At AWS, something
+  relatively simple, like the performance of a throttling algorithm under stress, can be difficult to test without, you know,
+  putting it under stress.</p>
+  <p>We’ve developed incremental nondestructive imperfect techniques for evaluating this kind of thing, and you’d need
+  something like that to make useful decisions about @bluesky ideas. You’d need to run them at scale in the context of an automated
+  harness, and you’d need to do it more or less all the time, forever.</p>
+  <p>The construction of this infrastructure is, I believe, apt to be one of the hardest parts of @bluesky.</p>
+  <h2 id='p-5'>Will it work?</h2>
+  <p>I doubt it.  Social-media dysfunction seems closely related to aspects of human nature at the individual and societal levels. A
+  solution might end up being more or less equivalent in difficulty to World Peace or Curing Cancer.</p>
+  <p>Which is obviously not a reason to not try.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>Content-based Filtering</title>
+  <link href='https://www.tbray.org/ongoing/When/201x/2019/12/18/Content-based-filtering' />
+  <link rel='replies'        thr:count='0'        type='application/xhtml+xml'        href='/ongoing/When/201x/2019/12/18/Content-based-filtering#comments' />
+  <id>https://www.tbray.org/ongoing/When/201x/2019/12/18/Content-based-filtering</id>
+  <published>2019-12-18T12:00:00-08:00</published>
+  <updated>2019-12-19T13:00:58-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology/Cloud' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Technology' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Cloud' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>The publish/subscribe pattern is central to data in motion<span class="dashes"> —</span> event-driven and messaging-based apps,  I mean.  I’m increasingly convinced that pub/sub software just isn’t complete without some sort of declarative filtering technology, so that you can subscribe to a huge shared torrent of data and only see the parts of it that you need to process.  You could look at everything and write code to reject the data you don’t care about, but it’s nice to write a declarative rule and have the system take care of the filtering for you</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>The publish/subscribe pattern is central to data in motion<span class='dashes'> —</span> event-driven and messaging-based apps, 
+  I mean.  I’m increasingly convinced that pub/sub software just isn’t complete without some sort of declarative filtering technology,
+  so that you can subscribe to a huge shared torrent of data and only see the parts of it that you need to process.  You could look
+  at everything and write code to reject the data you don’t care about, but it’s nice to write a declarative rule and have the system
+  take care of the filtering for you.</p>  
+  <p>This piece is about data-filtering technology we’ve been cooking up
+  <a href="https://aws.amazon.com/">at AWS</a>, and that I’ve personally put a whole lot of work into.  The proximate cause for
+  publishing now is that while this feature has been around for a while in the old CloudWatch Events and in SNS, we’re just rolling out all
+  the latest bells and whistles in
+  <a href="https://aws.amazon.com/eventbridge/">EventBridge</a>.  I want to write about it because it’s different enough from other filtering
+  technologies to be interesting.</p>
+  <p>EventBridge’s events are delivered in JSON, but this tech ought to apply to any nested JSON-like structured data.  The syntax is
+  called “Event Patterns”, and the idea is that the filters don’t look like SQL or really any other popular query language, they look
+  like the events they’re filtering.</p>
+  <p>To make this concrete, let’s look at a typical event you might encounter on EventBridge:</p>
+  <pre><code>{
+    "version": "0",
+    "id": "6a7e8feb-b491-4cf7-a9f1-bf3703467718",
+    "detail-type": "EC2 Instance State-change Notification",
+    "source": "aws.ec2",
+    "account": "111122223333",
+    "time": "2017-12-22T18:43:48Z",
+    "region": "us-west-1",
+    "resources": [
+      "arn:aws:ec2:us-west-1:123456789012:instance/ i-1234567890abcdef0"
+    ],
+    "detail": {
+      "instance-id": " i-1234567890abcdef0",
+      "state": "terminated"
+    }
+  }</code></pre>
+  <p>In the following sections, all the examples will match this event.</p>
+  <h2 id='p-1'>Event Patterns have the same structure as the Events they match</h2>
+  <p>Suppose you wanted to subscribe only to events from EC2. Here’s the Event Pattern:</p>
+  <pre><code>{
+    "source": [ "aws.ec2" ]
+  }</code></pre>
+  <p>The pattern simply quotes the fields you want to match and provides the values you are looking for.</p>
+  <p>The sample event above, like most events, has a nested structure. Suppose you want to process all instance-termination events:</p>
+  <pre><code>{
+    "source": [ "aws.ec2" ],
+    "detail-type": [ "EC2 Instance State-change Notification" ],
+    "detail": {
+      "state": [ "terminated" ]
+    }
+  }</code></pre>
+  <h2 id='p-2'>Only specify the fields you care about</h2>
+  <p>In the example above, you only provide values for three fields: The top-level fields “source” and “detail-type”, and the “state”
+  field inside the “detail” object field. EventBridge ignores all the other fields in the event while applying the filter.</p>
+  <h2 id='p-3'>Match values are always in arrays</h2>
+  <p>Note that the value to match is in a JSON array, that is to say surrounded by “[” and “]”. This is so that you can provide
+  multiple values. Suppose you were interested in events from EC2 or Fargate:</p>
+  <pre><code>{
+    "source": [ "aws.ec2", "aws.fargate" ]
+  }</code></pre>
+  <p>If the value of the “source” field was an array, that would work too: The pattern would match if the intersection between the
+  pattern array and the event array (both treated as sets) was non-empty.</p>
+  <h2 id='p-12'>Ands and Ors</h2>
+  <p>The filter language is a bit surprising in that when you provide multiple possible matches, as immediately above, that’s an OR
+  operation<span class='dashes'> —</span> you match if any one of them does.  But when your pattern has multiple fields, that’s an AND
+  because all of the fields have to match.  Oddly, this seems to meet people’s needs quite well.  And if you really need OR’ed fields,
+  you can post two filters, one with each of the options.</p>
+  <h2 id='p-4'>You can match all the JSON data types</h2>
+  <p>Consider the following Auto Scaling event:</p>
+  <pre><code>{
+    "version": "0",
+    "id": "3e3c153a-8339-4e30-8c35-687ebef853fe",
+    "detail-type": "EC2 Instance Launch Successful",
+    "source": "aws.autoscaling",
+    "account": "123456789012",
+    "time": "2015-11-11T21:31:47Z",
+    "region": "us-east-1",
+    "resources": [
+    ],
+    "detail": {
+      "eventVersion": "",
+      "responseElements": null
+    }
+  }</code></pre>
+  <p>You can match the “responseElements” field as follows:</p>
+  <pre><code>{
+    "detail": {
+      "responseElements": [ null ]
+    }
+  } </code></pre>
+  <p>This works for numbers too. Consider the following
+  <a href="https://aws.amazon.com/macie/">Macie</a> event (truncated for brevity, and pardon the klunky line breaks, need to make my
+  CSS smarter about code):</p>
+  <pre><code>{
+    "version": "0",
+    "id": "3e355723-fca9-4de3-9fd7-154c289d6b59",
+    "detail-type": "Macie Alert",
+    "source": "aws.macie",
+    "account": "123456789012",
+    "time": "2017-04-24T22:28:49Z",
+    "region": "us-east-1",
+    "resources": [
+      "arn:aws:macie:us-east-1:123456789012:trigger/trigger_id/alert/alert_id",
+      "arn:aws:macie:us-east-1:123456789012:trigger/trigger_id"
+    ],
+    "detail": {
+      "notification-type": "ALERT_CREATED",
+      "name": "Scanning bucket policies",
+      "tags": [
+        "Custom_Alert",
+        "Insider"
+      ],
+      "url": "https://lb00.us-east-1.macie.aws.amazon.com/111122223333/posts/alert_id",
+      "alert-arn": "arn:aws:macie:us-east-1:123456789012:trigger/trigger_id/alert/alert_id",
+      "risk-score": 80,
+      "trigger": {
+        "rule-arn": "arn:aws:macie:us-east-1:123456789012:trigger/trigger_id",
+        "alert-type": "basic",
+        "created-at": "2017-01-02 19:54:00.644000",
+        "description": "Alerting on failed enumeration of large number of bucket policies",
+        "risk": 8
+      },
+      "created-at": "2017-04-18T00:21:12.059000",
+      // truncated for brevity
+      . . . 
+  </code></pre>
+  <p>Suppose your security policies require you to react when Macie reports anything with a risk score of 80 and a trigger risk of
+  8:</p>
+  <pre><code>{
+    "source": [ "aws.macie" ],
+    "detail": {
+      "risk-score": [ 80 ],
+      "trigger": {
+        "risk": [ 8 ]
+      }
+    }
+  }</code></pre>
+  <h2 id='p-5'>Numbers work properly</h2>
+  <p>While the pattern above works, it doesn’t work that well, because it only matches against the JSON exactly as stated. So for
+  example, if the programmer generating that Macie event changed their code so that it emitted <code>"risk-score": 80.0</code>, the
+  rule wouldn’t match.</p> 
+  <p>Fortunately, EventBridge has numeric matching built-in. This would allow you to implement security policies much more flexibly and reliably. For example, here’s a pattern that matches a
+  trigger risk value of 8 (even if it’s expressed as “8.000” or “8.0e0”, and any risk-score value over 50 but less than or equal to
+  100.</p>
+  <pre><code>{
+    "source": [ "aws.macie" ],
+    "detail-type": [ "Macie Alert" ],
+    "detail": {
+      "risk-score": [ { "numeric": [ ">", 50, "&lt;=", 100 ] } ],
+      "trigger": {
+        "risk": [ { "numeric": [ "=", 8 ] } ]
+      }
+    }
+  }</code></pre>
+  <p>This kind of numeric matching is useful, but is limited to values between -1.0e9 and +1.0e9 inclusive, with 15 digits of precision, that is to say six digits to the right of the decimal point.</p>
+  <p>Note that match expressions go into arrays just like literal values. Match expressions and literals can be mixed up as much as
+  you want.</p>
+  <h2 id='p-6'>Prefix matching</h2>
+  <p>Suppose you want to process all the auto-scaling events from AWS’s European regions. There’s a match expression for that.</p>
+  <pre><code>{
+    "source": [ "aws.autoscaling" ],
+    "region": [ { "prefix": "eu-" } ]
+  }</code></pre>
+  <h2 id='p-11'>IP address matching</h2>
+  <p>For one reason or another, it’s not that uncommon to encounter IP addresses in event fields.  Since the
+  <a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDR</a> notation was explicitly designed to match IP ranges,
+  it works well as a filter syntax:</p>
+  <pre><code>{
+    "caller-ip": [ { "cidr": "192.168.100.0/22" } ] 
+  }</code></pre>
+  <p>It works with IPv6 too!</p>
+  <pre><code>{
+    "caller-ip": [ { "cidr": "2001:db8::/120" } ] 
+  }</code></pre>
+  <p>(Confession: I’ve never seen one of these in the wild in our event ecosystem.)</p>
+  <p>(Confession: I don’t think the CIDR capability has quite finished deploying as of the publishing of this blog.)</p>
+  <h2 id='p-7'>Existence Matching</h2>
+  <p>Suppose you wanted to make an ElasticSearch full-text index of a bunch of events. To do this, you might want to select all the events that have a description field:</p>
+  <pre><code>{
+    "detail": {
+      "description": [ { "exists": true } ],
+    }
+  }</code></pre>
+  <p>You could also use <code>{ "exists": false }</code> to select events that don’t contain some particular field.</p>
+  <h2 id='p-8'>Anything-but matching</h2>
+  <p>Sometimes you want to exclude rather than include a particular field value. Suppose you want to process all the events except
+  those that are CloudTrail reports of API calls:</p>
+  <pre><code>{
+    "detail-type": [ { "anything-but": "AWS API Call via CloudTrail" } ]
+  }   </code></pre>
+  <p>The anything-but match expression can blacklist literal strings or also a list of values, but the list has to contain either all
+  strings or all numbers. Suppose you wanted to see all the events except those that came from EC2 or S3:</p>
+  <pre><code>{
+    "source": [ { "anything-but": [ "aws.ec2", "aws.s3" ] } ]
+  }</code></pre>
+  <p>The anything-but match expression can also use a nested match expression to exclude prefixes. For example, EventBridge’s main
+  event bus has a huge number of events coming from all the AWS services, but you can also inject your own events using the
+  <a href="https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_PutEvents.html">PutEvents API</a>. You can distinguish
+  AWS’s events and process only your own because the “source” field in all the AWS events begins with the string “aws.”.</p>
+  <pre><code>{
+    "source": [ { "anything-but": { "prefix": "aws." } } ]
+  }</code></pre>
+  <h2 id='p-9'>The future?</h2>
+  <p>People seem to like this idiom a lot<span class='dashes'> —</span> EventBridge has a huge number of customers. Also, we’ve got a
+  super-efficient implementation currently processing an immense number of events per second, that I’d like to open-source.  We keep getting
+  requests for more filtering features (wildcards or 
+  regexes are an obvious direction) and have managed to keep new stuff rolling out steadily.</p>
+  <p>There’s one problem: It’s not SQL-flavored, and a high proportion of software people sort of think in SQL when they want to
+  select data.
+  There have been attempts to extend SQL to be a good citizen of the world of non-relational data; the one I’m most familiar with,
+  because it’s recent and from AWS, is
+  <a href="https://partiql.org/">PartiQL</a>.</p>
+  <p>I’m biased in that I’ve never actually <em>liked</em> SQL, but I recognize that this is not exactly a majority opinion.  Anyhow,
+  it’s on my mind.</p>
+  </div></content></entry>
+
+  <entry>
+  <title>The Oil Patch Up Against the Wall</title>
+  <link href='https://www.tbray.org/ongoing/When/201x/2019/12/15/Oil-Patch-Against-the-Wall' />
+  <link rel='replies'        thr:count='4'        type='application/xhtml+xml'        href='/ongoing/When/201x/2019/12/15/Oil-Patch-Against-the-Wall#comments' />
+  <id>https://www.tbray.org/ongoing/When/201x/2019/12/15/Oil-Patch-Against-the-Wall</id>
+  <published>2019-12-15T12:00:00-08:00</published>
+  <updated>2019-12-15T14:47:09-08:00</updated>
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World/Politics' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='The World' />
+  <category scheme='https://www.tbray.org/ongoing/What/' term='Politics' />
+  <summary type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>I’m terribly worried about how my children<span class="dashes"> —</span> and humans in general<span class="dashes"> —</span> are  going to deal with catastrophic global warming in the likely case that the average global temperature spike is somewhere in the 2°-4°C range.  I want to highlight a couple of weekend stories on the biggest news story of the twenty-first century: The tragedy of the deniers, and likely consequences for the perpetrators</div></summary>
+  <content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>
+  <p>I’m terribly worried about how my children<span class='dashes'> —</span> and humans in general<span class='dashes'> —</span> are 
+  going to deal with catastrophic global warming in the likely
+  case that the average global temperature spike is somewhere in the 2°-4°C range.  I want to highlight a couple of weekend stories
+  on the biggest news story of the twenty-first century: The tragedy of the deniers, and likely consequences for the perpetrators.</p>
+  <p>Like most literate people whose livelihood doesn’t depend directly on the fossil-energy industry, I believe the evidence is
+  overwhelming that anthropogenic atmospheric CO<sub>2</sub> overload has a 
+  strong greenhouse effect whose results are already visible in receding ice and flurries of “hundred-year” natural
+  disasters. </p>
+  <p>I’m also convinced that we can move the needle further and faster, with less economic dislocation and pain, than many others
+  believe. 
+  The energy-economics picture has been changing so fast that unless you’re paying close attention and are open-minded about new
+  energy sources, you might think it’s reasonable to doubt the plausibility of wholesale replacement of fossil-fuel-based power
+  generation by renewables.</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/15/Energy-graph.png" alt="Current energy pricing trends" />
+  <div class='caption'><p>These are <em>unsubsidized</em> prices. Unfortunately, the graph doesn’t include recent trends in energy
+  storage pricing, which are good if not quite this dramatic; see for example
+  <a href="https://www.economist.com/leaders/2019/11/30/power-storage-is-the-missing-link-in-green-energy-plans">Power storage is the
+  missing link in green-energy plans</a> from <cite>The Economist</cite>.</p></div> 
+  <p>Yes, it would require massive investment on a wartime-like scale, but Lord knows there’s plenty of surplus
+  capital out there looking for a profitable home; just consider how effortlessly SoftBank has raised tens of billions to squander on
+  lies and fantasies.
+  It’s pretty obvious that “carbon disinvestment” has become a prudent mainstream financial strategy, and that the
+  renewable-generation sector is the single biggest and best investment opportunity of the next few decades, with paybacks to be had
+  like those harvested during the rise of the Internet.</p>
+  <p>If you’re interested in modern energy economics (and you should be) a good place to start is with
+  <a href="https://twitter.com/GregorMacdonald">Gregor Macdonald</a>, who stays on top of the numbers and is particularly good on
+  what’s happening in China, and with electric vehicles.</p>
+  <h2 id='p-2'>Tragic Alberta opera</h2>
+  <p>Consider this CBC story:
+  <a href="https://www.cbc.ca/news/canada/calgary/kenney-energy-war-room-1.5393010?cmp=rss">Alberta wants to flip the script in
+  oilpatch’s favour — it won't be easy</a>.</p>
+  <p>A few words of background: Alberta, Canada’s second province from the left, has the nation’s highest average income, no sales
+  tax, and generally fabulous social services, all in large part based on its petroleum revenue.  Until some point in my forties, I was
+  still getting a few bucks a month in royalties from the natural-gas well on the old family farm.
+  As a result, Upton Sinclair’s famous soundbite applies to Alberta in spades: “It is difficult to get a man to understand
+  something, when his salary depends on his not understanding it.”</p>
+  <p>Bearing all this in mind, I found the language about Alberta’s “war room”, whose objective is to “shift unfavorable views of
+  the oil and gas sector”, oddly evocative. Here we have a chorus composed of successful members of a rich society’s elite singing a
+  chorus that nobody believes, outside of a small and shrinking fraction of society.  They inveigh against outsiders who are impugning
+  their industry: “these same organizations trying to misinform prospective investors about our environmental performance”
+  and “the political agenda emanating from Europe, which is trying to stigmatize development of hydrocarbon energy”.</p>
+  <p>One feels that there’s material for an opera or formal <i>Noh</i> play in these people fighting what seems to them like the
+  good fight, all they 
+  want to do is protect their home-towns’ livelihoods.  And they’re not wrong: A whole lot of people all over the world, including
+  me,  are indeed stigmatizing the development of hydrocarbon energy. Where by “stigmatize” we mean “slam on the fucking brakes before
+  we wreck the world.”</p>
+  <p>By the way, the “war room” has terrible Google juice despite its $30M budget, but I managed to turn it up:
+  Welcome to the <a href="https://www.canadianenergycentre.ca/">Canadian Energy Centre</a>, an alternate reality where you
+  fight climate change by pumping high-carbon tar-sands crude.</p>
+  <h2 id='p-3'>The experience of the crisis</h2>
+  <p>To most people, it all feels so abstract; Bad things are going to happen, but to other people a long way away, and it’s not
+  obvious what it’ll be like.  Here, in Paolo Bacigalupi’s beautiful, terrible story
+  <a href="https://www.technologyreview.com/s/613349/a-full-life/">A Full Life</a> (interestingly, published in
+  <cite>MIT Technology Review</cite>) is what it will feel like for a very ordinary young person in the heart of America.
+  Seriously, if the climate crisis feels a little abstract to you, read this.  It’s more important than my words that you’re reading
+  now.</p>
+  <h2 id='p-4'>Up against the wall!</h2>
+  <p>Which brings me to this little
+  <a href="https://twitter.com/GretaThunberg/status/1205862132308488193">two-tweet sequence</a> from Greta Thunberg:</p>
+  <img src="https://www.tbray.org/ongoing/When/201x/2019/12/15/Greta-tweet.png" alt="Tweet from Greta Thunberg" />
+  <p>Ms Thunberg says her message is 100% non-violent and I believe her.
+  But when the water levels start rising; when a hundred million people start walking north, empty-handed and hungry, out of the
+  Bengal lowlands; when 
+  Mar-a-Lago is smashed and it wasn’t even an official hurricane; when California’s inland crops fail; when the fires burn a third of
+  Sydney; when Arizona real estate goes to zero; and especially, when some climate-change surprise nobody thought of wreaks deadly
+  havoc in a place nobody expected, people <em>are</em> going to be put up against walls and not in Greta’s “Swenglish” sense, no not at
+  all.</p>
+  <p>Alberta should really stop calling their operation a “war room”.</p>
+  </div></content></entry>
+
+  </feed>

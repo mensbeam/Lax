@@ -1,0 +1,270 @@
+# This feed is notable for using fairly extensive iTunes metadata
+# It's otherwise standard WordPress output
+
+url: 'https://ipolitics.ca/feed/'
+headers:
+  date: 'Thu, 26 Mar 2020 14:28:55 GMT'
+  content-type: 'application/rss+xml; charset=UTF-8'
+  etag: '"a2fc3bd290a9b1de05ab40c2c4bad957"'
+  last-modified: 'Thu, 26 Mar 2020 13:53:28 GMT'
+body: >
+  <?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+  xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+  xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+
+    xmlns:georss="http://www.georss.org/georss"
+    xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+    >
+
+  <channel>
+    <title>iPolitics</title>
+    <atom:link href="https://ipolitics.ca/feed/" rel="self" type="application/rss+xml" />
+    <link>https://ipolitics.ca</link>
+    <description>Canadian News and Politics</description>
+    <lastBuildDate>Thu, 26 Mar 2020 14:30:23 +0000</lastBuildDate>
+    <language>en-US</language>
+    <sy:updatePeriod>
+    hourly	</sy:updatePeriod>
+    <sy:updateFrequency>
+    1	</sy:updateFrequency>
+    <generator>https://wordpress.org/?v=5.3.2</generator>
+  <!-- podcast_generator="Blubrry PowerPress/8.2.7" mode="advanced" feedslug="feed" Blubrry PowerPress Podcasting plugin for WordPress (https://www.blubrry.com/powerpress/) -->
+    <atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+    <itunes:summary><![CDATA[Canadian News and Politics]]></itunes:summary>
+    <itunes:author>iPolitics</itunes:author>
+    <itunes:explicit>clean</itunes:explicit>
+    <itunes:image href="https://ipolitics.ca/wp-content/uploads/2018/02/0218-PodMoose.jpg" />
+    <itunes:owner>
+      <itunes:name>iPolitics</itunes:name>
+      <itunes:email>sarahwest@ipolitics.ca</itunes:email>
+    </itunes:owner>
+    <managingEditor>sarahwest@ipolitics.ca (iPolitics)</managingEditor>
+    <itunes:subtitle>Our crack team of political journalists covers all things Canadian politics and policy.</itunes:subtitle>
+  <image>
+      <title>iPolitics</title>
+      <url>https://ipolitics.ca/wp-content/uploads/2019/10/iPolitics-Logo144.png</url>
+      <link>https://ipolitics.ca</link>
+      <width>144</width>
+      <height>23</height>
+      <description>ipolitics</description>
+      </image>	<item>
+      <title>Hill Movers: Two new additions to the PMO</title>
+      <link>https://ipolitics.ca/2020/03/26/hill-movers-two-new-additions-to-the-pmo/</link>
+          <comments>https://ipolitics.ca/2020/03/26/hill-movers-two-new-additions-to-the-pmo/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 14:29:31 +0000</pubDate>
+      <dc:creator><![CDATA[Rachel Emmanuel]]></dc:creator>
+          <category><![CDATA[Federal]]></category>
+      <category><![CDATA[In Ottawa]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Parliament]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[Public Service]]></category>
+      <category><![CDATA[federal politics]]></category>
+      <category><![CDATA[lunchbox]]></category>
+      <category><![CDATA[Parliament Hill]]></category>
+      <category><![CDATA[PMO]]></category>
+      <category><![CDATA[staff]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952863</guid>
+          <description><![CDATA[Elaine Nixon has started a new position as a special assistant in the Office of the Prime Minister last month, after working for the Liberal Party for almost three years. Nixon served as a national campaign mobilization manager up until February 2020, a position she began in August just before the federal election was called. [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/hill-movers-two-new-additions-to-the-pmo/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Ontario releases highly-anticipated $17B COVID-19 action plan: Fundingportal analysis</title>
+      <link>https://ipolitics.ca/2020/03/26/ontario-releases-highly-anticipated-17b-covid-19-action-plan-fundingportal-analysis/</link>
+          <comments>https://ipolitics.ca/2020/03/26/ontario-releases-highly-anticipated-17b-covid-19-action-plan-fundingportal-analysis/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 13:43:06 +0000</pubDate>
+      <dc:creator><![CDATA[Fundingportal]]></dc:creator>
+          <category><![CDATA[COVID-19]]></category>
+      <category><![CDATA[Covid19-Experts]]></category>
+      <category><![CDATA[Economy & Finance]]></category>
+      <category><![CDATA[Industry & Trade]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[Provincial]]></category>
+      <category><![CDATA[FundingPortal]]></category>
+      <category><![CDATA[fundingportal analysis]]></category>
+      <category><![CDATA[lunchbox]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952854</guid>
+          <description><![CDATA[The Government of Ontario released its highly-anticipated $17B Action Plan Wednesday afternoon in response to the COVID-19 pandemic, including $10B in support for businesses and individuals. The Plan, titled “Ontario’s Action Plan: Responding to COVID-19 (March 2020 Economic and Fiscal Update),” acts in lieu of the Government’s traditional spring budget and is Ontario’s first major [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/ontario-releases-highly-anticipated-17b-covid-19-action-plan-fundingportal-analysis/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>iPolitics AM: Trudeau to deliver on-camera update on COVID-19 as his self isolation comes to an end</title>
+      <link>https://ipolitics.ca/2020/03/26/ipolitics-am-trudeau-to-deliver-on-camera-update-on-covid-19-as-his-self-isolation-comes-to-an-end/</link>
+          <comments>https://ipolitics.ca/2020/03/26/ipolitics-am-trudeau-to-deliver-on-camera-update-on-covid-19-as-his-self-isolation-comes-to-an-end/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 10:15:57 +0000</pubDate>
+      <dc:creator><![CDATA[Kady O'Malley]]></dc:creator>
+          <category><![CDATA[Federal]]></category>
+      <category><![CDATA[International]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[iPolitics AM]]></category>
+      <category><![CDATA[lunchbox]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952853</guid>
+          <description><![CDATA[As has become part of his daily routine since fears of a full-blown COVID-19 outbreak put Canada — and Canadians — under virtual lockdown, Prime Minister Justin Trudeau will once again emerge from Rideau Cottage to outline the latest developments in the cross-country campaign to curtail the spread of the virus — which, as of today, includes one very personal prime [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/ipolitics-am-trudeau-to-deliver-on-camera-update-on-covid-19-as-his-self-isolation-comes-to-an-end/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Morning Brief: Unresolved front line worker equipment issue worrying Ontario health professionals</title>
+      <link>https://ipolitics.ca/2020/03/26/morning-brief-unresolved-front-line-worker-equipment-issue-worrying-ontario-health-professionals/</link>
+          <comments>https://ipolitics.ca/2020/03/26/morning-brief-unresolved-front-line-worker-equipment-issue-worrying-ontario-health-professionals/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 10:00:32 +0000</pubDate>
+      <dc:creator><![CDATA[iPolitics]]></dc:creator>
+          <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[iPolitics Briefs]]></category>
+      <category><![CDATA[Morning Brief]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952840</guid>
+          <description><![CDATA[Today's Morning Brief is brought to you by #BetterDeltaport.]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/morning-brief-unresolved-front-line-worker-equipment-issue-worrying-ontario-health-professionals/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Despite assurances, Ontario health care workers facing dwindling supplies of COVID-19 equipment</title>
+      <link>https://ipolitics.ca/2020/03/26/despite-assurances-ontario-health-care-workers-facing-dwindling-supplies-of-covid-19-equipment/</link>
+          <comments>https://ipolitics.ca/2020/03/26/despite-assurances-ontario-health-care-workers-facing-dwindling-supplies-of-covid-19-equipment/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 04:00:37 +0000</pubDate>
+      <dc:creator><![CDATA[Charlie Pinkerton]]></dc:creator>
+          <category><![CDATA[COVID-19]]></category>
+      <category><![CDATA[Covid19-Provincial]]></category>
+      <category><![CDATA[Federal]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[coronavirus]]></category>
+      <category><![CDATA[lunchbox]]></category>
+      <category><![CDATA[Ontario]]></category>
+      <category><![CDATA[Ontario public health]]></category>
+      <category><![CDATA[personal protective equipment]]></category>
+      <category><![CDATA[ppe]]></category>
+      <category><![CDATA[ventilators]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952777</guid>
+          <description><![CDATA[At a virtual town hall last Thursday, the head of Ontario&#8217;s provincial doctors association recited a story about the challenges facing front line health care workers fighting the novel coronavirus pandemic. Ontario Medical Association (OMA) president Dr. Sohail Gandhi said that at the hospital where he works there were only seven COVID-19 swabs remaining when [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/despite-assurances-ontario-health-care-workers-facing-dwindling-supplies-of-covid-19-equipment/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Cartoon of the Day</title>
+      <link>https://ipolitics.ca/2020/03/26/cartoon-of-the-day-143/</link>
+          <comments>https://ipolitics.ca/2020/03/26/cartoon-of-the-day-143/#respond</comments>
+          <pubDate>Thu, 26 Mar 2020 04:00:12 +0000</pubDate>
+      <dc:creator><![CDATA[iPolitics]]></dc:creator>
+          <category><![CDATA[Cartoons]]></category>
+      <category><![CDATA[Cartoon of the Day]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952850</guid>
+          <description><![CDATA[]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/26/cartoon-of-the-day-143/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>COVID-19 aid bill could have passed quickly if Liberals dropped demand for new powers: CPC source</title>
+      <link>https://ipolitics.ca/2020/03/25/covid-19-aid-bill-could-have-passed-quickly-if-liberals-dropped-demand-for-new-powers-cpc-source/</link>
+          <comments>https://ipolitics.ca/2020/03/25/covid-19-aid-bill-could-have-passed-quickly-if-liberals-dropped-demand-for-new-powers-cpc-source/#respond</comments>
+          <pubDate>Wed, 25 Mar 2020 23:02:54 +0000</pubDate>
+      <dc:creator><![CDATA[Rachel Emmanuel]]></dc:creator>
+          <category><![CDATA[COVID-19]]></category>
+      <category><![CDATA[Covid19-Federal]]></category>
+      <category><![CDATA[Economy & Finance]]></category>
+      <category><![CDATA[Federal]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Parliament]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[Conservative Party]]></category>
+      <category><![CDATA[COVID-19 aid bill]]></category>
+      <category><![CDATA[COVID-19 outbreak]]></category>
+      <category><![CDATA[federal government]]></category>
+      <category><![CDATA[House of Commons]]></category>
+      <category><![CDATA[Scott Reid]]></category>
+      <category><![CDATA[Senate]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952827</guid>
+          <description><![CDATA[The federal Conservatives are blaming the Trudeau Liberals for the hours-long delay in passing legislation authorizing financial supports for Canadians reeling from the COVID-19 pandemic, arguing the bill could have easily passed in the House early Tuesday afternoon if the Liberals had not tried to push through sweeping new powers. The House of Commons ultimately [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/25/covid-19-aid-bill-could-have-passed-quickly-if-liberals-dropped-demand-for-new-powers-cpc-source/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Evening Brief: COVID-19 aid bill now law</title>
+      <link>https://ipolitics.ca/2020/03/25/evening-brief-covid-19-aid-bill-now-law/</link>
+          <comments>https://ipolitics.ca/2020/03/25/evening-brief-covid-19-aid-bill-now-law/#respond</comments>
+          <pubDate>Wed, 25 Mar 2020 21:06:56 +0000</pubDate>
+      <dc:creator><![CDATA[iPolitics]]></dc:creator>
+          <category><![CDATA[Evening Brief]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[iPolitics Briefs]]></category>
+      <category><![CDATA[evening brief]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952834</guid>
+          <description><![CDATA[Tonight’s Evening Brief is brought to you by the Canadian Centre on Substance Use and Addiction.]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/25/evening-brief-covid-19-aid-bill-now-law/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Ontario anticipates deficit to jump to $20.5-billion in 2020-21 due to COVID-19 pandemic</title>
+      <link>https://ipolitics.ca/2020/03/25/ontario-anticipates-deficit-to-jump-to-20-5-billion-in-2020-21-due-to-covid-19-pandemic/</link>
+          <comments>https://ipolitics.ca/2020/03/25/ontario-anticipates-deficit-to-jump-to-20-5-billion-in-2020-21-due-to-covid-19-pandemic/#respond</comments>
+          <pubDate>Wed, 25 Mar 2020 20:26:50 +0000</pubDate>
+      <dc:creator><![CDATA[Victoria Gibson]]></dc:creator>
+          <category><![CDATA[COVID-19]]></category>
+      <category><![CDATA[Covid19-Provincial]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[Provincial]]></category>
+      <category><![CDATA[Doug Ford]]></category>
+      <category><![CDATA[Finance Minister Rod Phillips]]></category>
+      <category><![CDATA[ontario budget 2020]]></category>
+      <category><![CDATA[Premier Doug Ford]]></category>
+      <category><![CDATA[progressive conservatives]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952829</guid>
+          <description><![CDATA[The Ontario government is bracing itself for provincial deficits to more than double next year because of the ramifications of COVID-19 — predicting on Wednesday afternoon that their shortfall will slump from an expected $9.2 billion in the 2019-20 fiscal year to a $20.5-billion deficiency in 2020-21. The forecast was released as part of the [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/25/ontario-anticipates-deficit-to-jump-to-20-5-billion-in-2020-21-due-to-covid-19-pandemic/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+      <item>
+      <title>Bill with emergency COVID-19 aid becomes law; offers $2,000 benefit for workers</title>
+      <link>https://ipolitics.ca/2020/03/25/bill-with-emergency-covid-19-aid-awaits-royal-assent-merges-benefit-for-workers/</link>
+          <comments>https://ipolitics.ca/2020/03/25/bill-with-emergency-covid-19-aid-awaits-royal-assent-merges-benefit-for-workers/#respond</comments>
+          <pubDate>Wed, 25 Mar 2020 17:10:21 +0000</pubDate>
+      <dc:creator><![CDATA[Jolson Lim]]></dc:creator>
+          <category><![CDATA[COVID-19]]></category>
+      <category><![CDATA[Covid19-Federal]]></category>
+      <category><![CDATA[Federal]]></category>
+      <category><![CDATA[iPolitics]]></category>
+      <category><![CDATA[News]]></category>
+      <category><![CDATA[Policy]]></category>
+      <category><![CDATA[Politics]]></category>
+      <category><![CDATA[Bill C-13]]></category>
+      <category><![CDATA[Bill Morneau]]></category>
+      <category><![CDATA[wage subsidy]]></category>
+
+      <guid isPermaLink="false">https://ipolitics.ca/?p=952817</guid>
+          <description><![CDATA[Parliament has passed the federal government’s emergency legislation that will get tens of billions of dollars in assistance to Canadians and their businesses hurt by the COVID-19 outbreak. It includes a merged, single benefit that will cover workers who have lost their incomes. The bill, which was hastily studied and adopted without amendment by the [&#8230;]]]></description>
+              <wfw:commentRss>https://ipolitics.ca/2020/03/25/bill-with-emergency-covid-19-aid-awaits-royal-assent-merges-benefit-for-workers/feed/</wfw:commentRss>
+      <slash:comments>0</slash:comments>
+                </item>
+    </channel>
+  </rss>

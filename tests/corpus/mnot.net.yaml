@@ -1,0 +1,902 @@
+# The blog of Mark Nottingham, of IETF
+# This feed is notable for being a proper Atom feed, and using xml:base and relative URLs
+
+url: 'https://www.mnot.net/blog/index.atom'
+headers:
+  date: 'Wed, 25 Mar 2020 16:39:04 GMT'
+  content-type: 'application/atom+xml'
+  cache-control: 'max-age=43200'
+  etag: '"1964c-594ec1d1b8b27"'
+  last-modified: 'Tue, 15 Oct 2019 05:18:25 GMT'
+body: >
+  <?xml version="1.0" encoding="utf-8"?>
+  <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>mnot’s blog</title>
+    <link rel="alternate" type="text/html" href="https://www.mnot.net/blog/" />
+    <link rel="self" type="application/atom+xml" href="https://www.mnot.net/blog/index.atom" />
+    <id>tag:www.mnot.net,2010-11-11:/blog//1</id>
+    <updated>2019-10-15T05:18:17Z</updated>
+    <subtitle>“Design depends largely on constraints.” — Charles Eames</subtitle>
+
+    <entry>
+      <title>How Multiplexing Changes Your HTTP APIs</title>
+      <link rel="alternate" type="text/html" href="/blog/2019/10/13/h2_api_multiplexing" />
+      <id>https://www.mnot.net/blog/2019/10/13/h2_api_multiplexing</id>
+      <updated>2019-10-13T00:00:00Z</updated>
+      <author>
+          <name>Mark Nottingham</name>
+          <uri>https://www.mnot.net/personal/</uri>
+      </author>
+      <summary>When I first learned about SPDY, I was excited about it for a number of reasons, but near the top of the list was its potential impact on APIs that use HTTP.</summary>
+      
+    <category term="HTTP" />
+        
+      <content type="html" xml:lang="en" xml:base="/blog/2019/10/13/h2_api_multiplexing">
+        <![CDATA[<p>When I first learned about SPDY, I was excited about it for a number of reasons, but near the top of the list was its potential impact on APIs that use HTTP.</p>
+
+  <p>While HTTP is great for APIs for a number of reasons, one of the problems that many APIs come up against is one of <em>granularity</em>; it’s most useful to have fine-grained APIs, so that you’re only returning the information that the client needs, but that leads to clients needing to make lots of requests to get everything they need.</p>
+
+  <p>For example, if your API is about widgets, you probably want to expose a URL for each widget, so that clients can just access the widgets they’re interested in.</p>
+
+  <pre><code class="language-example">GET /widget/5382894223 HTTP/1.1
+  Accept: application/widget+json
+  Host: api.widgets.org
+  Accept-Encoding: gzip, deflate
+  User-Agent: BobsWidgetClient/1.5
+  </code></pre>
+
+  <p>However, in HTTP/1, requests are <em>expensive</em>, and an API designed like this quickly runs into practical problems; if a client needs to find out about forty specific widgets, 40 requests need to be made. Besides the overhead of transmitting all of those requests (at about 150 bytes each, as per above, that’s almost 6K), the client has an awkward decision about how to transmit them:</p>
+
+  <ol>
+    <li>
+      <p>It can use a single connection for all 40 requests. Practically speaking, this means that the minimum time to service all of the requests is 40 round trips between the client and server (plus a few more for connection setup). Even if can use <a href="https://en.wikipedia.org/wiki/HTTP_pipelining">HTTP pipelining</a> (which is often problematic), any delay in producing one of the responses will block all of those behind it.</p>
+    </li>
+    <li>
+      <p>It can use a single connection per request, so that none of them blocks the others. However, this means that the client will use 40 connections, which take time to open, consume resources, and will very often cause TCP congestion problems, which adds – not removes – significant delays and inefficiency, due to retransmission.</p>
+    </li>
+    <li>
+      <p>It can use a smaller number of connections to spread out the load, reducing (but not removing) the risk of congestion issues without requiring the requests to be completely serialised. This is effectively the compromise position; it won’t necessarily take 40 round trips, but it’ll be at least 40 divided by the number of connections used. Also, delay on one response will still block the responses “behind” it on that same connection – meaning that performance will vary depending on a number of factors. And variance in performance is often worse than consistent delay.</p>
+    </li>
+  </ol>
+
+  <p>Some APIs try to dodge this choice by offering a URL that clients can GET or POST a “batch” request to, e.g.,</p>
+
+  <pre><code class="language-example">GET /widgets/5382894223,35223231,534232313,5231332435 HTTP/1.1
+  Accept: application/widgets+json
+  Host: api.widgets.org
+  Accept-Encoding: gzip, deflate
+  User-Agent: BobsWidgetClient/1.5
+  </code></pre>
+
+  <p>However, this approach has a number of downsides. Both the service and clients need to understand a new endpoint, and a new list-based format, bloating the API – especially if there are many different types of resources that need similar treatment. Furthermore, this approach seriously impacts cache efficiency, creating further server load and client-perceived latency.</p>
+
+  <p>This has also been one of the factors leading to query languages like <a href="https://graphql.org">GraphQL</a> being developed; if you can describe precisely what you want to the server in an efficient format, it can reply with just what you want.</p>
+
+  <p class="hero">This awkward choice is also faced by Web browsers when using HTTP/1 to request all of the various assets on a Web page, and led to the design of SPDY, which served as input to HTTP/2. HTTP/2 is fundamentally different to HTTP/1 in several ways, but <em>multiplexing</em> – the ability to have multiple requests and responses in flight on one connection – is the biggest.</p>
+
+  <p>Multiplexing associates each request/response exchange with a <em>stream ID</em>, and uses that to make sure that the chunks of each aren’t mixed up when they’re transmitted, no matter how they’re interleaved. It means that you can use only one connection without sacrificing performance due to <a href="https://en.wikipedia.org/wiki/Head-of-line_blocking">Head of Line Blocking</a>.</p>
+
+  <p class="hero">The above is probably not news to most, but I suspect the implications for API design aren’t fully apparent. On the wire, HTTP/2 (and soon, HTTP/3) allows you to express a large number of requests in a very compact way.</p>
+
+  <p>To give a very simplistic example, consider this script, which makes 40 concurrent HTTP/2 requests with <a href="https://www.nghttp2.org">nghttp2</a>:</p>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+  <span class="nv">URLS</span><span class="o">=</span><span class="s2">""</span>
+  <span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..40<span class="o">}</span>
+  <span class="k">do
+      </span>URLS+<span class="o">=</span><span class="s2">"https://localhost:8443/widgets/</span><span class="k">${</span><span class="nv">i</span><span class="k">}</span><span class="s2">/whatever "</span>
+  <span class="k">done
+
+  </span>nghttp <span class="nt">-y</span> <span class="nt">--no-dep</span> <span class="nv">$URLS</span>
+  </code></pre></div></div>
+
+  <p>If you watch that in Wireshark, you’ll see those 40 requests go by in <strong>one 1440 byte packet</strong>. Here’s the relevant bits of the text dump (with some details elided and lines folded):</p>
+
+  <pre><code class="language-example">No. 11  Time 0.002228  Source ::1  src port 56623  destination ::1
+  Protocol HTTP2  Length 1440   Information
+  Magic, SETTINGS[0],
+  HEADERS[1]: GET /widgets/1/whatever,
+  HEADERS[3]: GET /widgets/2/whatever,
+  HEADERS[5]: GET /widgets/3/whatever,
+  HEADERS[7]: GET /widgets/4/whatever,
+  ...
+  HEADERS[75]: GET /widgets/38/whatever,
+  HEADERS[77]: GET /widgets/39/whatever,
+  HEADERS[79]: GET /widgets/40/whatever
+
+  Frame 11: 1440 bytes on wire (11520 bits),
+      1440 bytes captured (11520 bits) on interface 0
+  Null/Loopback
+  Internet Protocol Version 6, Src: ::1, Dst: ::1
+  Transmission Control Protocol
+      Source Port: 56623
+      Destination Port: 8443
+      [Stream index: 0]
+      [TCP Segment Len: 1364]
+      TCP payload (1364 bytes)
+  </code></pre>
+
+  <p>Most of the individual requests are 23 or so bytes, so you should be able to fit about <strong>400 requests like this in the first 10 packets</strong> (the most common initial CWND) of a connection before any further requests need to wait for an ACK. No worries about Head of Line blocking, congestion events due to multiple connections, or bloat.</p>
+
+  <p>The responses come back efficiently too; as soon as the server has part of a response available, it can send it, constrained only by available bandwidth. In particular, if a cache is between the server and client, it can fill the available bandwidth while the server answers uncached requests – making the most of the resources available.</p>
+
+  <p class="hero">This is pretty powerful. Without too much exaggeration, another way to think of HTTP/2 is as <em>a new query language</em> – one that lets you encode a very complex set of requests into a small amount of data that is heavily optimised for transmission, while still allowing standard HTTP components – especially caches – to work with the individual requests.</p>
+
+  <p>You might say that the URLs in my example are very similar, which isn’t realistic for many use cases. That’s true, but because of <a href="https://www.mnot.net/blog/2018/11/27/header_compression">the way that HPACK header compression works</a>, that doesn’t matter too much; forty requests for any URL paths of about that length would encode to be about the same size.</p>
+
+  <p>There are, of course, other reasons to use batch endpoints or specialised query languages; in particular, if some of your requests have side effects that are visible in others that you’re making, so that their processing order is important.</p>
+
+  <p>It’s also early days for HTTP/2 clients; while it’s well established in browsers, it’s just starting to be available and usable as a library in many languages (hint: try <a href="https://curl.haxx.se/docs/http2.html">libcurl</a>). Your server implementation will also need to be carefully considered to exploit this kind of request pattern; many will need rethinking before they can handle 40 or 400 concurrent requests on one connection efficiently (but it is possible; caching can help tremendously, as can consider outstanding requests as a pool, rather than in isolation).</p>
+
+  <p>With all of those caveats noted, HTTP/2 should put to rest any notion of the need to minimise the number of requests for APIs; the protocol makes them cheap enough to not practically matter. Go ahead and design a highly granular HTTP API to meet the needs of your clients.</p>]]>
+      </content>
+    </entry>
+
+    <entry>
+      <title>Moving Control to the Endpoints</title>
+      <link rel="alternate" type="text/html" href="/blog/2019/06/11/endpoint_control" />
+      <id>https://www.mnot.net/blog/2019/06/11/endpoint_control</id>
+      <updated>2019-06-11T00:00:00Z</updated>
+      <author>
+          <name>Mark Nottingham</name>
+          <uri>https://www.mnot.net/personal/</uri>
+      </author>
+      <summary>The introduction of encrypted DNS is a natural step in the process of securing the Internet, but it has brought a considerable amount of controversy, because it removes a means of control for network operators -- including not only enterprises but also schools and parents. The solution is to move control of these services to the endpoints of communication -- for example, the users’ computers -- but doing so has its own challenges.</summary>
+      
+    <category term="Internet" />
+        
+      <content type="html" xml:lang="en" xml:base="/blog/2019/06/11/endpoint_control">
+        <![CDATA[<p class="banner">The introduction of encrypted DNS is a natural step in the process of securing the Internet, but it has brought a considerable amount of controversy, because it removes a means of control for network operators – including not only enterprises but also schools and parents. The solution is to move control of these services to the endpoints of communication – for example, the users’ computers – but doing so has its own challenges.</p>
+
+  <p><em>This article first appeared <a href="https://blog.apnic.net/2019/06/11/moving-control-to-the-endpoints-motivations-challenges-and-the-path-forward/">on the APNIC Blog</a>.</em></p>
+
+  <h3 id="secure-communication-the-new-default">Secure Communication: The New Default</h3>
+
+  <p>In the past half decade, the Internet community has put a tremendous amount of effort into securing communications. TLS has evolved to <a href="https://www.ietf.org/blog/tls13/">version 1.3</a>, and various parts of the Web platform have been conditioned to <a href="https://www.w3.org/TR/secure-contexts/">require a secure context</a>. <a href="https://letsencrypt.org/">Let’s Encrypt</a> was established to lower the barrier to getting a certificate, and work continues to make secure communication easy to deploy, easy to use, and eventually, the only option. For example, <a href="https://quicwg.org/">QUIC</a>, a new transport protocol, only offers encrypted communications.</p>
+
+  <p>The Snowden revelations did not solely motivate these changes; efforts already underway were accelerated by the realisation that insecure communications were being exploited at a large scale, and that without action they would continue to be vulnerable – whether that be to a government (benevolent or otherwise), a criminal, or other attackers.</p>
+
+  <p>This effort also continues implementation of one of the foundations of the Internet’s architecture, the <a href="https://en.wikipedia.org/wiki/End-to-end_principle">end-to-end principle</a>. As per Wikipedia:</p>
+
+  <blockquote>
+    <p>In networks designed according to this principle, application-specific features reside in the communicating end nodes of the network, rather than in intermediary nodes, such as gateways and routers, that exist to establish the network.</p>
+  </blockquote>
+
+  <p><a href="https://https.cio.gov/everything/">Encrypting as much communication as possible</a> helps to keep the Internet flexible; networks often make assumptions about the protocols that run across them based upon current traffic, with the side effect of making changes to those protocols very difficult to deploy (referred to as ‘<a href="https://lwn.net/Articles/745590/">ossification</a>’ in the industry).</p>
+
+  <h3 id="network-interventions">Network Interventions</h3>
+
+  <p>These changes have not come without friction. As communications become more opaque, a number of parties that have previously interposed various policies using the network have found that it’s less possible to do so.</p>
+
+  <ul>
+    <li>
+      <p>Commercial enterprises often impose various policies using network interventions; for example, they scan for viruses, perform data loss prevention, and monitor user activity.</p>
+    </li>
+    <li>
+      <p>Schools, prisons and parents sometimes use network interventions to control what parts of the Internet those under their charge have access to, and monitor their activity.</p>
+    </li>
+    <li>
+      <p>Some governments use network interventions to impose policy for access to network resources as well, often to prevent access to services or content that is illegal in their jurisdiction.</p>
+    </li>
+  </ul>
+
+  <p>In each of these cases, the intervention is taking advantage of some latent aspect of the Internet’s protocols. While such monitoring or filtering was not an intended use, the protocols’ designs allowed it by nature. Effectively, these interventions exploit a loophole – one that the protocols neither sanction nor guarantee will always be available.</p>
+
+  <h3 id="a-fairly-smooth-start">A Fairly Smooth Start</h3>
+
+  <p>Recent efforts to secure communication initially focused upon application protocols such as HTTP. Because HTTPS was already defined and used on the Internet, this was an evolution rather than a revolution; whereas before a typical website using HTTPS was a bank or an Internet retailer, the changes discussed above spread its use to what is now the <a href="https://httparchive.org/reports/state-of-the-web#pctHttps">vast majority of the Web</a>.</p>
+
+  <p>As a result, while there was some concern expressed by some about the lack of visibility into these data flows (especially by networks that were concerned with a loss of caching efficiency), but the security goals were well-understood, and so this is now how the Internet works.</p>
+
+  <p>Subsequently, some network operators have expressed concerns about the standardisation of the new transport protocol <a href="https://quicwg.org/">QUIC</a>, because it encrypts signalling that was previously sent in the clear by TCP. They held that such information helps them operate their networks, in particular in estimating things such as latency issues experienced by connections traversing their networks.</p>
+
+  <p>After much discussion, the <a href="https://www.ietfjournal.org/enabling-internet-measurement-with-the-quic-spin-bit/">spin bit was added</a> to QUIC to address these concerns by allowing endpoints to choose whether to expose this information. Although still somewhat controversial, this represents a fruitful consultation with an affected community, and the development of an appropriate response – one that satisfies their needs while preserving the security properties desired.</p>
+
+  <h3 id="enter-encrypted-dns">Enter Encrypted DNS</h3>
+
+  <p>More recently, people have become concerned about the security of the Domain Name System (DNS). While <a href="https://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions">DNSSEC</a> provides integrity and authentication to DNS results, it does not provide confidentiality, and its integrity and authentication mechanisms typically don’t extend to the client.</p>
+
+  <p>The DNS is often used as a way to control and monitor users in the network interventions mentioned above. By recording the names that a client requests, the network can build a profile of their activity — by returning false results, it can make it harder to find and contact Internet resources.</p>
+
+  <p>The problem is that there’s no way to only allow appropriate interventions in the DNS. While some might be legitimate and even desired by the user, a web browser (or mail client, or app) can’t distinguish between a DNS response that’s generated by a safety filter that a child’s parents have installed, a criminal sitting in a coffee shop, or an authoritarian government that’s looking for dissidents.</p>
+
+  <p>In other words, if a service such as the DNS is going to be used to impose policy, it needs to be authenticated; both so that you can verify who is providing the service, and also so that if the service isn’t available, you can take further action (for example, disabling access until a content filter is available again) without exposing yourself to attacks (for example, denial of service).</p>
+
+  <p>This led to the design of <a href="https://en.wikipedia.org/wiki/DNS_over_TLS">DNS over TLS</a> (DoT) and then <a href="https://en.wikipedia.org/wiki/DNS_over_HTTPS">DNS over HTTPS</a> (DoH). DoT encrypts DNS traffic, and DoH goes one step further by effectively hiding it inside of encrypted web traffic, thereby making it difficult to observe, block or modify.</p>
+
+  <p>Importantly, they were not developed with an assumption that the interventions listed above are illegitimate. Instead, it was done with the knowledge that it’s not possible to distinguish between a DNS resolver imposing a service wanted by the user (or the owner of the computer) and one that’s attacking them, because of the way that DNS is configured (typically, from the ambient network environment).</p>
+
+  <p>They also don’t provide a new way of circumventing these controls; that has existed for some time using Virtual Private Networks (VPNs) of various flavours, as well as some forms of DNS proxies. Some of these workarounds are even available as browser extensions. What they do is make sure that average, non-technical users have the same protections available.</p>
+
+  <h3 id="the-shortcomings-highlighted-by-doh">The Shortcomings Highlighted by DoH</h3>
+
+  <p>DoH, in particular, has turned out to be more controversial than other efforts to increase the use of TLS.</p>
+
+  <p>Some security products, for example, use DNS as a way to identify requests from viruses and malware. DoH circumvents such services if they’re interposed by the local network’s chosen DNS server.</p>
+
+  <p>Some countries use the DNS to block various kinds of content. DoH can be used to circumvent such filters.</p>
+
+  <p>Network operators are also alarmed by the lack of visibility and control brought by DoH.</p>
+
+  <p>In each of these cases, the DNS was assumed to be a viable and appropriate way to achieve these goals, even though it was not designed to allow such interventions securely, and even though they can be circumvented (often easily). Because there isn’t a need to configure every application and device to use them, network interventions such as DNS filters are an attractive (if problematic) way to impose policy.</p>
+
+  <p>What would be a secure and appropriate way to meet these goals then? Through all of this, the mantra of those who advocate securing the Internet has been to move control to the endpoints, so that there is some assurance that the user is aware of the interventions, and that whoever owns the computer controls them.</p>
+
+  <p>However, this assumes that it’s easy to do so. While it may be technically possible to perform such functions on a user’s laptop or mobile device (in the sense that they’re general-purpose computers), the facilities that modern operating systems offer for such mechanisms are currently lacking.</p>
+
+  <p>Commercial enterprises are the best-served by current operating systems, using a thicket of mechanisms that fall under the umbrella term ‘device management’; for example, <a href="https://en.wikipedia.org/wiki/Mobile_device_management">Mobile Device Management</a> (MDM) for laptops and mobile phones.</p>
+
+  <p>Likewise, some consumer-facing operating systems are offering improved controls for parents; for example, Apple’s iOS offers fine-grained remote control and monitoring of application use on a managed iPhone or iPad. Microsoft, likewise, has greatly improved the parental controls in Windows over time.</p>
+
+  <p>In time, these mechanisms will accommodate the need for DoH configuration, with appropriate controls to ensure that well-behaved applications respect it.</p>
+
+  <h3 id="the-path-forwards">The Path Forwards</h3>
+
+  <p>Like VPNs and similar circumventions, DoH is a genie that cannot be put back in its bottle. Even if the browser vendors can be convinced that it is a bad idea (and there is little evidence that they will be swayed), it’s trivial for any technically competent programmer to write a DoH proxy to run on their machine, and a DoH service to colocate with a website. DoH exists, it was possible even before it was specified, and can’t be wished away.</p>
+
+  <p>More to the point, encrypted DNS addresses a critical security issue in the current Internet architecture. Any weakness left will be exploited by attackers, making everything we do online vulnerable.</p>
+
+  <p>Instead, there needs to be renewed focus on the ability for a user to manage their computer, whether that be a corporate IT department, a school’s administrator, a parent, or just someone who wants to have more control over what they’re exposed to online.</p>
+
+  <p>That means a lot of careful thought and discussion with operating system vendors; they are the custodians of the computer’s view of the world, and can provide the appropriate abstractions to applications, users and administrators.</p>
+
+  <p>For example, a computer might be configured to disallow certain kinds of content. Several already do, thanks to their ‘software store’ model of installing applications. Those constraints should apply not only to the applications installed, but also to the content viewed with the web browsers on the system – even those not provided by the operating system vendor. That implies a significant amount of coordination between these parties.</p>
+
+  <p>What that coordination looks like is still unclear, but it could mean a system-wide DoH service, configured by the system’s administrator, that imposes the desired resources. In other words, the implementation of these services need not move to the endpoints – just the control. Doing so empowers users and helps assure that networks focus on what they do best – unmodified packet delivery. It also assures that they don’t unintentionally cause ossification in the Internet.</p>
+
+  <p>The technically inclined will note that it’s impossible to disallow all ‘offensive’ content completely, even if you can identify it; a user (for example, a precocious child, or just one with technically inclined friends) can find a workaround on a system that has even a sliver of capability. The point, though, is to put the tradeoff between capability and risk where it belongs – in the person who owns the computer.</p>
+
+  <p>It will also be essential to assure that the endpoints themselves don’t become vulnerable to new kinds of attacks once they have these more powerful capabilities. Furthermore, the relationship between ownership of a computer and control over it deserves more careful thought, since many people are using personal computers on behalf of their employers or another party that might want control over it, and vice versa. This extends to the ‘software store’ model of computing; if that becomes a control point, care needs to be taken to assure that it does not <a href="https://www.aclu.org/blog/apple-drone-strikes-and-limits-censorship">concentrate power inappropriately</a>.</p>
+
+  <p>All of this requires collaboration across industry, including operating systems vendors, network operators, protocol designers, application developers, and end users, including their advocates. Fostering that collaboration will require trust and goodwill between these parties – things that seem to be in short supply in the discussions to date.</p>
+
+  <p><em>Thanks to Martin Thomson, Joseph Lorenzo Hall, Patrick McManus and Daniel Kahn Gillmor reviewing this article.</em></p>]]>
+      </content>
+    </entry>
+
+    <entry>
+      <title>Eight #aabill Predictions</title>
+      <link rel="alternate" type="text/html" href="/blog/2018/12/06/predictions" />
+      <id>https://www.mnot.net/blog/2018/12/06/predictions</id>
+      <updated>2018-12-06T00:00:00Z</updated>
+      <author>
+          <name>Mark Nottingham</name>
+          <uri>https://www.mnot.net/personal/</uri>
+      </author>
+      <summary>As I write this, the Australian Senate is in the final stages of passing the Assistance and Access Bill 2018 (with some but not all amendments).</summary>
+      
+    <category term="Politics" />
+      
+    <category term="Australia" />
+        
+      <content type="html" xml:lang="en" xml:base="/blog/2018/12/06/predictions">
+        <![CDATA[<p>As I write this, the Australian Senate is in the final stages of passing the <a href="https://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId=r6195">Assistance and Access Bill 2018</a> (with some but not all amendments).</p>
+
+  <p>Lots of people think that the effects of this legislation will be far-reaching and surprising. Because it’s not clear how such a hastily written, vague bill will be implemented, many of the impacts are hard to predict, but its biggest effect might be easier to discern.</p>
+
+  <p>That’s because its true legacy isn’t likely to be a direct impact measured in TARs, TANs and TCNs issued; rather, its lasting effect will be the reaction of various parts of Industry and the Internet.</p>
+
+  <p>But what will that reaction be? Here are my off-the-cuff predictions:</p>
+
+  <h3 id="1-somebody-pulls-out">#1: Somebody Pulls Out</h3>
+
+  <p>Some hardware vendor, software author, or service provider might perceive the risk of continuing to do business in Australia – therefore making them subject to this law – as too high, and as a result pull their business fully out of this country.</p>
+
+  <p>What risk? The thinking goes that being subject to this legislation means that they are “tainted”; there might be an overreaching TCN or TAN applied, and its very limited oversight and transparency combined with the onerous secrecy measures means that overseas buyers will lose confidence.</p>
+
+  <p>Australia’s not helping itself here by being such a very small market, in global terms; if a provider loses 5% of their business in the US as a result, it’s not a hard choice.</p>
+
+  <p>I don’t think this is very likely, though, if only because other countries are reported to be considering enacting similar legislation, and cooperating in application of these laws.</p>
+
+  <p>Still, this might make sense for companies who don’t already have a lot of Australian business, or who are in especially sensitive industries, such as military and government suppliers. Likewise, a motivated and very large company might decide to make a statement here, sacrificing the Australian market to prevent this approach from spreading elsewhere.</p>
+
+  <p>It’s also more likely if a company perceives its obligations under Australian law to conflict with those it has in overseas jurisdictions – a factor that many submissions to the committee pointed out, and that wasn’t addressed in the amendments.</p>
+
+  <p>Let’s set the odds of this happening in the next five years to a company whose name most people would recognise at 20%.</p>
+
+  <h3 id="2-outsourcing-our-mates">#2: Outsourcing Our Mates</h3>
+
+  <p>A variant of #1 is Australian companies who serve global markets, especially when they have products or services that handle lots of sensitive data (whether that be military, corporate, government or personal).</p>
+
+  <p>Here, the perception of risk is much higher, because it’s an Australian company – even when the actual risk isn’t much different.</p>
+
+  <p>I suspect this is going to happen; the question is whether it will happen to a company whose name we’d recognise. Let’s put the odds of the latter happening in the next five years at, say, 15% – only because there aren’t <em>that</em> many companies that qualify.</p>
+
+  <h3 id="3-australia-gets-claytons-security">#3: Australia Gets Clayton’s Security</h3>
+
+  <p>An international company that serves Australia and wants to stay has another choice; it can create special, Australia-specific products and services; that way, if an “intercepting agency” asks for access to a non-Australian version, the company can tell them to <em>get fucked</em> (this is Australia, after all).</p>
+
+  <p>That Australian product (or service) is likely to have fewer guarantees around privacy and security, because it is operating in an environment that’s perceived as unfriendly to them.</p>
+
+  <p>Again, this is mostly about managing the perception of overseas buyers; if they know that there’s a separate Australian product, they’re more likely to believe that they’re insulated from Australian legal demands. It’s also going to be appealing to suppliers in sensitive markets.</p>
+
+  <p>I think this is quite likely; let’s say a 65% chance of it being done to a product or service from a supplier most people would recognise, in the next five years.</p>
+
+  <h3 id="4-less-is-more">#4: Less is More</h3>
+
+  <p>Arguably, the instruments in this legislation that the “interception agencies” <em>really</em> want to be using are the TARs and TANs – Technical Assistance Requests and Notices. “Assistance” means that they’re just asking for data or a capability that the provider already has lying around.</p>
+
+  <p>Some of that is unavoidable; for example, a Web store is always going to know what you buy, so they’ll be able to provide this if they’re served with a TAR or TAN – which have a lower bar for oversight, as compared to TCNs.</p>
+
+  <p>That said, a lot of what’s collected isn’t what you do, it’s extra information – sometimes called “metadata” – that helps them operate their services, or is just collected in the normal process of business. Interestingly, it’s not at all clear what kind of oversight applies to metadata, or whether a warrant is required; see my <a href="https://www.mnot.net/blog/2018/11/15/trust_australia">earlier post</a>.</p>
+
+  <p>If consumers get nervous about these powers being misused, it might create a market for services and software that intentionally limits data collection.</p>
+
+  <p>A year or two ago I would have said there was little to no chance of this happening, because the vast majority of people don’t seem to care about their privacy (as evidenced by Facebook et al). However, I think the tide is turning a bit here (thanks to Facebook et al), and <code class="highlighter-rouge">#aabill</code> could contribute to a tipping point.</p>
+
+  <p>In a way, this is already happening; Apple is making great strides in being thoughtful about how they treat data and the capabilities of their devices. Product managers at other companies are taking notice, even if Apple’s business model isn’t the same as theirs.</p>
+
+  <p>This is more of a trend than a prediction, so I won’t assign a probability.</p>
+
+  <h3 id="5-going-really-dark">#5: Going Really Dark</h3>
+
+  <p>The other obvious countermeasure to things like <code class="highlighter-rouge">#aabill</code> is to use encryption prolifically; not only “on the wire”, but “end to end” – i.e., between you and the people you’re communicating with, and not <em>anyone</em> in between.</p>
+
+  <p>Again, we’re already seeing this, in messaging apps like <a href="https://www.signal.org">Signal</a> and <a href="https://wire.com/en/">Wire</a>. Unfortunately the design of e-mail makes it impractical for everyone to do it there; for things like file storage, it hasn’t caught on very well, and the way the Web works means you <em>have</em> to trust the server.</p>
+
+  <p>Lots of people are trying to create other “dapps” – distributed applications – but just because an application is distributed, it doesn’t mean that it honours your private data.</p>
+
+  <p>Still, I suspect we’re going to see renewed interest and work on end-to-end encryption where possible; the IETF’s work in <a href="https://mlswg.github.io">mls</a> is one recent example.</p>
+
+  <p>Again, this is more of a trend than a prediction, so I won’t assign a probability.</p>
+
+  <h3 id="6-blowing-the-whistle">#6: Blowing the Whistle</h3>
+
+  <p>The original bill had the wolves overseeing the henhouse; the intercepting agencies were also in charge of assuring they were “reasonable” – and if you didn’t like it, your only option was to zip your mouth and meekly complain to a secret court.</p>
+
+  <p>As a result, I had a suspicion that it would breed a new generation of whistleblowers; people in tech companies who saw this law being used in ways that they didn’t think were appropriate, and making that public.</p>
+
+  <p>While the bill goes to some lengths to punish such behaviour, I think it underestimates how easy it is to anonymously whistleblow these days (thanks, <a href="https://securedrop.org">SecureDrop</a>), nor how internationally distributed so many tech companies are. While Australia might punish their employer, the damage (in .au’s eyes) will be done.</p>
+
+  <p>The newly-amended bill creates a slightly more antagonistic oversight and appeal mechanism using <a href="https://www.agis.gov.au">IGIS</a> and the <a href="http://www.ombudsman.gov.au">Commonwealth Ombudsman</a>, so the impetus for a whistleblower might not be so great.</p>
+
+  <p>On the other hand, most non-Australian developers aren’t really aware of or inclined to trust these institutions, and many companies will do the calculus and give in to these demands quietly – after all, indemnity! – rather than fight, despite their employees’ misgivings.</p>
+
+  <p>So, I think the likelihood of an <code class="highlighter-rouge">#aabill</code> whistleblower emerging in the next five years is reasonably good; say, 35%. Note that it might not be reported in the Australian news media, but that’s a different problem.</p>
+
+  <h3 id="7-open-source-renaissance">#7: Open Source Renaissance</h3>
+
+  <p>Another remedy for people who perceive this legislation as overreach is to use Open Source software (and hardware); after all, who would a TAN or TCN be served upon?</p>
+
+  <p>Against this is the impracticality of OS for the vast majority of people, and momentum in the other direction from “cloud” services.</p>
+
+  <p>So I think this is extremely unlikely to move the needle for anything but a niche market. However, it does illustrate one thing - that niche market is very likely to include the terrorists and pedophiles that this legislation attempts to target.</p>
+
+  <h3 id="8-scandal">#8: Scandal!</h3>
+
+  <p>One last prediction for now, but it’s not of a reaction.</p>
+
+  <p>Last week, the Police Commissioner for Victoria, Graham Ashton, was quoted as justifying <a href="https://www.theage.com.au/national/victoria/i-did-nothing-wrong-ashton-stands-firm-amid-informer-3838-scandal-20181206-p50kiq.html">using a lawyer as an informant against their own client</a> with:</p>
+
+  <blockquote>
+    <p>Melbourne was in the grip of what is now widely known as the gangland wars…It was, accordingly, a desparate and dangerous time.</p>
+  </blockquote>
+
+  <p>Which sounds a lot like <em>do anything to get the job done – even if it violates the law.</em> That’s not very comforting, when at the same time they’ve been given an extraordinary amount of power with limited oversight.</p>
+
+  <p>So, yes, I think there will be at least one <code class="highlighter-rouge">#aabill</code> scandal where these powers are seen as being misused. Let’s say 40% of it seeing daylight in the next five years (these things take time to percolate).</p>
+
+  <h3 id="bonus-round-jobs-jobs-jobs">Bonus Round: Jobs Jobs Jobs</h3>
+
+  <p>From Twitter:</p>
+
+  <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Well shit, I&#39;ve already got international folks asking if they need to treat their Australian teams as potentially compromised now.<br /><br />Unfortunately, yes. With the <a href="https://twitter.com/hashtag/aabill?src=hash&amp;ref_src=twsrc%5Etfw">#aabill</a> you can be compelled to secretly break security on a system, or go to jail.<a href="https://twitter.com/hashtag/auspol?src=hash&amp;ref_src=twsrc%5Etfw">#auspol</a></p>&mdash; Paul Fenwick (@pjf) <a href="https://twitter.com/pjf/status/1070606119993696256?ref_src=twsrc%5Etfw">December 6, 2018</a></blockquote>
+  <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <p>It’s very easy to imagine this. Lots of overseas companies have been wooed to Victoria and New South Wales to open branch offices, hire teams of developers and kickstart the local startup culture. For some products and services, this will make Australia a much less appealing destination – for existing teams as well as new ones.</p>]]>
+      </content>
+    </entry>
+
+    <entry>
+      <title>Australian Assistance and Access Bill 2018: Amendments</title>
+      <link rel="alternate" type="text/html" href="/blog/2018/12/06/aabill" />
+      <id>https://www.mnot.net/blog/2018/12/06/aabill</id>
+      <updated>2018-12-06T00:00:00Z</updated>
+      <author>
+          <name>Mark Nottingham</name>
+          <uri>https://www.mnot.net/personal/</uri>
+      </author>
+      <summary>In a great hurry, Australia’s house of representatives today passed the controversial Assistance and Access Bill 2018. However, there were some last-minute amendments slipped in. Currently, it’s being debated in the Senate.</summary>
+      
+    <category term="Australia" />
+      
+    <category term="Politics" />
+        
+      <content type="html" xml:lang="en" xml:base="/blog/2018/12/06/aabill">
+        <![CDATA[<p>In a great hurry, Australia’s house of representatives today passed the controversial <a href="https://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId=r6195">Assistance and Access Bill 2018</a>. However, there were some <a href="http://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id%3A%22legislation%2Fsched%2Fr6195_sched_d701fa80-e013-4a9e-b3e2-4e52b8b2facf%22">last-minute amendments</a> slipped in. Currently, it’s being debated in the Senate.</p>
+
+  <p>I suspect not many people (including our representatives) have had a chance to read them, so I’m going to use this post to try to summarise, based upon a reading since the <a href="http://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id%3A%22legislation%2Famend%2Fr6195_amend_2ef65c47-7a59-45e1-9427-cf3e7400ef4d%22">draft amendments</a> were published early this morning (!) and my <a href="https://www.mnot.net/blog/2018/11/15/trust_australia">existing knowledge of the bill</a> (read this for context).</p>
+
+  <p>I am not a lawyer, etc., and I’ve probably missed or misunderstood things. Corrections and proposed additions welcome on <a href="https://twitter.com/mnot">Twitter</a>.</p>
+
+  <p>I’m only going to focus on Schedule 1 – the part about industry assistance – for now. I’ll be using the <code class="highlighter-rouge">(number)</code> notation found to identify individual amendments in <a href="http://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id%3A%22legislation%2Fsched%2Fr6195_sched_d701fa80-e013-4a9e-b3e2-4e52b8b2facf%22">the amendments document</a> (<a href="http://parlinfo.aph.gov.au/parlInfo/download/legislation/sched/r6195_sched_d701fa80-e013-4a9e-b3e2-4e52b8b2facf/upload_pdf/Telecommunications%20and%20Other%20Legislation%20Amendment%20(Assistance%20and%20Access)%20Bill%202018.pdf;fileType=application%2Fpdf">PDF</a>), since they don’t provide links to individual items (hint, hint).</p>
+
+  <h3 id="general-changes">General Changes</h3>
+
+  <p>First, I’ll jump around to cover some non-specific, overall changes in the bill.</p>
+
+  <p>Amendment <code class="highlighter-rouge">(1)</code> kicks things off by making <code class="highlighter-rouge">#aabill</code> Schedule 1 effective the day it receives Royal Assent (i.e., the <a href="http://gg.gov.au">Governor General</a> signs off), instead of a day that’s Proclaimed sometime in the nine months afterwards.</p>
+
+  <p>Amendment <code class="highlighter-rouge">(3)</code> schedules the legislation for review by the <a href="https://www.inslm.gov.au">Independent National Security Legislation Monitor</a> after 18 months of operation.</p>
+
+  <p><strong>UPDATE</strong>: Penny Wong has submitted some amendments on behalf of the opposition in the Senate, to <a href="https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id:%22legislation/billhome/display.w3p;query=Id%3A%22legislation%2Famend%2Fr6195_amend_c745a958-ab29-4e2b-80b4-939c25d0f3fb%22;rec=0">make the review immediate</a>.</p>
+
+  <p>There are a number of changes to require more written records of various actions (too many to list), and corresponding notifications. However, it appears soft; failing to keep records or notify is called out in a number of places as <strong>not</strong> invalidating these instruments, and there’s this interesting addition in <code class="highlighter-rouge">(81)</code>:</p>
+
+  <blockquote>
+    <p>(2A)  Despite subsection 13.3(3) of the Criminal Code , in a prosecution for an offence against subsection (1) of this section, an IGIS official does not bear an evidential burden in relation to the matters in subsection (2) of this section, to the extent to which that subsection relates to subsection (5) of this section.</p>
+
+    <p>(2B)  Despite subsection 13.3(3) of the Criminal Code , in a prosecution for an offence against subsection (1) of this section, an Ombudsman official does not bear an evidential burden in relation to the matters in subsection (2) of this section, to the extent to which that subsection relates to subsection (5A), (5B) or (5C) of this section.</p>
+  </blockquote>
+
+  <p>As I understand it, that means that <a href="https://igis.gov.au">IGIS</a> and the <a href="http://www.ombudsman.gov.au">Ombudsman</a> don’t bear the evidential burden to prove that an exception to the disclosure provisions of this law apply to them. I don’t know enough to say that it’s a get-out clause, but it does seem… odd. If you know why they need this protection, please tell me.</p>
+
+  <p><code class="highlighter-rouge">(85)</code> allows communications providers to request authorisation to disclose information about the TANs and TCNs they receive, from the party they received it from.</p>
+
+  <p>Finally, way down in <code class="highlighter-rouge">(138)</code>, a new level of oversight is established as 317ZRB; the <a href="http://www.ombudsman.gov.au">Commonwealth Ombudsman</a> may inspect records to determine compliance and write a report – as long as the report doesn’t expose operational activities or methodologies, or prejudice an investigation or prosecution. The report must be tabled in Parliament by the <a href="https://www.australia.gov.au/directories/australia/portfolio/homeaffairs">Home Affairs Minister</a>.</p>
+
+  <h3 id="when-i-use-a-word">When I Use A Word…</h3>
+
+  <p>A number of the following amendments adjust the definitions in the bill, some with interesting effect:</p>
+
+  <ul>
+    <li><code class="highlighter-rouge">(6)</code> defines <strong>electronic protection</strong> as authentication and encryption.</li>
+    <li><code class="highlighter-rouge">(10)</code> constrains the meaning of <strong>interception agency</strong> to just be the <a href="https://www.afp.gov.au">AFP</a>, Australian Crime Commission (<a href="https://www.acic.gov.au/">these folks?</a>) or the Police Force of a State or the Northern Territory. I.e., <a href="http://www.icac.nsw.gov.au">ICAC</a> and similar are <strong>out</strong> (possibly because some politicians recognised the implications?).</li>
+    <li><code class="highlighter-rouge">(14)</code> defines <strong>serious offences</strong> as something punishable by 3 years or more imprisonment, in Australia or overseas. This is a requirement for all three instruments (TARs - <code class="highlighter-rouge">(21)</code>, TANs - <code class="highlighter-rouge">(34)</code>, and TCNs - <code class="highlighter-rouge">(51)</code>), instead of the old lower bar of “laws imposing pecuniary penalties”.</li>
+    <li><code class="highlighter-rouge">(16)</code> defines <strong>systemic vulnerability</strong> as “a vulnerability that affects a whole class of technology, but does not include a vulnerability that is selectively introduced to one or more target technologies that are connected with a particular person.” <strong>systemic weakness</strong> has a similar definition.</li>
+    <li><code class="highlighter-rouge">(17)</code> defines a new term, <strong>target technology</strong>. It seems to be an attempt to constrain the application of these instruments to technology that has certain relationships to the person of interest.</li>
+  </ul>
+
+  <p>Jumping down to <code class="highlighter-rouge">(89)</code> further refines the meaning of systemic weakness in <a href="https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;db=LEGISLATION;id=legislation%2Fbills%2Fr6195_first-reps%2F0001;query=Id%3A%22legislation%2Fbills%2Fr6195_first-reps%2F0000%22;rec=0#_Toc524674307">317ZG</a>:</p>
+
+  <blockquote>
+    <p>(4A)  In a case where a weakness is selectively introduced to one or more target technologies that are connected with a particular person, the reference in paragraph (1)(a) to implement or build a systemic weakness into a form of electronic protection includes a reference to any act or thing that will, or is likely to, jeopardise the security of any information held by any other person.</p>
+
+    <p>(4B)  In a case where a vulnerability is selectively introduced to one or more target technologies that are connected with a particular person, the reference in paragraph (1)(a) to implement or build a systemic vulnerability into a form of electronic protection includes a reference to any act or thing that will, or is likely to, jeopardise the security of any information held by any other person.</p>
+
+    <p>(4C)  For the purposes of subsections (4A) and (4B), an act or thing will, or is likely to, jeopardise the security of information if the act or thing creates a material risk that otherwise secure information can be accessed by an unauthorised third party.</p>
+  </blockquote>
+
+  <p><strong>UPDATE</strong>: Penny Wong has submitted some amendments on behalf of the opposition in the Senate; one to <a href="https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id:%22legislation/billhome/display.w3p;query=Id%3A%22legislation%2Famend%2Fr6195_amend_c42d6720-ae94-4751-b534-c145eccbd14d%22;rec=0">rescind the changes in <code class="highlighter-rouge">(16)</code>, <code class="highlighter-rouge">(17)</code>, <code class="highlighter-rouge">(86</code>) and <code class="highlighter-rouge">(90)</code></a> (I think the intended target was <code class="highlighter-rouge">(89)</code>?) and one to <a href="https://parlinfo.aph.gov.au/parlInfo/search/display/display.w3p;query=Id:%22legislation/billhome/display.w3p;query=Id%3A%22legislation%2Famend%2Fr6195_amend_b7158111-49d8-4f3a-bb1f-e5dddacefca1%22;rec=0">rewrite 317ZG completely</a>.</p>
+
+  <h3 id="technical-assistance-requests">Technical Assistance Requests</h3>
+
+  <p>Technical Assistance Requests, or TARs, are a polite request to a cooperating provider to share information or a capability they already have; effectively they formalise the relationship and give the provider some indemnity.</p>
+
+  <p>Listing the parts that caught my eye:</p>
+
+  <p><code class="highlighter-rouge">(23)</code> redefines the <strong>relevant objective</strong> for TARs to be specific to the party making the request:</p>
+  <ul>
+    <li>A request from the DG of Security has to be regarding national security</li>
+    <li>One from the DG of ASIS has to be about national security, foreign relations, or the interests of “Australia’s national economic well-being”</li>
+    <li>One from the DG of the ASD has to be related to their work</li>
+    <li>One from another interception agency has to be regarding enforcement of criminal law or assistent enforcement of criminal laws in other countries (serious offences both)</li>
+  </ul>
+
+  <p><code class="highlighter-rouge">(33)</code> adds a new section, 317JC - “Whether a technical assistance request is reasonable and proportionate.” It’s worth highlighting (please excuse some small formatting changes):</p>
+
+  <blockquote>
+    <p>In considering whether a technical assistance request or a varied technical assistance request is reasonable and proportionate, the Director-General of Security, the Director-General of the Australian Secret Intelligence Service, the Director-General of the Australian Signals Directorate or the chief officer of an interception agency, as the case requires, must have regard to the following matters:</p>
+    <ol>
+      <li>the interests of national security;</li>
+      <li>the interests of law enforcement;</li>
+      <li>the legitimate interests of the designated communications provider to whom the request relates;</li>
+      <li>the objectives of the request;</li>
+      <li>the availability of other means to achieve the objectives of the request;</li>
+      <li>whether the request, when compared to other forms of industry assistance known to the Director-General of Security, the Director-General of the Australian Secret Intelligence Service, the Director-General of the Australian Signals Directorate or the chief officer, as the case requires, is the least intrusive form of industry assistance so far as the following persons are concerned:
+        <ol>
+          <li>persons whose activities are not of interest to <a href="https://www.asio.gov.au">ASIO</a>;</li>
+          <li>persons whose activities are not of interest to the Australian Secret Intelligence Service;</li>
+          <li>persons whose activities are not of interest to the Australian Signals Directorate;</li>
+          <li>persons whose activities are not of interest to interception agencies;</li>
+        </ol>
+      </li>
+      <li>whether the request is necessary;</li>
+      <li>the legitimate expectations of the Australian community relating to privacy and cybersecurity;</li>
+      <li>such other matters (if any) as the Director-General of Security, the Director-General of the Australian Secret Intelligence Service, the Director-General of the Australian Signals Directorate or the chief officer, as the case requires, considers relevant.</li>
+    </ol>
+  </blockquote>
+
+  <p>Finally, there are a number of amendments later on that patch in protections against systemic weaknesses for TARs; this seems to have been an oversight in the earlier bill.</p>
+
+  <h3 id="technical-assistance-notices">Technical Assistance Notices</h3>
+
+  <p>A TAN, you will recall, is the mandatory version of a TAR; compliance is compelled, but it still has to be a pre-existing capability. Here’s an overview of what’s changed:</p>
+
+  <p><code class="highlighter-rouge">(36)</code> adds a really interesting requirement for TANs:</p>
+
+  <blockquote>
+    <p>The specified acts or things must not be directed towards ensuring that a designated communications provider is capable of giving help to ASIO or an interception agency.</p>
+  </blockquote>
+
+  <p>I think that means that a TAN has to be about a specific case (above in section 2), not just developing a capability for the sake of it.</p>
+
+  <p><code class="highlighter-rouge">(38)</code> is a small change with a big effect; the “listed acts or things” for TANs is now a closed set, not an open-ended “include (but not limited to)…”</p>
+
+  <p><code class="highlighter-rouge">(39)</code> introduces a requirement for an interception agency of a State or Territory (i.e., the police) to get approval from the <a href="https://www.smh.com.au/national/who-is-andrew-colvin-20140918-10ijyq.html">AFP Commissioner</a> before they give it to a provider.</p>
+
+  <p><code class="highlighter-rouge">(41)</code> gives providers the right to make a complaint about TANs to <a href="https://www.igis.gov.au">IGIS</a> or the <a href="http://www.ombudsman.gov.au">Commonwealth Ombudsman</a> (depending on who gave it to them). They must be informed of this right.</p>
+
+  <p><code class="highlighter-rouge">(43)</code> requires TANs to have an expiry date of no more than 12 months; <code class="highlighter-rouge">(44)</code> allows that to be extended with agreement from the provider.</p>
+
+  <p><code class="highlighter-rouge">(45)</code> requires that the provider be consulted before a TAN, except when the matter is “urgent” (as determined by the issuing officer).</p>
+
+  <p><code class="highlighter-rouge">(50)</code> explicitly includes how intrusive a TAN’s effects are on people whose activities are not of interest in determining whether it is “reasonable and proportionate”.</p>
+
+  <h3 id="technical-capability-notices">Technical Capability Notices</h3>
+
+  <p>Finally, TCNs compel a provider to develop a new capability just for the requesting agency. The high points of changes here include:</p>
+
+  <p><code class="highlighter-rouge">(57)</code> is like <code class="highlighter-rouge">(38)</code> but for TCNs; it makes the “listed acts or things” a closed set.</p>
+
+  <p><code class="highlighter-rouge">(58)</code> removes 317T(8) to (11), which was text that prevented these instruments being used for wiretapping. That seems to have moved to 317ZGA with <code class="highlighter-rouge">(91)</code>.</p>
+
+  <p>While we’re on <code class="highlighter-rouge">(91)</code>, 317ZGA seems to preclude collecting “addresses.” This seems to be an attempt to reassure people about collecting “Web browsing history.”</p>
+
+  <p><code class="highlighter-rouge">(59)</code> requires the <a href="https://www.ag.gov.au">Attorney-General</a> to give notice of TCNs to the <a href="https://www.australia.gov.au/directories/australia/portfolio/homeaffairs">Home Affairs Minister</a>, and then <code class="highlighter-rouge">(62)</code> requires the Home Affairs Minister to tell <a href="https://www.igis.gov.au">IGIS</a> or the <a href="http://www.ombudsman.gov.au">Commonwealth Ombudsman</a> that the notice has been given.</p>
+
+  <p>Like TANs, <code class="highlighter-rouge">(63)</code> requires a maximum 12 month expiry on TCNs, and <code class="highlighter-rouge">(64)</code> allows them to be renewed, with agreement from the provider.</p>
+
+  <p>The original bill required consultation with the provider before giving them a TCN; <code class="highlighter-rouge">(68)</code> flips that around so that the provider has to request it in a specified time period. When they do ask for it, <code class="highlighter-rouge">(68)</code> specifies that the assessors are appointed by the Attorney-General (one with security clearance; the other an ex-judge), not jointly with the provider, as it was before. The scope of the report by the assessors is much more carefully defined, however.</p>
+
+  <p>As with the other instruments, <code class="highlighter-rouge">(75)</code> changes the meaning of “reasonable and proportionate” for TCNs to now explicitly include how intrusive they are on people whose activities are not of interest.</p>]]>
+      </content>
+    </entry>
+
+    <entry>
+      <title>Designing Headers for HTTP Compression</title>
+      <link rel="alternate" type="text/html" href="/blog/2018/11/27/header_compression" />
+      <id>https://www.mnot.net/blog/2018/11/27/header_compression</id>
+      <updated>2018-11-27T00:00:00Z</updated>
+      <author>
+          <name>Mark Nottingham</name>
+          <uri>https://www.mnot.net/personal/</uri>
+      </author>
+      <summary>One of the concerns that often comes up when someone creates a new HTTP header is how much “bloat” it will add on the network. This is especially relevant in requests, when a little bit of extra data can introduce a lot of latency when repeated on every request.</summary>
+      
+    <category term="HTTP" />
+      
+    <category term="Protocol Design" />
+        
+      <content type="html" xml:lang="en" xml:base="/blog/2018/11/27/header_compression">
+        <![CDATA[<p>One of the concerns that often comes up when someone creates a new HTTP header is how much “bloat” it will add on the network. This is especially relevant in requests, when a little bit of extra data can introduce a lot of latency when repeated on every request.</p>
+
+  <p>For example, if requests have an average of 1K of headers, and loading your page requires 30 requests, that means you need to upload 30K of data to get all of the responses <em>started</em>. <a href="https://en.wikipedia.org/wiki/TCP_congestion_control#Slow_start">TCP slow start</a> means that on a new connection, it’s going to take many round trips to get those requests out – a significant amount of time, especially when the server is far away.</p>
+
+  <p>HTTP/2 added a form of header compression (called <a href="https://httpwg.org/specs/rfc7541.html">HPACK</a>) to help address this concern. Unfortunately, there’s not a lot of information about it out there, so it’s easy to fall into the trap of thinking it works like other compression schemes we’re familiar with – for example, GZIP – and assuming that it’ll just work.</p>
+
+  <p>If you remember nothing else from this blog post, please take away that <strong>HPACK is not GZIP</strong>. It works in a very different way, and if you don’t understand how it works when you create a new header, you can make HTTP/2 much (much!) less efficient.</p>
+
+  <h3 id="how-hpack-works">How HPACK Works</h3>
+
+  <p>It’s reasonable to ask why GZIP wasn’t used; it offers better compression, as illustrated in  <a href="http://http2.github.io/compression-test/">our tests that helped guide HPACK’s design</a>. Below we show the size of all the 140 request header blocks on a single connection in “raw” HTTP/1 form, as well as GZIP compressed and an early form of HTTP/2 compression.</p>
+
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="800" height="436.364" viewBox="0, 0, 800, 436.364">
+    <g id="Layer_1">
+      <g>
+        <g>
+          <g>
+            <path d="M58.182,378.182 L58.182,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 58.182, 388.378)">
+              <tspan x="-2.182" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">0</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M154.469,378.182 L154.469,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 154.469, 388.378)">
+              <tspan x="-4.364" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">20</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M250.755,378.182 L250.755,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 250.755, 388.378)">
+              <tspan x="-4.364" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">40</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M347.042,378.182 L347.042,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 347.042, 388.378)">
+              <tspan x="-4.364" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">60</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M443.329,378.182 L443.329,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 443.329, 388.378)">
+              <tspan x="-4.364" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">80</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M539.616,378.182 L539.616,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 539.616, 388.378)">
+              <tspan x="-6.545" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">100</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M635.903,378.182 L635.903,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 635.903, 388.378)">
+              <tspan x="-6.545" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">120</tspan>
+            </text>
+          </g>
+          <g>
+            <path d="M732.19,378.182 L732.19,382.546" fill="#000000" />
+            <text transform="matrix(1, 0, 0, 1, 732.19, 388.378)">
+              <tspan x="-6.545" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">140</tspan>
+            </text>
+          </g>
+        </g>
+        <g>
+          <g>
+            <g>
+              <path d="M58.182,349.96 L741.818,349.96" fill="#000000" />
+              <path d="M58.182,349.96 L741.818,349.96" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 49.091, 350.207)">
+              <tspan x="-6.182" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">200</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,320.561 L741.818,320.561" fill="#000000" />
+              <path d="M58.182,320.561 L741.818,320.561" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 49.091, 320.809)">
+              <tspan x="-6.182" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">400</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,291.163 L741.818,291.163" fill="#000000" />
+              <path d="M58.182,291.163 L741.818,291.163" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 49.091, 291.41)">
+              <tspan x="-6.182" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">600</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,261.765 L741.818,261.765" fill="#000000" />
+              <path d="M58.182,261.765 L741.818,261.765" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 49.091, 262.012)">
+              <tspan x="-6.182" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">800</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,232.366 L741.818,232.366" fill="#000000" />
+              <path d="M58.182,232.366 L741.818,232.366" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 232.614)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">1,000</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,202.968 L741.818,202.968" fill="#000000" />
+              <path d="M58.182,202.968 L741.818,202.968" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 203.215)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">1,200</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,173.57 L741.818,173.57" fill="#000000" />
+              <path d="M58.182,173.57 L741.818,173.57" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 173.817)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">1,400</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,144.172 L741.818,144.172" fill="#000000" />
+              <path d="M58.182,144.172 L741.818,144.172" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 144.419)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">1,600</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,114.773 L741.818,114.773" fill="#000000" />
+              <path d="M58.182,114.773 L741.818,114.773" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 115.021)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">1,800</tspan>
+            </text>
+          </g>
+          <g>
+            <g>
+              <path d="M58.182,85.375 L741.818,85.375" fill="#000000" />
+              <path d="M58.182,85.375 L741.818,85.375" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+            </g>
+            <text transform="matrix(1, 0, 0, 1, 45.952, 85.622)">
+              <tspan x="-9.32" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">2,000</tspan>
+            </text>
+          </g>
+          <path d="M741.818,58.182 L58.182,58.182 L58.182,378.182 L741.818,378.182" fill-opacity="0" stroke="#0C0C0C" stroke-width="0.727" stroke-opacity="0.228" />
+          <text transform="matrix(0, -1, 1, 0, 32.742, 258.664)">
+            <tspan x="-39.755" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">compressed size, bytes</tspan>
+          </text>
+        </g>
+        <text transform="matrix(1, 0, 0, 1, 416.354, 33.818)">
+          <tspan x="-16.354" y="2.545" font-family="GillSans" font-size="8.727" fill="#000000">Requests</tspan>
+        </text>
+        <g>
+          <path d="M62.996,351.576 L63.799,351.429 C64.601,351.282 66.206,350.988 67.811,354.247 C69.415,357.505 71.02,364.316 72.625,368.284 C74.23,372.253 75.834,373.38 77.439,373.086 C79.044,372.792 80.649,371.077 82.254,369.289 C83.858,367.5 85.463,365.639 87.068,363.85 C88.673,362.062 90.277,360.347 91.882,361.572 C93.487,362.797 95.092,366.962 96.697,369.019 C98.301,371.077 99.906,371.028 101.511,368.137 C103.116,365.247 104.72,359.514 106.325,356.427 C107.93,353.34 109.535,352.899 111.14,355.717 C112.744,358.534 114.349,364.61 115.954,365.345 C117.559,366.08 119.163,361.474 120.768,351.968 C122.373,342.463 123.978,328.058 125.583,325.069 C127.187,322.08 128.792,330.508 130.397,332.786 C132.002,335.064 133.607,331.194 135.211,329.503 C136.816,327.813 138.421,328.303 140.026,334.476 C141.63,340.65 143.235,352.507 144.84,359.832 C146.445,367.158 148.05,369.95 149.654,363.973 C151.259,357.995 152.864,343.247 154.469,342.855 C156.073,342.463 157.678,356.427 159.283,363.581 C160.888,370.734 162.493,371.077 164.097,369.558 C165.702,368.039 167.307,364.659 168.912,360.567 C170.516,356.476 172.121,351.674 173.726,348.808 C175.331,345.942 176.936,345.011 178.54,349.298 C180.145,353.585 181.75,363.091 183.355,367.941 C184.959,372.792 186.564,372.988 188.169,372.768 C189.774,372.547 191.379,371.91 192.983,372.008 C194.588,372.106 196.193,372.939 197.798,373.184 C199.402,373.429 201.007,373.086 202.612,371.004 C204.217,368.921 205.822,365.1 207.426,364.316 C209.031,363.532 210.636,365.786 212.241,366.79 C213.846,367.794 215.45,367.549 217.055,368.211 C218.66,368.872 220.265,370.44 221.869,371.2 C223.474,371.959 225.079,371.91 226.684,364.659 C228.289,357.407 229.893,342.953 231.498,333.129 C233.103,323.305 234.708,318.111 236.312,315.441 C237.917,312.771 239.522,312.624 241.127,322.08 C242.732,331.537 244.336,350.596 245.941,357.995 C247.546,365.394 249.151,361.131 250.755,357.358 C252.36,353.585 253.965,350.302 255.57,341.948 C257.175,333.594 258.779,320.169 260.384,314.608 C261.989,309.047 263.594,311.35 265.198,319.802 C266.803,328.254 268.408,342.855 270.013,352.115 C271.618,361.376 273.222,365.296 274.827,355.178 C276.432,345.06 278.037,320.904 279.642,319.851 C281.246,318.797 282.851,340.846 284.456,326.833 C286.061,312.82 287.665,262.745 289.27,262.598 C290.875,262.451 292.48,312.232 294.085,312.354 C295.689,312.477 297.294,262.941 298.899,264.754 C300.504,266.566 302.108,319.728 303.713,326.98 C305.318,334.231 306.923,295.573 308.528,276.317 C310.132,257.061 311.737,257.208 313.342,275.141 C314.947,293.074 316.551,328.793 318.156,345.378 C319.761,361.964 321.366,359.416 322.971,357.677 C324.575,355.937 326.18,355.006 327.785,331.194 C329.39,307.381 330.994,260.687 332.599,262.402 C334.204,264.117 335.809,314.241 337.414,321.566 C339.018,328.891 340.623,293.417 342.228,282.197 C343.833,270.976 345.438,284.009 347.042,303.143 C348.647,322.276 350.252,347.51 351.857,360.249 C353.461,372.988 355.066,373.233 356.671,373.209 C358.276,373.184 359.881,372.89 361.485,363.801 C363.09,354.712 364.695,336.828 366.3,324.31 C367.904,311.791 369.509,304.637 371.114,312.011 C372.719,319.385 374.324,341.287 375.928,352.801 C377.533,364.316 379.138,365.443 380.743,366.619 C382.347,367.794 383.952,369.019 385.557,369.779 C387.162,370.538 388.767,370.832 390.371,367.941 C391.976,365.051 393.581,358.975 395.186,332.443 C396.79,305.911 398.395,258.923 400,261.103 C401.605,263.284 403.21,314.633 404.814,314.633 C406.419,314.633 408.024,263.284 409.629,237.781 C411.233,212.278 412.838,212.621 414.443,238.295 C416.048,263.97 417.653,314.976 419.257,341.434 C420.862,367.892 422.467,369.803 424.072,369.877 C425.677,369.95 427.281,368.186 428.886,348.882 C430.491,329.577 432.096,292.731 433.7,280.972 C435.305,269.212 436.91,282.54 438.515,302.236 C440.12,321.933 441.724,348 443.329,341.287 C444.934,334.574 446.539,295.083 448.143,275.533 C449.748,255.983 451.353,256.375 452.958,275.704 C454.563,295.034 456.167,333.301 457.772,352.654 C459.377,372.008 460.982,372.449 462.586,372.694 C464.191,372.939 465.796,372.988 467.401,369.926 C469.006,366.864 470.61,360.69 472.215,360.371 C473.82,360.053 475.425,365.59 477.029,344.129 C478.634,322.668 480.239,274.21 481.844,275.386 C483.449,276.562 485.053,327.372 486.658,350.841 C488.263,374.311 489.868,370.44 491.473,366.766 C493.077,363.091 494.682,359.612 496.287,360.224 C497.892,360.837 499.496,365.541 501.101,367.353 C502.706,369.166 504.311,368.088 505.916,368.284 C507.52,368.48 509.125,369.95 510.73,370.367 C512.335,370.783 513.939,370.146 515.544,369.95 C517.149,369.754 518.754,369.999 520.359,368.897 C521.963,367.794 523.568,365.345 525.173,365.345 C526.778,365.345 528.382,367.794 529.987,368.407 C531.592,369.019 533.197,367.794 534.802,363.556 C536.406,359.318 538.011,352.066 539.616,350.401 C541.221,348.735 542.826,352.654 544.43,356.844 C546.035,361.033 547.64,365.492 549.245,368.26 C550.849,371.028 552.454,372.106 554.059,372.866 C555.664,373.625 557.268,374.066 558.873,372.204 C560.478,370.342 562.083,366.178 563.688,365.761 C565.292,365.345 566.897,368.676 568.502,370.857 C570.107,373.037 571.712,374.066 573.316,365.32 C574.921,356.574 576.526,338.053 578.131,326.294 C579.735,314.535 581.34,309.537 582.945,308.679 C584.55,307.822 586.155,311.105 587.759,310.443 C589.364,309.782 590.969,305.176 592.574,314.853 C594.178,324.53 595.783,348.49 597.388,360.665 C598.993,372.841 600.598,373.233 602.202,373.674 C603.807,374.115 605.412,374.605 607.017,372.645 C608.621,370.685 610.226,366.276 611.831,353.316 C613.436,340.356 615.041,318.846 616.645,318.454 C618.25,318.062 619.855,338.788 621.46,334.109 C623.065,329.43 624.669,299.346 626.274,301.085 C627.879,302.824 629.484,336.387 631.088,352.85 C632.693,369.313 634.298,368.676 635.903,369.044 C637.508,369.411 639.112,370.783 640.717,363.581 C642.322,356.378 643.927,340.601 645.531,335.579 C647.136,330.557 648.741,336.289 650.346,343.124 C651.951,349.96 653.555,357.897 655.16,359.783 C656.765,361.67 658.37,357.505 659.974,356.55 C661.579,355.594 663.184,357.848 664.789,334.011 C666.394,310.174 667.998,260.246 669.603,235.037 C671.208,209.828 672.813,209.338 674.417,218.794 C676.022,228.251 677.627,247.654 679.232,255.297 C680.837,262.941 682.441,258.825 684.046,277.101 C685.651,295.377 687.256,336.044 688.86,349.69 C690.465,363.336 692.07,349.96 693.675,329.675 C695.28,309.39 696.884,282.197 698.489,278.056 C700.094,273.916 701.699,292.829 703.304,306.107 C704.908,319.385 706.513,327.029 708.118,332.786 C709.723,338.543 711.327,342.414 712.932,342.659 C714.537,342.904 716.142,339.523 717.747,341.655 C719.351,343.786 720.956,351.429 722.561,354.982 C724.166,358.534 725.77,357.995 727.375,351.576 C728.98,345.158 730.585,332.86 732.19,332.786 C733.794,332.713 735.399,344.864 737.004,342.83 C738.609,340.797 740.213,324.579 741.016,316.47 L741.818,308.361" fill-opacity="0" stroke="#1F77B4" stroke-width="0.727" />
+          <text transform="matrix(1, 0, 0, 1, 761.678, 308.87)">
+            <tspan x="-8.95" y="2.545" font-family="GillSans" font-size="8.727" fill="#1F77B4">H2</tspan>
+          </text>
+        </g>
+        <g>
+          <path d="M62.996,339.964 L63.799,336.118 C64.601,332.272 66.206,324.579 67.811,323.55 C69.415,322.521 71.02,328.156 72.625,332.345 C74.23,336.534 75.834,339.278 77.439,339.719 C79.044,340.16 80.649,338.298 82.254,335.26 C83.858,332.223 85.463,328.009 87.068,324.065 C88.673,320.12 90.277,316.445 91.882,314.608 C93.487,312.771 95.092,312.771 96.697,312.746 C98.301,312.722 99.906,312.673 101.511,312.991 C103.116,313.31 104.72,313.996 106.325,311.472 C107.93,308.949 109.535,303.216 111.14,302.726 C112.744,302.236 114.349,306.989 115.954,308.532 C117.559,310.076 119.163,308.41 120.768,298.194 C122.373,287.978 123.978,269.212 125.583,265.342 C127.187,261.471 128.792,272.495 130.397,276.733 C132.002,280.972 133.607,278.424 135.211,279.012 C136.816,279.6 138.421,283.323 140.026,291.53 C141.63,299.737 143.235,312.428 144.84,311.472 C146.445,310.517 148.05,295.916 149.654,286.974 C151.259,278.032 152.864,274.749 154.469,283.421 C156.073,292.094 157.678,312.722 159.283,322.129 C160.888,331.537 162.493,329.724 164.097,326.073 C165.702,322.423 167.307,316.935 168.912,303.535 C170.516,290.134 172.121,268.82 173.726,249.907 C175.331,230.995 176.936,214.483 178.54,227.957 C180.145,241.431 181.75,284.891 183.355,306.818 C184.959,328.744 186.564,329.136 188.169,328.891 C189.774,328.646 191.379,327.764 192.983,327.911 C194.588,328.058 196.193,329.234 197.798,329.577 C199.402,329.92 201.007,329.43 202.612,327.225 C204.217,325.02 205.822,321.1 207.426,319.018 C209.031,316.935 210.636,316.69 212.241,315.931 C213.846,315.172 215.45,313.898 217.055,315.784 C218.66,317.67 220.265,322.717 221.869,324.947 C223.474,327.176 225.079,326.588 226.684,315.123 C228.289,303.657 229.893,281.315 231.498,266.174 C233.103,251.034 234.708,243.097 236.312,243.905 C237.917,244.714 239.522,254.268 241.127,259.339 C242.732,264.411 244.336,264.999 245.941,259.388 C247.546,253.778 249.151,241.97 250.755,231.46 C252.36,220.95 253.965,211.739 255.57,212.841 C257.175,213.944 258.779,225.36 260.384,235.723 C261.989,246.086 263.594,255.395 265.198,254.415 C266.803,253.435 268.408,242.166 270.013,252.333 C271.618,262.5 273.222,294.103 274.827,287.17 C276.432,280.237 278.037,234.767 279.642,232.832 C281.246,230.897 282.851,272.495 284.456,261.471 C286.061,250.446 287.665,186.799 289.27,173.913 C290.875,161.027 292.48,198.901 294.085,198.828 C295.689,198.754 297.294,160.733 298.899,159.704 C300.504,158.675 302.108,194.639 303.713,204.316 C305.318,213.993 306.923,197.383 308.528,188.98 C310.132,180.577 311.737,180.381 313.342,205.761 C314.947,231.142 316.551,282.099 318.156,302.04 C319.761,321.982 321.366,310.909 322.971,304.613 C324.575,298.317 326.18,296.798 327.785,267.252 C329.39,237.707 330.994,180.136 332.599,169.332 C334.204,158.528 335.809,194.492 337.414,204.095 C339.018,213.699 340.623,196.942 342.228,199.465 C343.833,201.988 345.438,223.792 347.042,244.199 C348.647,264.607 350.252,283.617 351.857,293.172 C353.461,302.726 355.066,302.824 356.671,303.559 C358.276,304.294 359.881,305.666 361.485,297.876 C363.09,290.085 364.695,273.132 366.3,261.544 C367.904,249.956 369.509,243.734 371.114,254.832 C372.719,265.93 374.324,294.348 375.928,310.198 C377.533,326.049 379.138,329.332 380.743,331.169 C382.347,333.007 383.952,333.398 385.557,333.717 C387.162,334.035 388.767,334.28 390.371,327.592 C391.976,320.904 393.581,307.283 395.186,271.613 C396.79,235.943 398.395,178.225 400,184.178 C401.605,190.131 403.21,259.756 404.814,259.976 C406.419,260.197 408.024,191.013 409.629,156.299 C411.233,121.584 412.838,121.339 414.443,154.094 C416.048,186.848 417.653,252.602 419.257,288.419 C420.862,324.236 422.467,330.116 424.072,327.715 C425.677,325.314 427.281,314.633 428.886,288.37 C430.491,262.108 432.096,220.264 433.7,210.293 C435.305,200.322 436.91,222.224 438.515,242.778 C440.12,263.333 441.724,282.54 443.329,271.785 C444.934,261.03 446.539,220.313 448.143,199.857 C449.748,179.401 451.353,179.205 452.958,204.12 C454.563,229.035 456.167,279.061 457.772,304.123 C459.377,329.185 460.982,329.283 462.586,324.824 C464.191,320.365 465.796,311.35 467.401,302.359 C469.006,293.368 470.61,284.401 472.215,289.399 C473.82,294.397 475.425,313.359 477.029,290.208 C478.634,267.056 480.239,201.792 481.844,192.311 C483.449,182.83 485.053,229.133 486.658,258.825 C488.263,288.517 489.868,301.599 491.473,308.018 C493.077,314.437 494.682,314.192 496.287,315.417 C497.892,316.641 499.496,319.336 501.101,319.728 C502.706,320.12 504.311,318.209 505.916,317.719 C507.52,317.229 509.125,318.16 510.73,319.851 C512.335,321.541 513.939,323.991 515.544,324.359 C517.149,324.726 518.754,323.011 520.359,320.953 C521.963,318.895 523.568,316.495 525.173,314.216 C526.778,311.938 528.382,309.782 529.987,311.325 C531.592,312.869 533.197,318.111 534.802,310.345 C536.406,302.579 538.011,281.805 539.616,279.918 C541.221,278.032 542.826,295.034 544.43,302.751 C546.035,310.468 547.64,308.9 549.245,309.439 C550.849,309.978 552.454,312.624 554.059,313.677 C555.664,314.731 557.268,314.192 558.873,311.595 C560.478,308.998 562.083,304.343 563.688,307.259 C565.292,310.174 566.897,320.659 568.502,325.877 C570.107,331.096 571.712,331.047 573.316,315.147 C574.921,299.248 576.526,267.497 578.131,239.716 C579.735,211.935 581.34,188.122 582.945,191.013 C584.55,193.904 586.155,223.498 587.759,233.444 C589.364,243.391 590.969,233.689 592.574,246.649 C594.178,259.609 595.783,295.23 597.388,311.374 C598.993,327.519 600.598,324.187 602.202,322.742 C603.807,321.296 605.412,321.737 607.017,320.12 C608.621,318.503 610.226,314.829 611.831,299.884 C613.436,284.94 615.041,258.727 616.645,259.731 C618.25,260.736 619.855,288.958 621.46,280.776 C623.065,272.593 624.669,228.006 626.274,215.805 C627.879,203.605 629.484,223.792 631.088,246.821 C632.693,269.849 634.298,295.72 635.903,308.655 C637.508,321.59 639.112,321.59 640.717,310.713 C642.322,299.835 643.927,278.081 645.531,267.914 C647.136,257.747 648.741,259.168 650.346,268.796 C651.951,278.424 653.555,296.259 655.16,301.281 C656.765,306.303 658.37,298.513 659.974,300.619 C661.579,302.726 663.184,314.731 664.789,285.945 C666.394,257.159 667.998,187.583 669.603,152.82 C671.208,118.056 672.813,118.105 674.417,133.515 C676.022,148.924 677.627,179.695 679.232,189.347 C680.837,198.999 682.441,187.534 684.046,203.434 C685.651,219.333 687.256,262.598 688.86,280.996 C690.465,299.395 692.07,292.927 693.675,255.028 C695.28,217.128 696.884,147.798 698.489,110.045 C700.094,72.293 701.699,66.119 703.304,92.97 C704.908,119.82 706.513,179.695 708.118,212.596 C709.723,245.498 711.327,251.426 712.932,245.718 C714.537,240.01 716.142,222.665 717.747,228.398 C719.351,234.13 720.956,262.941 722.561,274.014 C724.166,285.087 725.77,278.424 727.375,268.232 C728.98,258.041 730.585,244.322 732.19,249.858 C733.794,255.395 735.399,280.188 737.004,251.451 C738.609,222.714 740.213,140.448 741.016,99.315 L741.818,58.182" fill-opacity="0" stroke="#FF7F0E" stroke-width="0.727" />
+          <text transform="matrix(1, 0, 0, 1, 762.543, 58.691)">
+            <tspan x="-9.815" y="2.545" font-family="GillSans" font-size="8.727" fill="#FF7F0E">http1</tspan>
+          </text>
+        </g>
+        <g />
+        <g>
+          <path d="M62.996,352.01 L63.799,351.716 C64.601,351.422 66.206,350.834 67.811,353.921 C69.415,357.007 71.02,363.769 72.625,367.762 C74.23,371.756 75.834,372.98 77.439,372.907 C79.044,372.833 80.649,371.462 82.254,369.551 C83.858,367.64 85.463,365.19 87.068,363.157 C88.673,361.123 90.277,359.506 91.882,361.662 C93.487,363.818 95.092,369.747 96.697,372.515 C98.301,375.283 99.906,374.891 101.511,371.339 C103.116,367.787 104.72,361.074 106.325,357.742 C107.93,354.411 109.535,354.46 111.14,356.885 C112.744,359.31 114.349,364.112 115.954,365.582 C117.559,367.052 119.163,365.19 120.768,359.457 C122.373,353.725 123.978,344.121 125.583,339.515 C127.187,334.91 128.792,335.302 130.397,334.199 C132.002,333.097 133.607,330.5 135.211,336.061 C136.816,341.622 138.421,355.342 140.026,361.638 C141.63,367.934 143.235,366.807 144.84,367.199 C146.445,367.591 148.05,369.502 149.654,369.281 C151.259,369.061 152.864,366.709 154.469,366.611 C156.073,366.513 157.678,368.669 159.283,369.722 C160.888,370.776 162.493,370.727 164.097,370.457 C165.702,370.188 167.307,369.698 168.912,368.767 C170.516,367.836 172.121,366.464 173.726,363.304 C175.331,360.143 176.936,355.195 178.54,356.101 C180.145,357.007 181.75,363.769 183.355,367.517 C184.959,371.266 186.564,372.001 188.169,372.001 C189.774,372.001 191.379,371.266 192.983,371.364 C194.588,371.462 196.193,372.393 197.798,372.662 C199.402,372.931 201.007,372.54 202.612,370.702 C204.217,368.865 205.822,365.582 207.426,365.361 C209.031,365.141 210.636,367.983 212.241,369.967 C213.846,371.952 215.45,373.078 217.055,373.274 C218.66,373.47 220.265,372.736 221.869,372.368 C223.474,372.001 225.079,372.001 226.684,366.733 C228.289,361.466 229.893,350.932 231.498,342.602 C233.103,334.273 234.708,328.148 236.312,332.705 C237.917,337.262 239.522,352.5 241.127,360.168 C242.732,367.836 244.336,367.934 245.941,367.272 C247.546,366.611 249.151,365.19 250.755,365.263 C252.36,365.337 253.965,366.905 255.57,361.074 C257.175,355.244 258.779,342.014 260.384,342.749 C261.989,343.484 263.594,358.183 265.198,365.753 C266.803,373.323 268.408,373.764 270.013,373.348 C271.618,372.931 273.222,371.658 274.827,369.453 C276.432,367.248 278.037,364.112 279.642,363.818 C281.246,363.524 282.851,366.072 284.456,347.967 C286.061,329.863 287.665,291.106 289.27,289.955 C290.875,288.803 292.48,325.257 294.085,331.137 C295.689,337.017 297.294,312.322 298.899,313.767 C300.504,315.213 302.108,342.798 303.713,356.86 C305.318,370.923 306.923,371.462 308.528,371.903 C310.132,372.344 311.737,372.686 313.342,371.29 C314.947,369.894 316.551,366.758 318.156,364.332 C319.761,361.907 321.366,360.192 322.971,359.923 C324.575,359.653 326.18,360.829 327.785,349.021 C329.39,337.213 330.994,312.42 332.599,313.547 C334.204,314.674 335.809,341.72 337.414,356.003 C339.018,370.286 340.623,371.805 342.228,364.651 C343.833,357.497 345.438,341.671 347.042,341.353 C348.647,341.034 350.252,356.223 351.857,364.234 C353.461,372.246 355.066,373.078 356.671,373.348 C358.276,373.617 359.881,373.323 361.485,364.528 C363.09,355.734 364.695,338.438 366.3,329.496 C367.904,320.554 369.509,319.966 371.114,326.972 C372.719,333.979 374.324,348.58 375.928,357.056 C377.533,365.533 379.138,367.885 380.743,369.208 C382.347,370.531 383.952,370.825 385.557,371.168 C387.162,371.511 388.767,371.903 390.371,371.78 C391.976,371.658 393.581,371.021 395.186,354.901 C396.79,338.781 398.395,307.177 400,307.275 C401.605,307.373 403.21,339.172 404.814,341.916 C406.419,344.66 408.024,318.349 409.629,305.267 C411.233,292.184 412.838,292.331 414.443,304.262 C416.048,316.193 417.653,339.907 419.257,353.382 C420.862,366.856 422.467,370.09 424.072,369.649 C425.677,369.208 427.281,365.092 428.886,364.871 C430.491,364.651 432.096,368.326 433.7,365.312 C435.305,362.299 436.91,352.598 438.515,352.892 C440.12,353.186 441.724,363.475 443.329,368.473 C444.934,373.47 446.539,373.176 448.143,373.103 C449.748,373.029 451.353,373.176 452.958,373.152 C454.563,373.127 456.167,372.931 457.772,373.029 C459.377,373.127 460.982,373.519 462.586,373.666 C464.191,373.813 465.796,373.715 467.401,370.8 C469.006,367.885 470.61,362.152 472.215,362.005 C473.82,361.858 475.425,367.297 477.029,357.938 C478.634,348.58 480.239,324.424 481.844,324.89 C483.449,325.355 485.053,350.442 486.658,361.466 C488.263,372.491 489.868,369.453 491.473,367.713 C493.077,365.974 494.682,365.533 496.287,366.219 C497.892,366.905 499.496,368.718 501.101,369.526 C502.706,370.335 504.311,370.139 505.916,370.506 C507.52,370.874 509.125,371.805 510.73,371.756 C512.335,371.707 513.939,370.678 515.544,370.947 C517.149,371.217 518.754,372.784 520.359,371.437 C521.963,370.09 523.568,365.827 525.173,365.19 C526.778,364.553 528.382,367.542 529.987,367.885 C531.592,368.228 533.197,365.925 534.802,362.226 C536.406,358.526 538.011,353.431 539.616,354.901 C541.221,356.37 542.826,364.406 544.43,368.154 C546.035,371.903 547.64,371.364 549.245,371.486 C550.849,371.609 552.454,372.393 554.059,372.956 C555.664,373.519 557.268,373.862 558.873,372.001 C560.478,370.139 562.083,366.072 563.688,365.68 C565.292,365.288 566.897,368.571 568.502,370.727 C570.107,372.882 571.712,373.911 573.316,365.851 C574.921,357.791 576.526,340.642 578.131,328.932 C579.735,317.222 581.34,310.95 582.945,311.318 C584.55,311.685 586.155,318.692 587.759,325.184 C589.364,331.676 590.969,337.654 592.574,345.493 C594.178,353.333 595.783,363.034 597.388,368.056 C598.993,373.078 600.598,373.421 602.202,373.838 C603.807,374.254 605.412,374.744 607.017,373.201 C608.621,371.658 610.226,368.081 611.831,364.382 C613.436,360.682 615.041,356.86 616.645,357.718 C618.25,358.575 619.855,364.112 621.46,362.691 C623.065,361.27 624.669,352.892 626.274,352.941 C627.879,352.99 629.484,361.466 631.088,365.263 C632.693,369.061 634.298,368.179 635.903,368.448 C637.508,368.718 639.112,370.139 640.717,364.039 C642.322,357.938 643.927,344.317 645.531,339.124 C647.136,333.93 648.741,337.164 650.346,343.313 C651.951,349.462 653.555,358.526 655.16,361.442 C656.765,364.357 658.37,361.123 659.974,361.809 C661.579,362.495 663.184,367.101 664.789,346.4 C666.394,325.698 667.998,279.69 669.603,264.452 C671.208,249.214 672.813,264.746 674.417,286.844 C676.022,308.941 677.627,337.605 679.232,348.31 C680.837,359.016 682.441,351.765 684.046,353.039 C685.651,354.313 687.256,364.112 688.86,366.709 C690.465,369.306 692.07,364.7 693.675,352.965 C695.28,341.23 696.884,322.366 698.489,322.709 C700.094,323.052 701.699,342.602 703.304,350.172 C704.908,357.742 706.513,353.333 708.118,351.177 C709.723,349.021 711.327,349.119 712.932,349.707 C714.537,350.295 716.142,351.373 717.747,355.391 C719.351,359.408 720.956,366.366 722.561,368.399 C724.166,370.433 725.77,367.542 727.375,362.985 C728.98,358.428 730.585,352.206 732.19,352.72 C733.794,353.235 735.399,360.486 737.004,363.573 C738.609,366.66 740.213,365.582 741.016,365.043 L741.818,364.504" fill-opacity="0" stroke="#D62728" stroke-width="0.727" />
+          <text transform="matrix(1, 0, 0, 1, 763.269, 370.104)">
+            <tspan x="-10.542" y="-2.545" font-family="GillSans" font-size="8.727" fill="#D62728">SPDY </tspan>
+            <tspan x="-10.542" y="7.455" font-family="GillSans" font-size="8.727" fill="#D62728">gzip</tspan>
+          </text>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <p>Unfortunately, using fine-grained compression techniques like GZIP makes the protocol vulnerable to attacks like <a href="https://en.wikipedia.org/wiki/CRIME">CRIME</a>; an attacker who can observe the connection and also control parts of requests or responses can recover secrets (e.g., authentication tokens in <code class="highlighter-rouge">Cookie</code>s) even when TLS is used.</p>
+
+  <p>To address this, HPACK uses two techniques that were judged reasonably CRIME-resistant by security experts:</p>
+
+  <ol>
+    <li>A static <a href="https://en.wikipedia.org/wiki/Huffman_coding">Huffman coding</a>, and</li>
+    <li>A lookup table that works at the granularity of an <strong>entire</strong> header field.</li>
+  </ol>
+
+  <p>The Huffman coding is static so that an attacker can’t influence compression efficiency. It uses as few as five bits (but often more) to encode common characters, so you can count on something like 20% gains in efficiency from it (depending on the exact text you’re encoding). See <a href="https://http2.github.io/http2-spec/compression.html#huffman.code">the code</a> for details.</p>
+
+  <p>There are actually two lookup tables; a <em>static table</em> and a <em>dynamic table</em>.</p>
+
+  <p>The static table is <a href="https://http2.github.io/http2-spec/compression.html#static.table.definition">defined in the specification</a>; it doesn’t change. It’s there to “seed” a connection with some (hopefully) common values, so that they don’t have to be sent in full when the underlying TCP connection is still going through slow start.</p>
+
+  <p>The dynamic table, on the other hand, is actively managed by the sender; the server manages responses, and the client manages requests. When headers are sent, the sender tells the recipient whether to index that header name/value pair; if it does, future messages can refer back to that value by reference, instead of sending it again.</p>
+
+  <p>But, the header has to <strong>exactly</strong> match. For example, if you send this response header and tell the client to index it:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Cache-Control: max-age=60, stale-while-revalidate=60
+  </code></pre></div></div>
+
+  <p>Future responses on that connection can refer to it only if they’re exactly the same. <code class="highlighter-rouge">max-age</code> is 61? Different header. It comes after <code class="highlighter-rouge">stale-while-revalidate</code>? Different header. No <code class="highlighter-rouge">stale-while-revalidate</code>? Different header. Use uppercase? Different header. Not a space after the comma? Different header.</p>
+
+  <p>Each end of the connection can tell the other side the maximum lookup table size that it wants to keep for the headers it receives; the default is 4K. So the client can tell the server not to use more than a certain amount of space for responses, and likewise the server can tell the client how much space it wants to use for requests.</p>
+
+  <p>Managing the size of the dynamic table is important; if it’s big, your compression efficiency will grow (consider how big headers can get!), but each end of the connection has to keep enough memory around to store the dynamic tables – both request and response – for each connection it has open.</p>
+
+  <p>Browsers really like good compression efficiency, so they generally negotiate (with a <a href="https://httpwg.org/specs/rfc7540.html#SettingValues">SETTING</a>) to use a bigger dynamic table for responses. Servers, on the other hand, usually need to be very careful with memory, since they want to serve as many clients as possible. As a result, they generally don’t negotiate a bigger dynamic table for requests, and often don’t use a bigger response table even when the client lets them.</p>
+
+  <p>There’s lots more to HPACK, but those are the high points. There’s one more important detail I’ll mention; when you’re calculating the size of a header for purposes of enforcing the limits described above, you add the size of the header field name (without Huffman coding), the size of the value (also without coding), and add 32 bytes for overhead (specified <a href="https://httpwg.org/specs/rfc7541.html#calculating.table.size">here</a>). We’ll come back to why that’s important in a minute.</p>
+
+  <h3 id="the-ideal-header-for-hpack">The Ideal Header for HPACK</h3>
+
+  <p>Knowing how HPACK works, it’s easy to understand what header would compress best with it; it’s a header that, for the duration of a connection, <strong>never changes in any way</strong>. It can occur on some messages in one direction, all messages in that direction, or just a few messages, but when it occurs, it doesn’t change.</p>
+
+  <p>That’s because it will create just one entry in the dynamic table and continuously reference that entry; it only goes out “on the wire” once, when it’s sent the first time.</p>
+
+  <p>It’d be even better if it was small; that means that it won’t take up a lot of space in the dynamic table, so that other headers have a chance of being compressed too. This isn’t hyper-important; if it’s 20 or even 100 bytes, that’s fine, since it’s going to save a lot more on the wire.</p>
+
+  <p>If you think about it, this isn’t surprising; some of the most voluminous headers in requests are those that get repeated a number of times over the course of a connection; things like <code class="highlighter-rouge">User-Agent</code>, <code class="highlighter-rouge">Cookie</code>, and <code class="highlighter-rouge">Referer</code>. It makes sense that HPACK was optimised for them.</p>
+
+  <h3 id="the-worst-header-for-hpack">The Worst Header for HPACK</h3>
+
+  <p>On the other end of the scale, headers that have lots of different versions on the same connection mean lots of different entries in the dynamic table. How much space they’ll take up depends on a lot of different factors, but the absolute worst would be a header that has many different values that rotate through constantly; that would take up a lot of room in the dynamic table and “kick” a lot of other headers out.</p>
+
+  <p>The <code class="highlighter-rouge">Date</code> header is a good example here; it changes once a second, so putting it into the dynamic table often doesn’t make sense (and some implementations don’t).</p>
+
+  <p>Making them big just magnifies the effect. At the extreme, a header with a 2K value takes up half the default dynamic table size. However, many implementations won’t even index a header that big; since it’d remove so many other headers, it’s often a better strategy to just send it out on the wire as a literal every single time.</p>
+
+  <h3 id="your-header-and-hpack">Your Header and HPACK</h3>
+
+  <p>So, when you’re designing a header, you want it to be as close to the ideal as you can make it. This might take your design to a surprising place. For example, if you have a header that has many different values that change, like this:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My-Header: foo=15, bar=true, baz=4, bat=false
+  </code></pre></div></div>
+
+  <p>where <code class="highlighter-rouge">foo</code> is a number between 1 and 20, <code class="highlighter-rouge">bar</code> and <code class="highlighter-rouge">bat</code> are booleans, and <code class="highlighter-rouge">baz</code> is a number between 1 and 10, that means that there are 20 x 2 x 10 * 2 = 800 (!) possible permutations of this header value.</p>
+
+  <p>Let’s say that the field name and value have an average of 44 characters; remembering the 32 byte overhead (this is why it was important), that’s 76 x 800 = 60,800 bytes of space in the dynamic table to keep all of the different permutations. Ouch!</p>
+
+  <p>On the other hand, if you did this:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My-Foo: 15
+  My-Bar: true
+  My-Baz: 4
+  My-Bat: false
+  </code></pre></div></div>
+
+  <p>That’s 20 + 2 + 10 + 2 = 34 different headers (remember, we’re working at per-header granularity), with an average of 8 + 32 = 40 characters each, for something like 1,360 bytes of space in the dynamic table to hold all possible values.</p>
+
+  <p>Even if you reduce the size of the different values (perhaps using a <a href="https://github.com/w3ctag/design-reviews/issues/280#issuecomment-438573887">binary encoding</a>), the per-value overhead and the significantly larger number of permutations blows out the potential space used.</p>
+
+  <p>Of course, this is hugely dependant upon the access patterns in your application; seeing all of the possible permutations on a single connection is pathological. Right?</p>
+
+  <h4 id="remember-the-intermediaries">Remember the Intermediaries</h4>
+
+  <p>Except it’s not. One of the core concepts of HTTP is intermediation, and that’s what makes things like reverse proxies and CDNs possible. These devices will be mixing traffic from a lot of different clients back into one connection to the origin, with a much greater diversity of traffic.</p>
+
+  <p>That connection is likely to have bigger table sizes, but there are still limits. A header that blows out the table will be aggressively managed out of the compression context by a good implementation, and as a result will see poor compression efficiency.</p>
+
+  <h4 id="avoid-variation">Avoid Variation</h4>
+
+  <p>That brings us to another point; allowing many different forms of the header (with things like variable whitespace, or different forms of quoting) will also create unnecessary variations and duplication in the compression context – again affecting your header’s efficiency.</p>
+
+  <p>Again, all of these headers will be seen as different by HPACK, and so will waste space in the dynamic table:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My-Header: "foo"
+  My-Header: foo
+  My-Header: 'foo'
+  My-Header: Foo
+  My-Header:  foo
+  My-Header: foo,
+  My-Header: foo;bar
+  </code></pre></div></div>
+
+  <p>While such variation is unlikely if they’re all generated by the same implementation, when multiple connections are mixed onto one (as is the case for intermediaries), it’s very likely.</p>
+
+  <p>You can avoid this by specifying the generation of your header very carefully, recommending a canonical form. One emerging specification that could help here is <a href="https://httpwg.org/http-extensions/draft-ietf-httpbis-header-structure.html">Structured Headers</a>; it documents serialisation algorithms for various data types in HTTP headers so that you don’t have to.</p>
+
+  <h4 id="splitting-values-across-headers">Splitting Values Across Headers</h4>
+
+  <p>It’s worth mentioning that it’s not strictly necessary to split a header like this:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My-Header: foo=15, bar=true, baz=4, bat=false
+  </code></pre></div></div>
+
+  <p>You <em>could</em> serialise it like this:</p>
+
+  <div class="example highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My-Header: foo=15
+  My-Header: bar=true
+  My-Header: baz=4
+  My-Header: bat=false
+  </code></pre></div></div>
+
+  <p>Because of <a href="https://httpwg.org/specs/rfc7230.html#field.order">HTTP’s header combination rules</a>, these two forms are semantically equivalent, but the second form doesn’t create a combinatorial explosion in the dynamic table.</p>
+
+  <p>I don’t recommend relying upon this, though. It requires the sender to do this in every case – something that’s easy to forget, or be ignorant of. Also, an intermediary might “helpfully” combine them for you, leading back to the combinatorial explosion.</p>
+
+  <h4 id="header-names">Header Names</h4>
+
+  <p>One final consideration that sometimes comes up is the header’s name itself. Sometimes people try to over-optimise this, believing that shaving off a few characters is going to make a huge difference in performance. More often, people choose needlessly long names for their headers.</p>
+
+  <p>The sweet spot is in the middle; your header name should be descriptive enough that people can recognise it (remember, it’s a shared space; act accordingly). Saving a few bytes probably doesn’t matter unless your header is sent a <em>lot</em>, and can’t get into the dynamic table.</p>
+
+  <p>For example, a name like <code class="highlighter-rouge">FooApp-Response-Description</code> is probably needlessly verbose; we know that “foo” is an application, and if it’s in a response, we know it’s a response header. Something like <code class="highlighter-rouge">Foo-Desc</code> would serve just as well.</p>
+
+  <p>On the other hand, grabbing <code class="highlighter-rouge">Desc</code> or <code class="highlighter-rouge">Description</code> for your application isn’t a very friendly thing to do; it’s an extremely generic term, and you’re just one application that might use it.</p>
+
+  <h3 id="future-developments">Future Developments</h3>
+
+  <p>Keen observers of standards will ask how <a href="https://quicwg.org/base-drafts/draft-ietf-quic-qpack.html">QPACK</a> – the header compression scheme for the in-development <a href="https://quicwg.org/base-drafts/draft-ietf-quic-http.html">HTTP/3</a> – will affect things once it ships.</p>
+
+  <p>So far, the biggest difference in QPACK is in how it deals with ordering; since QUIC doesn’t guarantee ordering between streams, a number of changes needed to be made to how the compression algorithm keeps state.</p>
+
+  <p>Other things have changed too; QPACK has a different static table to start connections with, and has separate references to header names and header values.</p>
+
+  <p>From the perspective a header designer, HPACK and QPACK should operate in about the same way. That said, designing your header to work optimally with the minutia of HPACK (for example, targetting specific characters in the Huffman coding) is likely to backfire, because the details are likely to change in the long term.</p>
+
+  <p>That’s especially true if <a href="https://httpwg.org/http-extensions/draft-ietf-httpbis-header-structure.html">Structured Headers</a> meets one of its goals; enabling a new encoding of its data types on the wire, opening up the possibility of a new compression scheme at that granularity.</p>
+
+  <h3 id="in-summary">In Summary</h3>
+
+  <p>HPACK compression isn’t magical, but it is pretty effective for certain kinds of headers. To get the most out of it with your header, keep it brief (but still human-readable and extensible!) and more importantly, make sure that it doesn’t change unnecessarily. <strong>More headers are better than a changing header</strong>.</p>
+
+  <p>While you’re creating a new header, there are also lots of <a href="https://httpwg.org/specs/rfc7231.html#considerations.for.new.header.fields">other things to keep in mind</a> - check it out!</p>
+
+  <p><em>Thanks to Roberto Peon for reviewing this post.</em></p>]]>
+      </content>
+    </entry>
+
+  </feed>

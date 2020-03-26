@@ -1,0 +1,321 @@
+# This feed can be considered a standard example of Planet's Atom output
+# It is notable for using HTML-formatted titles, and for allowing no caching of any kind
+
+url: 'https://planet.scummvm.org/atom.xml'
+headers:
+  date: 'Wed, 25 Mar 2020 19:00:40 GMT'
+  content-type: 'text/xml; charset=UTF-8'
+  cache-control: 'no-store, no-cache, must-revalidate'
+  expires: 'Thu, 19 Nov 1981 08:52:00 GMT'
+body: >
+  <?xml version="1.0" encoding="UTF-8" ?><feed xmlns="http://www.w3.org/2005/Atom">
+      <title>ScummVM Planet</title>
+      <subtitle>ScummVM Planet</subtitle>
+      <id>https://planet.scummvm.org/</id>
+      <link rel="self" type="application/atom+xml" href="https://planet.scummvm.org/atom.php" />
+      <link rel="alternate" type="text/html" href="https://planet.scummvm.org/" />
+      <updated>2020-03-25T19:10:28Z</updated>
+      <author><name>ScummVM Planet</name></author>
+
+
+      <entry>
+          <title type="html">ScummVM news : &lt;div&gt;GSoC 2020 is on the way!&lt;/div&gt;</title>
+          <id>https://www.scummvm.org/news/20200222</id>
+          <link rel="alternate" href="https://www.scummvm.org/news/20200222"/>
+          <published>2020-02-22T23:36:20+00:00</published>
+          <updated>2020-02-22T23:36:20+00:00</updated>
+          <author><name>sev</name></author>
+
+          <content type="html"><![CDATA[<div><p><img src="http://www.scummvm.org/data/news/GSoC2017Logo.png" alt="GSoC Logo"></p>
+  <p>It is the 14th time when ScummVM is accepted as an organization for Google Summer of Code, and we're going with our
+  sister project ResidualVM. The Summer of Code is a yearly event organized by Google to encourage students to contribute to open source projects. Open source organizations provide mentors and projects to work on, while Google give some money to participating students. You can find more information on the <a href="https://summerofcode.withgoogle.com/">official web site</a>. We also have some information on <a href="http://wiki.scummvm.org/index.php/Summer_of_Code">our wiki</a>, and in particular <a href="http://wiki.scummvm.org/index.php/Summer_of_Code/Project_Rules">project rules</a> that applicants will need to follow.</p>
+  <p>If you feel adventurous, and would like to contribute to one of the largest game preservation projects, we are eagerly
+  waiting for you! Have a look at <a href="http://wiki.scummvm.org/index.php/Summer_of_Code/GSoC_Ideas_2020">our ideas page</a>. Of course, you are also very welcome to bring your own idea (though it must be our projects-related)! The deadline for the student proposals is March 31st, and on April 27th accepted students will be announced.</p>
+  <p>You are welcome to join <a href="https://discord.gg/5D8yTtF">our Discord server</a> and ask any questions of #scummvm-gsoc channel.</p>
+  <p>Looking forward to your applications!</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ScummVM – serra.me : Creating a ScummVM Engine for The Clue!</title>
+          <id>https://www.serra.me/en/2020/02/creating-a-scummvm-engine-for-the-clue/</id>
+          <link rel="alternate" href="https://www.serra.me/en/2020/02/creating-a-scummvm-engine-for-the-clue/"/>
+          <published>2020-02-22T08:00:00+00:00</published>
+          <updated>2020-02-22T08:00:00+00:00</updated>
+          <author><name>Lothar</name></author>
+
+          <content type="html"><![CDATA[<div><div class="wp-block-image"><figure class="alignleft size-medium"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-boxart-211x300.jpeg" alt="" class="wp-image-1196" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-boxart-211x300.jpeg 211w, https://www.serra.me/assets/uploads/2020/02/the-clue-boxart-722x1024.jpeg 722w, https://www.serra.me/assets/uploads/2020/02/the-clue-boxart-106x150.jpeg 106w, https://www.serra.me/assets/uploads/2020/02/the-clue-boxart-768x1090.jpeg 768w, https://www.serra.me/assets/uploads/2020/02/the-clue-boxart.jpeg 1015w" sizes="(max-width: 211px) 100vw, 211px"></figure></div>
+
+
+
+  <p>A couple of months ago, I (somehow) initiated a new project: Creating a ScummVM engine for the game ‘The Clue!’, originally released in 1994.</p>
+
+
+
+  <p>‘The Clue!’, originally known as ‘Der Clou!’, was developed and published by the Austrian games studio ‘neo Software Produktions GmbH’. Some sources say that the game was published by ‘Max Design’, but that’s not really certain. However, we know for sure that the UK release was published by ‘Kompart UK’.</p>
+
+
+
+  <span id="more-1188"></span>
+
+
+
+  <h3>Introduction</h3>
+
+
+
+  <p>The game – a cross-over between an adventure and an RPG – tells the story of the young small-time criminal Matt Stuvysunt, who arrives in London in the early 1950s and tries to make a living by commiting burglaries. The player has to plan those burglaries down to the smallest detail. Even the slightest mistake might lead you straight into the arms of the police instead of the loot you are looking for.</p>
+
+
+
+  <p>Both the MS-DOS and the Amiga got two versions of the game. The planned ScummVM engine will cover the DOS version. Next to a ‘classic’ floppy based release, The Clue! was released on CD-ROM with a speech track. The Amiga got a release for the OCS/ECS and the AGA chipset.</p>
+
+
+
+  <p>The Amiga and the DOS versions have completely different soundtracks and different graphics at some points. Compared to the AGA version, the OCS/ECS is missing some audio tracks. Besides that, the graphics of the planning mode are vastly simplified. Regarding graphics, the AGA version mostly matches the DOS version.</p>
+
+
+
+  <p>Without going into too much detail – this game is very precious for me since it was the game that sparked my interest in retro gaming and ultimately brought me to ScummVM. It’s a great pleasure to announce that sev, Strangerke and SupSuper from the ScummVM project agreed to convert the existing source code into a proper ScummVM engine.</p>
+
+
+
+  <p>I’ll take a supporting role in this project. A lot of the comments in the source code are only available in German, so I’ll take care of a proper translation, so the developers can work with them. Besides that, I’ll work on testing the game since I know it pretty well and I’m able to understand the original German release.</p>
+
+
+
+  <h3>About the source code situation</h3>
+
+
+
+  <p>Back in the year 2000, the developers of the original game released the game assets and the source code of the DOS version to the public using a custom license. Shortly thereafter, development of a SDL based reimplemtation licensed under the GPLv2 began. This port is known under the name ‘COSP’ which stands for <em><a rel="noreferrer noopener" aria-label="Clou Open Source Project (öffnet in neuem Tab)" href="https://sourceforge.net/projects/cosp/" target="_blank">Clou Open Source Project</a></em>. Additionally, the game got ported to SDL2 by <a rel="noreferrer noopener" aria-label='Portierung auf SDL2, die von Vasco Alexandre "vcosta" da Silva Costa erstellt wurde (öffnet in neuem Tab)' href="https://github.com/vcosta/derclou" target="_blank">Vasco Alexandre ‘vcosta’ da Silva Costa</a>.</p>
+
+
+
+  <p>For us, it’s very fortunate that the source code is available, even though it’s partially modified. Usually, we don’t have access to original sources when developing a new ScummVM engine, so we have to examine the original binaries using reverse engineering. This process is very difficult and time consuming since we have almost no information about the inner workings of a game when we start the implementation. In this case, we even have access to two different sources.</p>
+
+
+
+  <p>The ScummVM engine will be based on both the COSP project and vcosta’s implementation. In some parts, both implementation take different approaches, so we can choose the code that really suits our needs.</p>
+
+
+
+  <h3>About the current state of the engine</h3>
+
+
+
+  <p>The game is available in German, English and Czech. Next to the game itself, there’s an add-on called ‘Profi-Diskette’ available containing several more missions and buildings. Our current plan is to support all existing language versions. We already managed to implement detection entries for all known game versions and we are able to launch all of them in ScummVM.</p>
+
+
+
+  <p>In conclusion, ‘The Clue!’ already runs in ScummVM. However, due to the early stage of development, the engine shouldn’t be considered as playable – you should expect glitches, bugs and crashes.</p>
+
+
+
+  <p>We are already aware of a couple of issues. For example, both versions have timing issues. While the COSP version is running too slow, vcosta’s version is running too fast. Some of the graphic routines contain glitches too which manifest in wrong colors and palette issues.</p>
+
+
+
+  <p>Parts of the audio and video output as well as input handling is already done by ScummVM components. The remaining tasks like the game’s logic and file handling are not done by the intended functions and calls in ScummVM at the moment.</p>
+
+
+
+  <h3>Screenshots? Screenshots!</h3>
+
+
+
+  <p>The following pictures were taken from the game running in ScummVM, so you can get a first look at the current development.</p>
+
+
+
+  <figure class="wp-block-image size-large"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-victoria-station.png" alt="" class="wp-image-1215" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-victoria-station.png 640w, https://www.serra.me/assets/uploads/2020/02/the-clue-victoria-station-300x225.png 300w, https://www.serra.me/assets/uploads/2020/02/the-clue-victoria-station-150x113.png 150w" sizes="(max-width: 640px) 100vw, 640px"><figcaption>You arrive in London…</figcaption></figure><figure class="wp-block-image size-large"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-holland-street.png" alt="" class="wp-image-1209" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-holland-street.png 640w, https://www.serra.me/assets/uploads/2020/02/the-clue-holland-street-300x225.png 300w, https://www.serra.me/assets/uploads/2020/02/the-clue-holland-street-150x113.png 150w" sizes="(max-width: 640px) 100vw, 640px"><figcaption>The streets of London</figcaption></figure><figure class="wp-block-image size-large"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-hotel-room.png" alt="" class="wp-image-1211" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-hotel-room.png 640w, https://www.serra.me/assets/uploads/2020/02/the-clue-hotel-room-300x225.png 300w, https://www.serra.me/assets/uploads/2020/02/the-clue-hotel-room-150x113.png 150w" sizes="(max-width: 640px) 100vw, 640px"><figcaption>Home, sweet home! Your hotel room is the HQ of your… operations. Here, you…</figcaption></figure><figure class="wp-block-image size-large"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-planning-1.png" alt="" class="wp-image-1217" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-planning-1.png 640w, https://www.serra.me/assets/uploads/2020/02/the-clue-planning-1-300x225.png 300w, https://www.serra.me/assets/uploads/2020/02/the-clue-planning-1-150x113.png 150w" sizes="(max-width: 640px) 100vw, 640px"><figcaption>…choose your next destination, your team members…</figcaption></figure><figure class="wp-block-image size-large"><img src="https://www.serra.me/assets/uploads/2020/02/the-clue-planning.png" alt="" class="wp-image-1213" srcset="https://www.serra.me/assets/uploads/2020/02/the-clue-planning.png 640w, https://www.serra.me/assets/uploads/2020/02/the-clue-planning-300x225.png 300w, https://www.serra.me/assets/uploads/2020/02/the-clue-planning-150x113.png 150w" sizes="(max-width: 640px) 100vw, 640px"><figcaption>…in order to create the perfect plan!</figcaption></figure><p>As you can see, we got off to a good start.</p>
+
+
+
+  <p>We’ll need to do quite a lot of work until we can call this project a ‘proper’ ScummVM engine. We’ll keep you up do date right here so you can follow the development process.</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">Dreammaster's disassembly blog : It's ScummVM ULTIMAte</title>
+          <id>https://dm-notes.blogspot.com/2020/02/its-scummvm-ultimate.html</id>
+          <link rel="alternate" href="https://dm-notes.blogspot.com/2020/02/its-scummvm-ultimate.html"/>
+          <published>2020-02-10T04:40:00+00:00</published>
+          <updated>2020-02-10T04:40:00+00:00</updated>
+          <author><name>Dreammaster</name></author>
+
+          <content type="html"><![CDATA[<div><div dir="ltr" style="text-align: left;" trbidi="on">A little over a week ago, it finally happened. I had combined my various work on the Ultima games into a single branch, and it was merged into master. This means Ultima VI: The False Prophet (from Nuvie), and Ultima VIII: Pagan (from Pentagram) are now playable in daily builds.  \o/. Ultima 1, as before, is startable, but still a work in progress, and work on that is on hiatus right now. The Ultima8 sub-engine already has a splash-screen, provided by Dominus Dragon, added to give credit to the Pentagram team that wrote the original code:<br><div class="separator" style="clear: both; text-align: center;"><a href="https://1.bp.blogspot.com/-ZIRy-I2_mb8/XkDaEtmw_wI/AAAAAAAAA0A/Od9vXYKV2AQ2mIRGCLaFcp7CiEm0g62DACNcBGAsYHQ/s1600/pentagram.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="480" data-original-width="640" height="240" src="https://1.bp.blogspot.com/-ZIRy-I2_mb8/XkDaEtmw_wI/AAAAAAAAA0A/Od9vXYKV2AQ2mIRGCLaFcp7CiEm0g62DACNcBGAsYHQ/s320/pentagram.png" width="320"></a></div><br>Nuvie will similarly get it's own splash image eventually to recognise it as well.<br><br>However, I'll hasten to say, that any Ultima fans should not necessary come running to play either game just yet. I'm still not quite ready to announce an official testing period for either game just yet. I plan to be doing my own testing of the games first, and it's always possible that there might be minor issues or changes to the savegame formats. So any experimenters be warned to play at your own risk.<br><br>I'd originally intended to move straight onto testing of Ultima VIII post-merge, but I got slightly sidetracked adding new functionality to the base Engine class that all game engines derive from. Functionality that future game engines will benefit from, including the Ultima engine.<br><br>1) The first of these is extended savegames. There was a recently added enhancement to savegames to take care of the drudgework of storing the savegames' names, thumbnails, total play time, etc. However, it still required engine writers to manually call various methods manually in their savegame code. With the addition of new methods in the Engine class that builds on this, this is all now taken care of automatically now, as well as opening and closing savegame files in general. All that needs to be done in future engines is overriding of two methods: loadGameStream and saveGameStream, which get passed a handle to a savefile for reading/writing it's contents, and the Engine takes care of everything else, including the savegame description and thumbnail.<br><br>2) The second is improved handling for autosaves, still under code review before inclusion. It adds autosave support to almost all the game engines. ScummVM has a global option for an Autosave interval, but it previously required each engine to implement their own code for autosaves. Because of this, only about 1/5th of the engines actually implemented autosave. When these changes are integrated autosaves, when turned on, are provided by practically all game engines. Only a few engines, like DreamWeb, that don't allow saving the from Global Main Menu won't support autosaves.<br><br>3) The third one, also under review, is an improvement to engine debuggers, the console window that pops up in many engines when you do Ctrl-D. Engines now just have to create their own debugger and pass it to the Engine to take care of, and it handles all the work for opening it when necessary, and updating it. One of the benefits of this, apart from standardization &amp; centralization, is that when errors occur now, the debugger window is more guaranteed to open up to show it. Even if the engine doesn't have it's own debugger, the base Engine class will create one on the fly. This means it will be easier for users to see fatal errors, rather than ScummVM simply terminating.<br><br>With these three done, I think my "base Engine binge" is fully tapped out. Barring any further issues or suggestions coming up in the pull requests for points 2 and 3, I'll probably take a few days to relax. Maybe do some further messing around with cleaning up Starship Titanic code, before I move back to my original plan of doing a test play-through of Ultima VIII.<br>.</div></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ScummVM – serra.me : More Sheep: ScummVM 2.1.1 is here!</title>
+          <id>https://www.serra.me/en/2020/02/more-sheep-scummvm-2-1-1-is-here/</id>
+          <link rel="alternate" href="https://www.serra.me/en/2020/02/more-sheep-scummvm-2-1-1-is-here/"/>
+          <published>2020-02-04T01:45:00+00:00</published>
+          <updated>2020-02-04T01:45:00+00:00</updated>
+          <author><name>Lothar</name></author>
+
+          <content type="html"><![CDATA[<div><p>A couple of days ago, the <a rel="noreferrer noopener" aria-label="ScummVM Team officially released ScummVM 2.1.1 (öffnet in neuem Tab)" href="https://www.scummvm.org/news/20200131/" target="_blank">ScummVM Team officially released ScummVM 2.1.1</a>, codenamed “:More Sheep:”. This new release includes several improvements and a large amount of bugfixes. Not only the game engines, but also the ScummVM GUI and networking stack received improvements. Let’s have a closer look at the updates that were made for ScummVM 2.1.1.</p>
+
+
+
+  <p>Amongst other things, the developers fixed a bug that could lead to a crash when switching between certain languages in the GUI. Additionally, changes made to the options dialog won’t be erroneously saved when the dialog is left using the ESC key.</p>
+
+
+
+  <span id="more-977"></span>
+
+
+
+  <p>The dialog for modifying the MIDI settings is now hidden if the game in question doesn’t support MIDI music. Networking and cloud integration is now more stable and less prone to errors. Save games are now only synced if necessary and for the first time, ScummVM’s cloud integration is available on the Nintendo Switch.</p>
+
+
+
+  <p>The SCI engine received a large number of improvements and fixes for bugs in the original game scripts. Additionally, support for a bunch of localized games versions was added.</p>
+
+
+
+  <p>“Blade Runner” can now be run at 120 FPS. Therefore, it’s possible to remove the 60 FPS cap from the original game. Besides that, support for savestates and thumbnails was improved. Platforms with support for virtual keyboards can now use them in Blade Runner too.</p>
+
+
+
+  <p>The Kyra, Mohawk, Queen, SCUMM, Supernova, Toltecs, Wintermute and Xeen engines are benefiting from numerous bugfixes and improvements.</p>
+
+
+
+  <p>In previous versions, ScummVM already supported a wide variety of platforms and devices. For the first time, ScummVM 2.1.1 offers official support for the Nintendo 3DS. The AmigaOS4, iOS, RISC OS and Pandora ports received some minor improvements while the Android port now supports HiDPI displays next to an improved filesystem navigation.</p>
+
+
+
+  <p>ScummVM 2.1.0 introduced text-to-speech (TTS) support within the GUI as an accessibility feature. Starting with this new release, TTS is available for Windows too.</p>
+
+
+
+  <p>ScummVM 2.1.1 is available immediately on the <a rel="noreferrer noopener" aria-label="project's website (öffnet in neuem Tab)" href="https://www.scummvm.org/downloads/" target="_blank">project’s website</a>. Users of previous versions for Windows and macOS can update their installations directly through the integrated updater.</p>
+
+
+
+  <p>For the first time, the Windows installer contains the 32 bit and the 64 bit version in one common binary. From now on, the installer will take care of your system’s architecture, so you don’t have to choose the “bitness” manually when downloading the latest and greatest ScummVM release.</p>
+
+
+
+  <p>ScummVM 2.1.1 is available for Windows (XP and later), Linux, macOS and many more platforms and operating systems. The version targeting Windows 95 to Windows 2000 is not ready yet – I’ll provide them as soon as possible.</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ScummVM news : &lt;div&gt;Release of ScummVM 2.1.1 &quot;:More Sheep:&quot;&lt;/div&gt;</title>
+          <id>https://www.scummvm.org/news/20200131</id>
+          <link rel="alternate" href="https://www.scummvm.org/news/20200131"/>
+          <published>2020-01-31T18:02:08+00:00</published>
+          <updated>2020-01-31T18:02:08+00:00</updated>
+          <author><name>sev</name></author>
+
+          <content type="html"><![CDATA[<div><p>After a short break, the ScummVM Team is pleased to announce a bugfix release for the 2.1 series - ScummVM 2.1.1, codenamed “:More Sheep:”.</p>
+  <p>This release contains a substantial amount of fixes and minor enhancements. The most notable ones are: better multi-language support in the GUI, improvements in FM TOWNS/PC-98 audio, optimisations of the cloud saves, a couple dozen SCI script fixes, improvements to Blade Runner and fixes to another 7 engines. Also, this is the first release with official support for the Nintendo 3DS. Additionally, we added cloud support to the Nintendo Switch port.</p>
+  <p>For a more comprehensive list of changes, please refer to the <a href="https://www.scummvm.org/frs/scummvm/2.1.1/ReleaseNotes.html">Release Notes</a>.</p>
+  <p>As always, the set of pre-built executables can be found at our <a href="http://www.scummvm.org/downloads/">downloads page</a>.</p>
+  <p>Enjoy, and have fun!</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ScummVM – serra.me : Updating my ScummVM build server</title>
+          <id>https://www.serra.me/en/2020/01/updating-my-scummvm-build-server/</id>
+          <link rel="alternate" href="https://www.serra.me/en/2020/01/updating-my-scummvm-build-server/"/>
+          <published>2020-01-14T20:20:54+00:00</published>
+          <updated>2020-01-14T20:20:54+00:00</updated>
+          <author><name>Lothar</name></author>
+
+          <content type="html"><![CDATA[<div><p>Since a few months I’m running my <a rel="noreferrer noopener" aria-label="eigenen Build-Server (öffnet in neuem Tab)" href="https://scummvm.serra.me/" target="_blank">own build server</a> for the Windows versions of <a rel="noreferrer noopener" aria-label="ScummVM (öffnet in neuem Tab)" href="https://www.scummvm.org/" target="_blank">ScummVM</a>. Originally, the server was intended to replace my previous toolchain based on MSYS2 and to provide self-contained (avoiding DLL hell) and continuously updated Win32 binaries.</p>
+
+
+
+  <p>In the meantime, this project evolved quite a bit. Currently, the official Windows versions of ScummVM as well as the <a rel="noreferrer noopener" aria-label="Entwicklerversionen (öffnet in neuem Tab)" href="https://www.scummvm.org/downloads/#daily" target="_blank">Nightly Builds</a> are built by this server. As you can imagine, the term “experimental” doesn’t really fit anymore, even though I’m still referring to this server as my staging environment.</p>
+
+
+
+  <span id="more-721"></span>
+
+
+
+  <p>For me it is important to always use the latest versions of the libraries that are used for building ScummVM. Yesterday, I updated my toolchain with <code>jpeg 9d</code>, <code>FLAC 1.3.3</code> and <code>curl 7.68.0</code>. The builds created in the last couple of hours are already using these new versions. I based my toolchain on the great <a rel="noreferrer noopener" aria-label=" MXE-Projekt (öffnet in neuem Tab)" href="https://mxe.cc/" target="_blank">MXE project</a>. A couple of months ago, I submitted <a rel="noreferrer noopener" aria-label="ein Makefile für libmpeg2 spendiert (öffnet in neuem Tab)" href="https://github.com/mxe/mxe/commit/9882463e51f91552286cc9e39d64283065e0f85f" target="_blank">a makefile for libmpeg2</a> and <a rel="noreferrer noopener" aria-label="a makefile for fluidsynth (öffnet in neuem Tab)" href="https://github.com/mxe/mxe/commit/ab0e4733cd71ead78ae077f8022e52411ba9ff27" target="_blank">a makefile for fluidsynth</a> to MXE.</p>
+
+
+
+  <p>It’s pretty nice to see that the Windows verions of ScummVM with all it’s engines and features can now be built using only the MXE toolchain itself. We don’t have to rely on “self constructed” toolchains anymore. This will make future toolchain updates <em>much</em> easier. Hopefully, it will integrate quite nicely into our CI system.</p>
+
+
+
+  <p>With the exception of <a rel="noreferrer noopener" aria-label="fluidsynth (öffnet in neuem Tab)" href="https://github.com/FluidSynth/fluidsynth" target="_blank">fluidsynth</a>, the libraries I use are (in general) always up-to-date. Regarding fluidsynth, I’m currently not completely satisfied with how it’s implemented in MXE. However, my current plan is to update fluidsynth as soon as we started the next release cycle for ScummVM. Currently, I’d have to build fluidsynth manually and I simply don’t have enough time for it since we already scheduled the next ScummVM release.</p>
+
+
+
+  <p>In the long run, I’m going to use my toolchain for the official <a rel="noreferrer noopener" aria-label="ScummVM buildbot (öffnet in neuem Tab)" href="https://buildbot.scummvm.org/" target="_blank">ScummVM buildbot</a> too – but more on that later.</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">Dreammaster's disassembly blog : Post New Years report</title>
+          <id>https://dm-notes.blogspot.com/2020/01/post-new-years-report.html</id>
+          <link rel="alternate" href="https://dm-notes.blogspot.com/2020/01/post-new-years-report.html"/>
+          <published>2020-01-07T05:49:00+00:00</published>
+          <updated>2020-01-07T05:49:00+00:00</updated>
+          <author><name>Dreammaster</name></author>
+
+          <content type="html"><![CDATA[<div><div dir="ltr" style="text-align: left;" trbidi="on">Once again, it seems I fell out of habit of doing regular blog updates. Though hopefully you'll at least be ameliorated by the fact that I have at least been busy over the last few months. With the start of 2020 finally upon us, I thought it would be an opportune time to summarize what I've been up to.<br><br>First of all, the ScummVM Glk engine has been going well. Before I put it on hiatus late last year, I'd already converted over 2/3rds of the existing engines to run under ScummVM, with cleanups and hooking into the ScummVM save system, etc. At this point, there's only a few sub-engines from the original Gargoyle suite left, chief among them TADS which, due to it's complexity, will likely take some time to clean up so that it compiles properly as part of ScummVM. I had previously done a preliminary conversion of TADS 2, but there were problems with immediate crashes that I couldn't figure out. I'm hopeful that doing a fresh conversion of both TADS 2 and 3 at the same time may result in a better outcome this time.<br><br>Next comes my work on Ultima. Back at the start of December, I'd had plans to keep working on Glk right up to my Christmas holidays. However, after a non-serious prodding from Dominus Dragon about Pentagram (the engine for playing Ultima 8) still not yet being supported, I started looking at what it would take to convert over the engine. And ended up getting hooked on it, to the exclusion of all else for the next several weeks. So below, I present a screenshot of Ultima 8 running in ScummVM:<br><div class="separator" style="clear: both; text-align: center;"><a href="https://1.bp.blogspot.com/-aCjpCeQpc7I/XhQWzjzfiMI/AAAAAAAAAzA/2eReEXSvKMcWa3zcDz-Kw09jsSy_54TwwCNcBGAsYHQ/s1600/scummvm00000.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="480" data-original-width="640" height="240" src="https://1.bp.blogspot.com/-aCjpCeQpc7I/XhQWzjzfiMI/AAAAAAAAAzA/2eReEXSvKMcWa3zcDz-Kw09jsSy_54TwwCNcBGAsYHQ/s320/scummvm00000.png" width="320"></a></div><br><br>As of Christmas, the only area I had left to update/correct was that of the music player.. I still need to figure out how to hook it into ScummVM. Otherwise, everything else seems to be working fine.. I was able to play the introduction, get through the docks cutscene, and then enter the city. I haven't yet really put the game through it's paces beyond that. It's better to wait until I'm happy that everything is properly implemented.<br><br>And I got distracted yet again, although this time intentionally. At this point, my Christmas holidays had been reached, and I really wanted something a bit more fun to work on than just bugfixing  and playtesting of Ultima 8. Trying to work my way through all those caves and jump platforms wasn't my first choice for my R&amp;R activities.. I much preferred working on the engine itself than actually playing the game.<br><br>Back when I started getting hooked on working on Ultima 8, and realized how fun it was, I again set my sights on Nuvie, the engine for Ultima 6 and spinoffs. I'd previously asked the lead developer, Eric Fry, nearly two years back about integrating Nuvie into ScummVM, but at that time he still wanted to work further on Martian Dreams on it with it still being the familiar stand alone project. Trying again in December, I got no response, even after several weeks, and asking a co-developer, again Dominus Dragon, to also try contacting him. Since it had also been several months since any commits had been done, I decided that I'd done my due diligence, and it was finally fair game.<br><br>So over the holidays I put Ultima 8 aside, and worked on integrating Nuvie into ScummVM as well, creating a shared "ultima" engine that contains both Ultima 6 and Ultima 8. And, eventually, hopefully the other remaining Ultima games as well. Including my in-progress reimplementation of Ultima 1, which I originally put on hiatus way back when I first got agreement to merge Gargoyle into ScummVM.<br><br>So over the holidays I had further fun of converting the Nuvie engine. To make things easy for users, the new ultima6 subengine has two different detection entries, with "original":<br><div class="separator" style="clear: both; text-align: center;"><a href="https://1.bp.blogspot.com/-nRj5wKVt4Bg/XhQXGVgcIFI/AAAAAAAAAzI/KcNfbDd6qVg-PoAxRXfdiOZfcxJsCLIZACEwYBhgL/s1600/scummvm00001.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="600" data-original-width="960" height="200" src="https://1.bp.blogspot.com/-nRj5wKVt4Bg/XhQXGVgcIFI/AAAAAAAAAzI/KcNfbDd6qVg-PoAxRXfdiOZfcxJsCLIZACEwYBhgL/s320/scummvm00001.png" width="320"></a></div><br><br> and "enhanced" versions:<br><div class="separator" style="clear: both; text-align: center;"><a href="https://1.bp.blogspot.com/-qsPYKcCLKL8/XhQXGrZXk8I/AAAAAAAAAzM/A9HF4SCwFowVJu7xspmLt631GOfDheNlwCEwYBhgL/s1600/scummvm00002.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="800" data-original-width="1280" height="200" src="https://1.bp.blogspot.com/-qsPYKcCLKL8/XhQXGrZXk8I/AAAAAAAAAzM/A9HF4SCwFowVJu7xspmLt631GOfDheNlwCEwYBhgL/s320/scummvm00002.png" width="320"></a></div><br><br>As you can see, original gives the look and feel of the original game, whereas the Enhanced version automatically sets all the Nuvie options for enhanced graphics, full screen map, and Ultima 7 style gumps. So users will easily be able to play in an enhanced mode without worrying about fiddling around with configuration options.<br><br>As of now, the game starts up and runs. It still needs some work testing the various areas, and making sure it all works properly. In it's case, the sound code was a lot easier to convert than for Pentagram. It actually already used copies of the ScummVM mixer and stream classes. So it was a pretty straightforward process to simply remove them, and remap the code to use the original ScummVM classes instead. Such a relief :).<br><br>A downside, though, is parts of the engine, such as the cutscenes, were written in Lua rather than C code. This has disadvantages for properly supporting the game in ScummVM. First of all, I've had to duplicate the entire Lua runtime from Nuvie just to run the scripts, as the version of Lua we have in common/lua/ can't execute the scripts, giving an error when I tried. Plus, when the intro sequence is running, the system isn't properly updated, which means I can't drag the window or, more seriously, exit ScummVM by closing the Window. Long term, I'm likely going to have to rewrite the Lua scripts as C++ code and classes, so Lua can eventually be entirely removed. That will give me greater flexibility to properly handle events for the cutscenes. Also, for enhanced mode, I set the graphic mode to double size of the original, so rewriting the cutscenes in C++ would also make it easier to either stretch the cinematics, or temporarily switch back to 320x200 mode for them.<br><br><br>So where am I going from here? Well, the larger portion of my time is going to return to working on Glk again. Given it's advanced state, I'd be happier getting it finally done and properly supported. At least for the engines that were already part of the Gargoyle suite. Converting other non-Glk-compliant interactive fiction engines can wait until some other time in the future. I'll also spend some smaller portion of my time still working on Ultima 6. For now I'm not worrying about converting the Lua scripts.. I'll first be focusing on ensuring that the rest of the engine is running solidly under ScummVM. After that I can worry about the scripts. We'll see how I go :)<br><br></div></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ScummVM news : &lt;div&gt;Westwood’s &lt;em&gt;Blade Runner&lt;/em&gt; (1997) is finally available for purchase as a digital copy&lt;/div&gt;</title>
+          <id>https://www.scummvm.org/news/20191217</id>
+          <link rel="alternate" href="https://www.scummvm.org/news/20191217"/>
+          <published>2019-12-17T18:38:08+00:00</published>
+          <updated>2019-12-17T18:38:08+00:00</updated>
+          <author><name>sev</name></author>
+
+          <content type="html"><![CDATA[<div><p>We are thrilled to announce that the <em>Blade Runner</em> point and click adventure game, developed by Westwood Studios and originally released in 1997, is <a href="http://gog.com/game/blade_runner?pp=22d200f8670dbdb3e253a90eee5098477c95c23d">now available again for purchase</a>, thanks to the efforts of GOG.com. This new digitally distributed version includes the officially dubbed versions of the game (English, French, Italian, Spanish and German).</p>
+  <p>Of course, it runs on top of ScummVM, which means it contains various bug fixes and quality of life improvements (like mouse-scrolling in KIA and fan made subtitles support) over the original 1997 version of the game.</p>
+  <p>You will find subtitles for the English and French versions of the game on the Games section of the ScummVM website.</p>
+  <p>We still have plans to complete the restored content version for the game, which is built from content and code segments that are already in the game’s resources but left unused or untriggered.</p>
+  <p>PS. If you use the link above we will get a commission from your purchase.</p></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">Criezy's Blog : GSoC 2019 mentor summit lightning talk</title>
+          <id>https://criezy.blogspot.com/2019/11/gsoc-2019-mentor-summit-lightning-talk.html</id>
+          <link rel="alternate" href="https://criezy.blogspot.com/2019/11/gsoc-2019-mentor-summit-lightning-talk.html"/>
+          <published>2019-11-10T19:02:00+00:00</published>
+          <updated>2019-11-10T19:02:00+00:00</updated>
+          <author><name>Thierry Crozat</name></author>
+
+          <content type="html"><![CDATA[<div>Following the participation of <a href="https://www.scummvm.org/">ScummVM</a> to the Google Summer of code this summer we were invited to send two mentors to the Mentors Summit in Munich in October. I was selected to go with Arnaud (Strangerke).<br><br>While there I decided to make a short presentation in the Lightning Talk sessions. In those sessions we only have 3 minutes to present something, which is a fun exercise in conciseness.<br><br>Arnaud recorded this presentation and you can see it here:<br><br><div class="separator" style="clear: both; text-align: center;"><iframe width="320" height="266" class="YOUTUBE-iframe-video" data-thumbnail-src="https://i.ytimg.com/vi/A8j91zp7Hc4/0.jpg" src="https://www.youtube.com/embed/A8j91zp7Hc4?feature=player_embedded" frameborder="0" allowfullscreen></iframe></div><br>And the slides are visible below:<br><iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRDe-ONrJbQQkjAlFe6K3clH4mspXYeKIJFmTON3EHhxqtUjdjH8MZPRIUwfg9q5eEzo57LeDjL6GAd/embed?start=false&amp;loop=false&amp;delayms=30000" frameborder="0" width="480" height="299" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>]]></content>
+      </entry>
+
+
+      <entry>
+          <title type="html">ResidualVM news : &lt;div&gt;The Longest Journey awaits&lt;/div&gt;</title>
+          <id>https://www.residualvm.org/news/20191110/</id>
+          <link rel="alternate" href="https://www.residualvm.org/news/20191110/"/>
+          <published>2019-11-10T12:00:00+00:00</published>
+          <updated>2019-11-10T12:00:00+00:00</updated>
+          <author><name>bgK</name></author>
+
+          <content type="html"><![CDATA[<div><p>
+    <img src="https://www.residualvm.org/data/news/tlj-intro.png" alt="The Longest Journey Logo" align="middle"></p>
+  <p>
+    The 20th anniversary of the release of The Longest Journey comes in a few days. As a present, the ResidualVM team offers the means to play the game on modern systems. Of course there is a catch, we need your help
+    to find the last few bugs in the game engine before we can declare it stable.
+  </p>
+  <p>
+    To play The Longest Journey, get a fresh <a href="https://www.residualvm.org/downloads/#daily">daily build of ResidualVM</a>, <a href="https://github.com/residualvm/residualvm/#51-required-files">assemble the required files</a>
+    from your game copy, and optionally install the <a href="https://tljhd.github.io/">HD mod</a>. The HD mod was created by Faberman. It brings a welcome graphical update to the game through the use of a machine learning upscaler
+    and a lot of polishing work. Please report the issues you encounter while playing the game on our <a href="https://github.com/residualvm/residualvm/issues">bug tracker</a>.
+  </p></div>]]></content>
+      </entry>
+
+
+  </feed>

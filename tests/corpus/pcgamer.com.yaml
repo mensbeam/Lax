@@ -1,0 +1,478 @@
+# PC Gamer is notable for its caching header-fields, which rely on age
+# It is otherwise a prime example of bog-standard RSS 2.0, with plain-text summaries and only the addition of an Atom ID for the feed
+
+url: 'https://www.pcgamer.com/rss/'
+headers:
+  date: 'Wed, 25 Mar 2020 17:39:54 GMT'
+  content-type: 'application/rss+xml; charset=utf-8'
+  cache-control: 'max-age=300,public'
+  expires: 'Wed, 25 Mar 2020 17:44:54 GMT'
+  age: '112'
+body: >
+  <?xml version="1.0" encoding="utf-8"?>
+  <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <atom:link href="http://www.pcgamer.com/rss/?feed=rss" rel="self" type="application/rss+xml"/>
+      <title>PC Gamer</title>
+      <description>Latest Articles</description>
+      <link>http://www.pcgamer.com/rss/?feed=rss</link>
+      <copyright>(c)2020 Future Publishing Ltd</copyright>
+      <generator>Future Syndication Engine 1.159</generator>
+      <lastBuildDate>Wed, 25 Mar 2020 17:33:13 +0000</lastBuildDate>
+      <image>
+        <url>http://assets.futurecdn.net/img/future-tag.png</url>
+        <title>PC Gamer</title>
+        <link>http://www.pcgamer.com/rss/?feed=rss</link>
+      </image>
+      <item>
+        <title>Microsoft to pause non-essential  Windows updates starting in May </title>
+        <link>http://www.pcgamer.com/microsoft-to-pause-non-essential-windows-updates-starting-in-may</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/microsoft-to-pause-non-essential-windows-updates-starting-in-may</guid>
+        <description>Reading between the lines, this is a move to make Windows more stable while people work from home.</description>
+        <pubDate>Wed, 25 Mar 2020 17:30:26 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/NamzPbNAFZ8nxEDuwyBbyg.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Liberated is a cyberpunk noir that takes place within the pages of a digital comic book</title>
+        <link>http://www.pcgamer.com/liberated-is-a-cyberpunk-noir-that-takes-place-within-the-pages-of-a-digital-comic-book</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/liberated-is-a-cyberpunk-noir-that-takes-place-within-the-pages-of-a-digital-comic-book</guid>
+        <description>Atomic World's dystopian adventure leaves neon behind for shades of grey.</description>
+        <pubDate>Wed, 25 Mar 2020 17:25:20 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/ANmQxUu7kiUki5J6d9cFFc.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Intel details how it could make Xe GPUs not suck for DX12 games</title>
+        <link>http://www.pcgamer.com/intel-xe-multi-gpu</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/intel-xe-multi-gpu</guid>
+        <description>Existing DirectX 12 techniques mean Intel's new Xe GPU could deliver higher performance when working with CPU graphics</description>
+        <pubDate>Wed, 25 Mar 2020 16:58:35 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/QbB8ux6WAgiFvnHbZBm7v5.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Faster gaming laptops rocking Intel and Nvidia hardware could launch very soon</title>
+        <link>http://www.pcgamer.com/nvidia-rtx-super-intel-comet-lake-gaming-laptops</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/nvidia-rtx-super-intel-comet-lake-gaming-laptops</guid>
+        <description>New gaming laptops will bring more firepower with faster Intel CPUs and Nvidia Super GPUs.</description>
+        <pubDate>Wed, 25 Mar 2020 16:53:22 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/2jjK44exAbV6TNHby8ADvR.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>See it all with this gorgeous 29-inch ultrawide 1080p monitor for $200</title>
+        <link>http://www.pcgamer.com/see-it-all-with-this-gorgeous-29-inch-ultrawide-1080p-monitor-for-dollar200</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/see-it-all-with-this-gorgeous-29-inch-ultrawide-1080p-monitor-for-dollar200</guid>
+        <description>B&amp;H has got a flash deal on this 1080p ultrawide Asus gaming monitor for almost half-price. </description>
+        <pubDate>Wed, 25 Mar 2020 16:36:19 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/Qp2mymERujpoMwMtViu7Ra.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Grab this RX 5700 XT graphics card at its lowest price of just £299</title>
+        <link>http://www.pcgamer.com/asus-amd-rx-5700-xt-gaming-x3-deal</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/asus-amd-rx-5700-xt-gaming-x3-deal</guid>
+        <description>Save around £60 on one of the best AMD GPUs.</description>
+        <pubDate>Wed, 25 Mar 2020 15:50:49 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/byavFSqHqdYXLJv7z7YJv5.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Watch someone play Sekiro, but all enemies are the final boss</title>
+        <link>http://www.pcgamer.com/watch-someone-play-sekiro-but-all-enemies-are-the-final-boss</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/watch-someone-play-sekiro-but-all-enemies-are-the-final-boss</guid>
+        <description>Just thinking about it is making me stressed.</description>
+        <pubDate>Wed, 25 Mar 2020 14:40:44 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/aLzcibhEmHHvfvk6FgxV86.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Watch this teacher give a geometry lesson in Half-Life: Alyx</title>
+        <link>http://www.pcgamer.com/watch-this-teacher-give-a-geometry-lesson-in-half-life-alyx</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/watch-this-teacher-give-a-geometry-lesson-in-half-life-alyx</guid>
+        <description>A good way to keep lessons going during lockdown.</description>
+        <pubDate>Wed, 25 Mar 2020 14:39:27 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/oUzw9ALY3CN6kHVzpPfsbF.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>Western Digital WD Black P10 Game Drive 5TB Review</title>
+        <link>http://www.pcgamer.com/wd-black-p10-game-drive-5tb-review</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/wd-black-p10-game-drive-5tb-review</guid>
+        <description>When all you need is a big external hard drive for your data, WD delivers.</description>
+        <pubDate>Wed, 25 Mar 2020 14:14:54 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/XPsU3sT5MdKEvvNJEHSnDX.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>Rogue Company shows its grit in new gameplay trailer</title>
+        <link>http://www.pcgamer.com/rogue-company-shows-its-grit-in-new-gameplay-trailer</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/rogue-company-shows-its-grit-in-new-gameplay-trailer</guid>
+        <description>The mercenaries of Rogue Company get a first chance to show off their stuff</description>
+        <pubDate>Wed, 25 Mar 2020 14:00:46 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/oJPFgYjxG4uDoK8hvve9QX.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>How to access all the Doom Eternal Slayer Gates for a special treat</title>
+        <link>http://www.pcgamer.com/doom-eternal-slayer-keys-gates-unmaykr</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/doom-eternal-slayer-keys-gates-unmaykr</guid>
+        <description>First you need Doom Eternal Slayer Keys to access each extra challenge room.</description>
+        <pubDate>Wed, 25 Mar 2020 11:46:10 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/PPxM2qJQCGFU6RvBUZRacT.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>GDC 2020 talks are now free for everyone</title>
+        <link>http://www.pcgamer.com/gdc-2020-talks-are-now-free-for-everyone</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/gdc-2020-talks-are-now-free-for-everyone</guid>
+        <description>Last week's pre-recorded conference talks are now available to watch on Twitch and GDC Vault</description>
+        <pubDate>Wed, 25 Mar 2020 11:44:13 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/XmsytRxXqBo4sG57uTZhNB.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>The gravity gloves are the real star of Half-Life: Alyx</title>
+        <link>http://www.pcgamer.com/the-gravity-gloves-are-the-real-star-of-half-life-alyx</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/the-gravity-gloves-are-the-real-star-of-half-life-alyx</guid>
+        <description>See Valve's newest gadget in action.</description>
+        <pubDate>Wed, 25 Mar 2020 10:49:18 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/4LtpcYnWLfAsiB6FyQzScX.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Total Lockdown goes vertical with the Battle Royale genre</title>
+        <link>http://www.pcgamer.com/total-lockdown-goes-vertical-with-the-battle-royale-genre</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/total-lockdown-goes-vertical-with-the-battle-royale-genre</guid>
+        <description>Ascend the top 24 floors of a sci-fi skyscraper in this daring new twist on the battle royale shooter</description>
+        <pubDate>Wed, 25 Mar 2020 10:21:56 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/UdiVvXATewyMYPyfrFj3SG.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Stylish RPG Child of Light is free-to-keep at the moment</title>
+        <link>http://www.pcgamer.com/stylish-rpg-child-of-light-is-free-to-keep-at-the-moment</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/stylish-rpg-child-of-light-is-free-to-keep-at-the-moment</guid>
+        <description>Ubisoft is giving the sidescrolling, turn-based game away.</description>
+        <pubDate>Wed, 25 Mar 2020 02:58:40 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/zFbV8xFmjtTyuMmN79Q6oC.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Australia, Green Man Gaming's March Mayhem sale has some good discounts</title>
+        <link>http://www.pcgamer.com/australia-green-man-gamings-march-mayhem-sale-has-some-good-discounts</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/australia-green-man-gamings-march-mayhem-sale-has-some-good-discounts</guid>
+        <description>Nier: Automata, Borderlands 3, Resident Evil 3 and more.</description>
+        <pubDate>Wed, 25 Mar 2020 01:42:26 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/pfSJWTZTYu7hJFTnMhxgQH.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>The best Australian PC gaming deals this week</title>
+        <link>http://www.pcgamer.com/best-australian-pc-gaming-deals</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/best-australian-pc-gaming-deals</guid>
+        <description>Hand-picked deals from the Aussie PCG team.</description>
+        <pubDate>Wed, 25 Mar 2020 01:40:27 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/qaXQnxXTVzJYHwhrpDEoyc.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Max Payne 2's ridiculous physics still make it a must-play</title>
+        <link>http://www.pcgamer.com/after-15-years-max-payne-2-is-still-worth-playing-for-its-ridiculous-physics</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/after-15-years-max-payne-2-is-still-worth-playing-for-its-ridiculous-physics</guid>
+        <description>Where have all the ragdolls gone?</description>
+        <pubDate>Wed, 25 Mar 2020 00:39:53 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/8RjBTVhzxqRQ5oHhFR6v4B.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Here's the free Bomberman-style battle royale game you've been waiting for</title>
+        <link>http://www.pcgamer.com/heres-the-free-bomberman-style-battle-royale-game-youve-been-waiting-for</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/heres-the-free-bomberman-style-battle-royale-game-youve-been-waiting-for</guid>
+        <description>Bombergrounds is an excellent time killer, costs nothing, and is under 200MB.</description>
+        <pubDate>Wed, 25 Mar 2020 00:16:17 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/eMmraj2QxWz8ST2KrHFoVk.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>How fidgeting playtesters convinced Valve to drastically shorten Half-Life: Alyx's intro</title>
+        <link>http://www.pcgamer.com/how-fidgeting-playtesters-convinced-valve-to-drastically-shorten-half-life-alyxs-intro</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/how-fidgeting-playtesters-convinced-valve-to-drastically-shorten-half-life-alyxs-intro</guid>
+        <description>It originally took "an hour to two hours" to get your first gun, says Valve. Fidgeting playtesters changed that, and more.</description>
+        <pubDate>Tue, 24 Mar 2020 23:18:53 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/btKZM9n9BpNGQnc2owkr3i.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>That Silent Hill reboot rumor has been debunked by Konami</title>
+        <link>http://www.pcgamer.com/that-silent-hill-reboot-rumor-has-been-debunked-by-konami</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/that-silent-hill-reboot-rumor-has-been-debunked-by-konami</guid>
+        <description>The excellent horror series will continue to be neglected.</description>
+        <pubDate>Tue, 24 Mar 2020 22:37:15 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/CgCLoSZgh9aDufxGZzT75R.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Borderlands 3 characters will get a big late-game boost later this week</title>
+        <link>http://www.pcgamer.com/borderlands-3-characters-will-get-a-big-late-game-boost-later-this-week</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/borderlands-3-characters-will-get-a-big-late-game-boost-later-this-week</guid>
+        <description>The Guns, Love, and Tentacles expansion is coming on Thursday, while a new seasonal event will start in April.</description>
+        <pubDate>Tue, 24 Mar 2020 22:12:50 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/dyVs79DpMGbdueQUjtuMGm.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Outer Wilds, the acclaimed outer space camping adventure, comes to Steam in June</title>
+        <link>http://www.pcgamer.com/outer-wilds-the-acclaimed-outer-space-camping-adventure-comes-to-steam-in-june</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/outer-wilds-the-acclaimed-outer-space-camping-adventure-comes-to-steam-in-june</guid>
+        <description>Anyone who backed the PC version on Fig will get a Steam key, even if they've already redeemed an Epic Games Store key.</description>
+        <pubDate>Tue, 24 Mar 2020 20:38:46 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/sbUAV48tT9p9fRw4JxKEaP.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Best gaming monitors for 2020</title>
+        <link>http://www.pcgamer.com/best-gaming-monitor</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/best-gaming-monitor</guid>
+        <description>These are the best gaming monitors that will have you playing in style.</description>
+        <pubDate>Tue, 24 Mar 2020 20:38:12 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/RmSuk4FEVeD7EoRoo2L5Wo.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>This Asus gaming laptop with a GTX 1660 Ti is just $850 right now</title>
+        <link>http://www.pcgamer.com/this-asus-gaming-laptop-with-a-gtx-1660-ti-is-just-dollar850-right-now</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/this-asus-gaming-laptop-with-a-gtx-1660-ti-is-just-dollar850-right-now</guid>
+        <description>A good entry-level gaming laptop with some upgrade potential.</description>
+        <pubDate>Tue, 24 Mar 2020 20:02:13 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/jDjpQ4eA5Ku4CkVtxVQyvH.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Here are the free Hearthstone decks being given to new and returning players</title>
+        <link>http://www.pcgamer.com/here-are-the-free-hearthstone-decks-being-given-to-new-and-returning-players</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/here-are-the-free-hearthstone-decks-being-given-to-new-and-returning-players</guid>
+        <description>Starting March 26, newcomers and lapsed players will be given a free deck from the class of their choice for logging back in.</description>
+        <pubDate>Tue, 24 Mar 2020 19:28:15 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/fH7zM4YSChakCWJq7FgAHQ.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>Cheap gaming laptop deals</title>
+        <link>http://www.pcgamer.com/gaming-laptop-deals</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/gaming-laptop-deals</guid>
+        <description>Stay warm in the winter with the best cheap gaming laptop deals the internet has to offer. </description>
+        <pubDate>Tue, 24 Mar 2020 19:12:43 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/vUh6Tu2hp2ajSS375trjg7.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>PSA: Zoom will narc to your boss if you're tabbed out during a meeting</title>
+        <link>http://www.pcgamer.com/psa-zoom-will-narc-to-your-boss-if-youre-tabbed-out-during-a-meeting</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/psa-zoom-will-narc-to-your-boss-if-youre-tabbed-out-during-a-meeting</guid>
+        <description>You suck, Zoom.</description>
+        <pubDate>Tue, 24 Mar 2020 19:05:27 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/u5V9SzjaVg2aknitC6QB9V.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>This slick SNES-inspired Bluetooth controller is $10 off right now</title>
+        <link>http://www.pcgamer.com/feed-your-nostalgia-by-saving-dollar10-on-this-snes-inspired-bluetooth-controller</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/feed-your-nostalgia-by-saving-dollar10-on-this-snes-inspired-bluetooth-controller</guid>
+        <description>Amazon has dropped the price on 8bitdo's awesome Sn30 Pro+ to $40.</description>
+        <pubDate>Tue, 24 Mar 2020 18:37:45 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/ggbo8ShtoHN3mYhwiCdALn.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Upgrade your home network with a fast Netgear Wi-Fi 6 router for just $110 today</title>
+        <link>http://www.pcgamer.com/upgrade-your-home-network-with-a-fast-netgear-wi-fi-6-router-for-just-dollar110-today</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/upgrade-your-home-network-with-a-fast-netgear-wi-fi-6-router-for-just-dollar110-today</guid>
+        <description>Our favorite router for buyers on a budget is on sale.</description>
+        <pubDate>Tue, 24 Mar 2020 18:25:33 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/HfDZTB92YcrbkGqeaK3QjX.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>YouTube will default to SD video to help reduce strain on the internet</title>
+        <link>http://www.pcgamer.com/youtube-will-default-to-sd-video-to-help-reduce-strain-on-the-internet</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/youtube-will-default-to-sd-video-to-help-reduce-strain-on-the-internet</guid>
+        <description>Video watching has surged as the coronavirus outbreak forces people to stay at home.</description>
+        <pubDate>Tue, 24 Mar 2020 18:25:32 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/7jSH4uPXwhcbAnAKNzcYxR.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Valve is 'looking forward' to mods that remove VR from Half-Life: Alyx</title>
+        <link>http://www.pcgamer.com/valve-is-looking-forward-to-mods-that-remove-vr-from-half-life-alyx</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/valve-is-looking-forward-to-mods-that-remove-vr-from-half-life-alyx</guid>
+        <description>Playing it without VR, Robin Walker thinks, will help players understand why Valve made the game for VR in the first place.</description>
+        <pubDate>Tue, 24 Mar 2020 18:21:57 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/b9regcKo5xWcQ29piJxqwe.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>The best Wolcen builds</title>
+        <link>http://www.pcgamer.com/best-wolcen-build-mage-guide</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/best-wolcen-build-mage-guide</guid>
+        <description>Get started with our favourite Wolcen build archetypes.</description>
+        <pubDate>Tue, 24 Mar 2020 18:09:47 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/tZr8Xh2JuXGxea8LDoh7ka.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Fantasy 4X game Endless Legend is free to play on Steam for a week</title>
+        <link>http://www.pcgamer.com/fantasy-4x-game-endless-legend-is-free-to-play-on-steam-for-a-week</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/fantasy-4x-game-endless-legend-is-free-to-play-on-steam-for-a-week</guid>
+        <description>Endless Legend and all DLC are also on sale for 75 percent off.</description>
+        <pubDate>Tue, 24 Mar 2020 18:00:36 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/qWCTAQsDeNmYrfsN6rRAgY.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>The best Android emulator to play Android games on PC</title>
+        <link>http://www.pcgamer.com/android-pc-emulators</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/android-pc-emulators</guid>
+        <description>Here's the emulator you should use for gaming, and how to configure it with PC keybinds or a controller.</description>
+        <pubDate>Tue, 24 Mar 2020 17:48:30 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/AKgREd9ug7WWPZBvf7VBm8.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>HDR in Doom Eternal is hell, and not in a good way</title>
+        <link>http://www.pcgamer.com/hdr-in-doom-eternal-is-hell-and-not-in-a-good-way</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/hdr-in-doom-eternal-is-hell-and-not-in-a-good-way</guid>
+        <description>An error message indicates AMD is working on a fix, but some Nvidia GPU owners report problems as well.</description>
+        <pubDate>Tue, 24 Mar 2020 17:47:59 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/R8t4QeQyRZwSxTdxpmaBmC.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Chicory was all fun and watercolors until a surprise, intense boss battle</title>
+        <link>http://www.pcgamer.com/chicory-was-all-fun-and-watercolors-until-a-surprise-intense-boss-battle</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/chicory-was-all-fun-and-watercolors-until-a-surprise-intense-boss-battle</guid>
+        <description>The demo for Chicory is a colorful painting adventure until things get weird.</description>
+        <pubDate>Tue, 24 Mar 2020 17:41:21 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/GvBmaQKwzgFfZznr93Nawn.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>AMD's 5nm CPUs could be monsters if TSMC's transistor numbers are right</title>
+        <link>http://www.pcgamer.com/amds-5nm-cpus-could-be-monsters-if-tsmcs-transistor-numbers-are-right</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/amds-5nm-cpus-could-be-monsters-if-tsmcs-transistor-numbers-are-right</guid>
+        <description>If the transistor density predictions are accurate, Zen 4 will be a beast.</description>
+        <pubDate>Tue, 24 Mar 2020 17:38:43 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/h9Nx5MjhZUJ2nDZj6hbGef.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Nvidia’s making ray-traced lighting easier for everyone, even AMD</title>
+        <link>http://www.pcgamer.com/nvidia-rtx-global-illumination-sdk</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/nvidia-rtx-global-illumination-sdk</guid>
+        <description>The RTXGI SDK introduces scalable ray-traced lighting effects for all DXR-enabled GPUs</description>
+        <pubDate>Tue, 24 Mar 2020 17:38:07 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/nQtekrYPSQCAgYFwU2g9Nm.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Unity is giving away hundreds of hours of premium tutorials because of the coronavirus</title>
+        <link>http://www.pcgamer.com/unity-is-giving-away-hundreds-of-hours-of-premium-tutorials-because-of-the-coronavirus</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/unity-is-giving-away-hundreds-of-hours-of-premium-tutorials-because-of-the-coronavirus</guid>
+        <description>If you're stuck inside all day, why not learn how to make games instead of just playing them?</description>
+        <pubDate>Tue, 24 Mar 2020 17:35:02 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/WzXG8neGYmRiVtFFPQHPoW.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>This Sekiro mod lets you play as Shaggy from Scooby Doo</title>
+        <link>http://www.pcgamer.com/this-sekiro-mod-lets-you-play-as-shaggy-from-scooby-doo</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/this-sekiro-mod-lets-you-play-as-shaggy-from-scooby-doo</guid>
+        <description>This isn't even my final form.</description>
+        <pubDate>Tue, 24 Mar 2020 17:16:30 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/DuxqCPtCUEE7FQkxi6r6cS.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>These are the essential guns to add to your Call of Duty: Warzone arsenal</title>
+        <link>http://www.pcgamer.com/best-guns-cod-warzone-best-weapons</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/best-guns-cod-warzone-best-weapons</guid>
+        <description>Look for these CoD: Warzone weapons to help you survive.</description>
+        <pubDate>Tue, 24 Mar 2020 17:02:36 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/qpES92DThSA63TSCBi7Hrj.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Save $300 on this RTX 2060 Acer Predator gaming laptop</title>
+        <link>http://www.pcgamer.com/save-dollar300-on-this-rtx-2060-acer-predator-gaming-laptop</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/save-dollar300-on-this-rtx-2060-acer-predator-gaming-laptop</guid>
+        <description>That's a decent saving on one of our favourite laptops.</description>
+        <pubDate>Tue, 24 Mar 2020 16:32:39 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/VnkdrMsU73fcZRzNJzestk.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Here are all the secrets in your Doom Eternal base</title>
+        <link>http://www.pcgamer.com/doom-eternal-fortress-of-doom-secrets-base-all</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/doom-eternal-fortress-of-doom-secrets-base-all</guid>
+        <description>There's no base like home.</description>
+        <pubDate>Tue, 24 Mar 2020 15:56:59 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/ddxCiYMRVpMvqU7cR7m8s8.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Minecraft is getting free educational worlds to help kids stuck inside</title>
+        <link>http://www.pcgamer.com/minecraft-is-getting-free-educational-worlds-to-help-kids-stuck-inside</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/minecraft-is-getting-free-educational-worlds-to-help-kids-stuck-inside</guid>
+        <description>Visit the International Space Station or learn all about marine biologists. </description>
+        <pubDate>Tue, 24 Mar 2020 15:30:33 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/gPmhq9tTgR3N6M5PK5qr57.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Plague Inc. announces new mode where players save the world from a deadly disease</title>
+        <link>http://www.pcgamer.com/plague-inc-creators-donate-dollar250000-to-fight-coronavirus</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/plague-inc-creators-donate-dollar250000-to-fight-coronavirus</guid>
+        <description>The mode will be free for all players. They've also donated $250,000 to help fight coronavirus.</description>
+        <pubDate>Tue, 24 Mar 2020 15:11:05 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/Kz7938embcKErSPGjVCY9T.jpeg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Risk of Rain 2 brings back artifacts in next week's update</title>
+        <link>http://www.pcgamer.com/risk-of-rain-2-brings-back-artifacts-in-next-weeks-update</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/risk-of-rain-2-brings-back-artifacts-in-next-weeks-update</guid>
+        <description>It's also going on sale for its one year anniversary.</description>
+        <pubDate>Tue, 24 Mar 2020 15:00:17 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/MAFwFPEpybDosarfPyruE.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>Animal Crossing's good-natured fun is what we need on PC right now</title>
+        <link>http://www.pcgamer.com/animal-crossings-good-natured-fun-is-what-we-need-on-pc-right-now</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/animal-crossings-good-natured-fun-is-what-we-need-on-pc-right-now</guid>
+        <description>Isn't it time that Nintendo made the jump to PC?</description>
+        <pubDate>Tue, 24 Mar 2020 14:47:31 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/HwPVbu2zuQzPHpbPhMPJwe.png" type="image/png" length="0"/>
+      </item>
+      <item>
+        <title>Computex 2020 postponed and scaled down</title>
+        <link>http://www.pcgamer.com/computex-2020-postponed-and-scaled-down</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/computex-2020-postponed-and-scaled-down</guid>
+        <description>The world's premier hardware show has been pushed back until September.</description>
+        <pubDate>Tue, 24 Mar 2020 14:42:50 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/qzCgjoVBmAtuKZBWAzQ93G.jpg" type="image/jpeg" length="0"/>
+      </item>
+      <item>
+        <title>Tonight's Call of Duty: Warzone update has been delayed</title>
+        <link>http://www.pcgamer.com/call-of-duty-warzone-is-getting-a-new-operator-and-4-more-weapons-today</link>
+        <guid isPermaLink="true">http://www.pcgamer.com/call-of-duty-warzone-is-getting-a-new-operator-and-4-more-weapons-today</guid>
+        <description>Infinity Ward halted the planned addition of a new Operator and multiplayer map just a few hours before it was to go live.</description>
+        <pubDate>Tue, 24 Mar 2020 14:10:05 +0000</pubDate>
+        <source url="http://www.pcgamer.com">PC Gamer</source>
+        <enclosure url="http://cdn.mos.cms.futurecdn.net/cgdRntfKNKkJYBMQTu3wLb.jpg" type="image/jpeg" length="0"/>
+      </item>
+    </channel>
+  </rss>
