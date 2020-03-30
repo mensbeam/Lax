@@ -336,7 +336,7 @@ abstract class Construct {
 
     /** Primitive to fetch a Dublin Core feed/entry identifier */
     protected function getIdDC(): ?string {
-        return $this->fetchString("dc:identifier", ".+");
+        return $this->fetchString("dc:identifier|dct:identifier", ".+");
     }
 
     protected function getLangXML(): ?string {
@@ -350,7 +350,7 @@ abstract class Construct {
     }
 
     protected function getLangDC(): ?string {
-        return $this->fetchString("dc:language", ".+");
+        return $this->fetchString("dc:language|dct:language", ".+");
     }
 
     protected function getLangRss2(): ?string {
@@ -382,7 +382,7 @@ abstract class Construct {
     }
 
     protected function getTitleDC(): ?Text {
-        return $this->fetchText("dc:title", self::TEXT_PLAIN);
+        return $this->fetchText("dc:title|dct:title", self::TEXT_PLAIN);
     }
 
     protected function getTitlePod(): ?Text {
@@ -419,7 +419,7 @@ abstract class Construct {
     /** Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation */
     protected function getCategoriesDC(): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->fetchString("dc:subject", null, true) ?? [] as $text) {
+        foreach ($this->fetchString("dc:subject|dct:subject", null, true) ?? [] as $text) {
             if (strlen($text)) {
                 $c = new Category;
                 $c->name = $text;

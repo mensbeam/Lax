@@ -47,10 +47,10 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getId(): ?string {
-        return $this->fetchString("atom:id", ".+")                  // Atom identifier
-            ?? $this->fetchString("dc:identifier", ".+")            // Dublin Core identifier
-            ?? $this->fetchString("self::rss1:item/@rdf:about")     // RSS 1.0 RDF identifier
-            ?? $this->fetchString("rss2:guid", ".+");               // RSS 2.0 GUID, as string
+        return $this->fetchString("atom:id", ".+")                          // Atom identifier
+            ?? $this->fetchString("dc:identifier|dct:identifier", ".+")     // Dublin Core identifier
+            ?? $this->fetchString("self::rss1:item/@rdf:about")             // RSS 1.0 RDF identifier
+            ?? $this->fetchString("rss2:guid", ".+");                       // RSS 2.0 GUID, as string
     }
 
     public function getLink(): ?Url {
@@ -111,9 +111,11 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getSummary(): ?Text {
-        return $this->fetchAtomText("atom:summary")                     // Atom summary
-            ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)  // Google Play podcast description
-            ?? $this->fetchText("apple:summary", self::TEXT_PLAIN);     // iTunes podcast summary
+        return $this->fetchAtomText("atom:summary")                                     // Atom summary
+            ?? $this->fetchText("dc:abstract|dct:abstract", self::TEXT_PLAIN)           // Dublin Core abstract
+            ?? $this->fetchText("dc:description|dct:description", self::TEXT_PLAIN)     // Dublin Core description
+            ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)                  // Google Play podcast description
+            ?? $this->fetchText("apple:summary", self::TEXT_PLAIN);                     // iTunes podcast summary
     }
 
     public function getBanner(): ?Url {

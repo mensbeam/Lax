@@ -147,15 +147,16 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getSummary(): ?Text {
-        return $this->fetchAtomText("atom:summary")                     // Atom summary (non-standard)
-            ?? $this->fetchAtomText("atom:subtitle")                    // Atom subtitle
-            ?? $this->fetchText("dc:description", self::TEXT_PLAIN)     // Dublin Core description
-            ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)   // RSS 1.0 description
-            ?? $this->fetchText("rss0:description", self::TEXT_LOOSE)   // RSS 0.90 description
-            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE)   // RSS 2.0 description
-            ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)  // Google Play podcast description
-            ?? $this->fetchText("apple:summary", self::TEXT_PLAIN)      // iTunes podcast summary
-            ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);    // iTunes podcast subtitle
+        return $this->fetchAtomText("atom:summary")                                     // Atom summary (non-standard)
+            ?? $this->fetchAtomText("atom:subtitle")                                    // Atom subtitle
+            ?? $this->fetchText("dc:abstract|dct:abstract", self::TEXT_PLAIN)           // Dublin Core abstract
+            ?? $this->fetchText("dc:description|dct:description", self::TEXT_PLAIN)     // Dublin Core description
+            ?? $this->fetchText("rss1:description", self::TEXT_LOOSE)                   // RSS 1.0 description
+            ?? $this->fetchText("rss0:description", self::TEXT_LOOSE)                   // RSS 0.90 description
+            ?? $this->fetchText("rss2:description", self::TEXT_LOOSE)                   // RSS 2.0 description
+            ?? $this->fetchText("gplay:description", self::TEXT_PLAIN)                  // Google Play podcast description
+            ?? $this->fetchText("apple:summary", self::TEXT_PLAIN)                      // iTunes podcast summary
+            ?? $this->fetchText("apple:subtitle", self::TEXT_PLAIN);                    // iTunes podcast subtitle
     }
 
     public function getDateModified(): ?Date {
@@ -200,19 +201,19 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getPeople(): PersonCollection {
         $authors = 
-            $this->fetchAtomPeople("atom:author", "author")     // Atom authors
-            ?? $this->fetchPeople("dc:creator", "author")       // Dublin Core creators
-            ?? $this->fetchPeople("rss2:author", "author")      // RSS 2.0 authors
-            ?? $this->fetchPeople("gplay:author", "author")     // Google Play authors
-            ?? $this->fetchPeople("apple:author", "author")     // iTunes authors
+            $this->fetchAtomPeople("atom:author", "author")             // Atom authors
+            ?? $this->fetchPeople("dc:creator|dct:creator", "author")   // Dublin Core creators
+            ?? $this->fetchPeople("rss2:author", "author")              // RSS 2.0 authors
+            ?? $this->fetchPeople("gplay:author", "author")             // Google Play authors
+            ?? $this->fetchPeople("apple:author", "author")             // iTunes authors
             ?? new PersonCollection;
         $contributors = 
-            $this->fetchAtomPeople("atom:contributor", "contributor")   // Atom contributors
-            ?? $this->fetchPeople("dc:contributor", "contributor")      // Dublin Core contributors
+            $this->fetchAtomPeople("atom:contributor", "contributor")               // Atom contributors
+            ?? $this->fetchPeople("dc:contributor|dct:contributor", "contributor")  // Dublin Core contributors
             ?? new PersonCollection;
         $editors = 
-            $this->fetchPeople("rss2:managingEditor", "editor")     // RSS 2.0 editors
-            ?? $this->fetchPeople("dc:publisher", "editor")         // Dublin Core publishers
+            $this->fetchPeople("rss2:managingEditor", "editor")             // RSS 2.0 editors
+            ?? $this->fetchPeople("dc:publisher|dct:publisher", "editor")   // Dublin Core publishers
             ?? new PersonCollection;
         $webmasters = 
             $this->fetchPeople("rss2:webMaster", "webmaster")   // RSS 2.0 authors
