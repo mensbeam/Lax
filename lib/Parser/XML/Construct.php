@@ -46,15 +46,15 @@ abstract class Construct {
     }
 
     /** Retrieves the trimmed text content of one or more DOM elements based on an XPath query, optionally matching a pattern
-     * 
+     *
      * Returns null if no suitable nodes were found
-     * 
+     *
      * @param string $query The XPath query of the nodes to return
      * @param string|null $pattern The pattern to optionally filter matches with. The pattern should not include delimiters or anchors and is always case-insensitive
      * @param bool|null $multi Whether to return multiple results as an array (true) or one result as a string (false, default)
      * @param \DOMNode $context The context node for the XPath query
      * @return string|array|null
-      */
+     */
     protected function fetchString(string $query, ?string $pattern = null, ?bool $multi = null, ?\DOMNode $context = null) {
         $out = [];
         $pattern = strlen($pattern ?? "") ? "/^(?:".str_replace("/", "\\/", $pattern).")$/i" : "";
@@ -74,9 +74,9 @@ abstract class Construct {
     }
 
     /** Retrieves and parses a date from one or more DOM elements based on an XPath query
-     * 
-     * Returns null if no suitable nodes were found  
-     * 
+     *
+     * Returns null if no suitable nodes were found
+     *
      * @param string $query The XPath query of the nodes to return
      * @param bool|null $mode Whether to return the first valid date found (DATE_ANY), the earliest chronologically (DATE_EARLIEST), latest chronologically (DATE_LATEST), or all valid dates (DAATE_ALL) in a sorted array
      * @param \DOMNode $context The context node for the XPath query
@@ -86,7 +86,7 @@ abstract class Construct {
         $out = [];
         $tz = new \DateTimeZone("UTC");
         assert(in_array($mode, [self::DATE_ANY, self::DATE_ALL, self::DATE_EARLIEST, self::DATE_LATEST]));
-        foreach((array) $this->fetchString($query, null, true, $context) as $d) {
+        foreach ((array) $this->fetchString($query, null, true, $context) as $d) {
             if ($d = $this->parseDate($d ?? "")) {
                 if ($mode === self::DATE_ANY) {
                     return $d;
@@ -114,7 +114,7 @@ abstract class Construct {
     }
 
     /** Returns the first valid URL matching an XPath query. Relative URLs are resolved when possible
-     * 
+     *
      * @param string $query The XPath query of the node to return
      * @param \DOMNode $context The context node for the XPath query
      */

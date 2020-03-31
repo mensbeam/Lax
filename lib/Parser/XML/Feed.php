@@ -108,7 +108,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     public function getSchedule(): Schedule {
         $sched = new Schedule;
-        $sched->interval =  $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
+        $sched->interval = $this->getSchedIntervalRss1() ?? $this->getSchedIntervalRss2();
         $sched->skip = $this->getSchedSkipRss2();
         $sched->expired = $this->getExpiredPod();
         if (is_null($sched->expired) && (($sched->skip & Schedule::DAY_ALL) == Schedule::DAY_ALL || ($sched->skip & Schedule::HOUR_ALL) == Schedule::HOUR_ALL)) {
@@ -164,7 +164,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             well-defined semantics here. Thus the semantics of all the other
             formats are equal, and we want the latest date, whatever it is.
         */
-        return $this->fetchDate("atom:updated", self::DATE_LATEST) 
+        return $this->fetchDate("atom:updated", self::DATE_LATEST)
             ?? $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_LATEST);
     }
 
@@ -191,31 +191,31 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getCategories(): CategoryCollection {
-        return $this->getCategoriesAtom() 
-            ?? $this->getCategoriesRss2() 
-            ?? $this->getCategoriesGPlay() 
-            ?? $this->getCategoriesTunes() 
-            ?? $this->getCategoriesDC() 
+        return $this->getCategoriesAtom()
+            ?? $this->getCategoriesRss2()
+            ?? $this->getCategoriesGPlay()
+            ?? $this->getCategoriesTunes()
+            ?? $this->getCategoriesDC()
             ?? new CategoryCollection;
     }
 
     public function getPeople(): PersonCollection {
-        $authors = 
+        $authors =
             $this->fetchAtomPeople("atom:author", "author")             // Atom authors
             ?? $this->fetchPeople("dc:creator|dct:creator", "author")   // Dublin Core creators
             ?? $this->fetchPeople("rss2:author", "author")              // RSS 2.0 authors
             ?? $this->fetchPeople("gplay:author", "author")             // Google Play authors
             ?? $this->fetchPeople("apple:author", "author")             // iTunes authors
             ?? new PersonCollection;
-        $contributors = 
+        $contributors =
             $this->fetchAtomPeople("atom:contributor", "contributor")               // Atom contributors
             ?? $this->fetchPeople("dc:contributor|dct:contributor", "contributor")  // Dublin Core contributors
             ?? new PersonCollection;
-        $editors = 
+        $editors =
             $this->fetchPeople("rss2:managingEditor", "editor")             // RSS 2.0 editors
             ?? $this->fetchPeople("dc:publisher|dct:publisher", "editor")   // Dublin Core publishers
             ?? new PersonCollection;
-        $webmasters = 
+        $webmasters =
             $this->fetchPeople("rss2:webMaster", "webmaster")   // RSS 2.0 authors
             ?? $this->getOwnersTunes()                          // iTunes webmaster
             ?? $this->fetchPeople("gplay:email", "webmaster")   // Google Play webmaster
@@ -249,9 +249,9 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     /** Fetches the schedule interval from an RSS feed; this is necessarily approximate:
-     * 
+     *
      * The interval is defined in the syndication RSS extension as fractions of a period, but PHP only supports integer intervals, so we perform integer divison on the nearest subdivision of a period, returning at least one.
-     * 
+     *
      * For example, "four times monthly" first assumes a month is 30 days, and divides this by four to yield seven days.
      */
     protected function getSchedIntervalRss1(): ?\DateInterval {
@@ -277,7 +277,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     /** Computes the "skip-schedule" of an RSS feed, the set of days and hours during which a feed should not be fetched */
     protected function getSchedSkipRss2(): ?int {
         $out = 0;
-        foreach($this->fetchString("rss2:skipHours/rss2:hour", "\d+", true) ?? [] as $h) {
+        foreach ($this->fetchString("rss2:skipHours/rss2:hour", "\d+", true) ?? [] as $h) {
             $out |= [
                 Schedule::HOUR_0,
                 Schedule::HOUR_1,
@@ -306,7 +306,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
                 Schedule::HOUR_0,
             ][(int) $h] ?? 0;
         }
-        foreach($this->fetchString("rss2:skipDays/rss2:day", null, true) ?? [] as $d) {
+        foreach ($this->fetchString("rss2:skipDays/rss2:day", null, true) ?? [] as $d) {
             $out |= [
                 "monday"    => Schedule::DAY_MON,
                 "tuesday"   => Schedule::DAY_TUE,

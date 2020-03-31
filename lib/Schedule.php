@@ -43,14 +43,14 @@ class Schedule {
 
     /** @var bool $expired Whether the feed has ceased publishing. In some formats this can be an explicit flag, while in others it can be derived from scheduling data */
     public $expired;
-    /** @var int $skip A bitfield representing days and hours during which a feed will not be published. 
-     * 
-     * The bits are arranged such that the UTC hours of the day (starting with midnight) occupy the 24 least 
+    /** @var int $skip A bitfield representing days and hours during which a feed will not be published.
+     *
+     * The bits are arranged such that the UTC hours of the day (starting with midnight) occupy the 24 least
      * significant bits, followed by the days of the week starting with Monday. Thus the following number:
-     * 
+     *
      * `0b1100000111111100000000111111111`
-     * 
-     * Signifies that the feed will not be published on Saturday and Sunday, nor outside the hours 09:00-04:00 
+     *
+     * Signifies that the feed will not be published on Saturday and Sunday, nor outside the hours 09:00-04:00
      * UTC on other days.
      */
     public $skip;

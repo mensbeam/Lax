@@ -56,8 +56,8 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     public function getLink(): ?Url {
         $link = $this->getLinkAtom() ?? $this->getLinkRss1(); // somme kind of unambigulous link
         if (!$link) {
-            /* If there is no reliable related link, attempt to discern 
-               both a link and related link from RSS 2.0 metadata, 
+            /* If there is no reliable related link, attempt to discern
+               both a link and related link from RSS 2.0 metadata,
                and use the former; otherwise use whichever is available
             */
             $candidates = $this->getLinkAndRelatedRss2();
@@ -95,7 +95,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     public function getDateCreated(): ?Date {
         /*  fetching a date works differently from other data as only Atom has
             well-defined semantics here. Thus the semantics of all the other
-            formats are equal, and we want the earliest date, but only if 
+            formats are equal, and we want the earliest date, but only if
             there are at least two
         */
         return $this->fetchDate("atom:published", self::DATE_EARLIEST)          // Atom creation date
@@ -142,10 +142,10 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
 
     /** Returns an indexed array containing the entry link (or null)
      * and the entry related link (or null)
-     * 
-     * This follows the suggestion in RSS 2.0 that if the permalink-GUID 
+     *
+     * This follows the suggestion in RSS 2.0 that if the permalink-GUID
      * and link differ, then the latter is a related link. For our purposes
-     * they are considered to differ if they point to different hosts or 
+     * they are considered to differ if they point to different hosts or
      * have different schemes
      */
     protected function getLinkAndRelatedRss2(): array {

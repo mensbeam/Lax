@@ -46,7 +46,7 @@ trait Construct {
             return (bool) filter_var($addr, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
         }
         return false;
-    }                
+    }
 
     protected function parseDate(string $date): ?Date {
         $out = null;
@@ -98,7 +98,7 @@ trait Construct {
     }
 
     protected function empty($o, array $ignore = []): bool {
-        return !array_filter((array) $o, function($v, $k) use($ignore) {
+        return !array_filter((array) $o, function($v, $k) use ($ignore) {
             return !in_array($k, $ignore) && !is_null($v) && (!$v instanceof Collection || sizeof($v) > 0);
         }, \ARRAY_FILTER_USE_BOTH);
     }
