@@ -66,6 +66,20 @@ Dublin Core ID with whitespace:
         version: '1.0'
         id: 'http://example.com/'
 
+Dublin Core term ID with whitespace:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/terms/">
+            <channel>
+                <dc:identifier>
+                    http://example.com/
+                </dc:identifier>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        id: 'http://example.com/'
+
 Syndication schedule 1:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
@@ -151,7 +165,7 @@ Syndication schedule 6:
         sched:
             interval: P4M
 
-Syndication schedule base 1:
+Syndication schedule base:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/">
             <channel>
@@ -244,6 +258,19 @@ Dublin Core title:
         title:
             plain: 'Plain text'
 
+Dublin Core term title:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/term/">
+            <channel>
+                <dc:title xml:base="https://example.com/"> Plain  text</dc:title>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        title:
+            plain: 'Plain text'
+
 Feed summary:
     input: >
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
@@ -262,6 +289,45 @@ Dublin Core summary:
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
                 <dc:description>Plain text</dc:description>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        summary:
+            plain: 'Plain text'
+
+Dublin Core abstract:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+                <dc:abstract>Plain text</dc:abstract>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        summary:
+            plain: 'Plain text'
+
+Dublin Core term summary:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/terms/">
+            <channel>
+                <dc:description>Plain text</dc:description>
+            </channel>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        summary:
+            plain: 'Plain text'
+
+Dublin Core term abstract:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/terms/">
+            <channel>
+                <dc:abstract>Plain text</dc:abstract>
             </channel>
         </rdf:RDF>
     output:
@@ -544,10 +610,10 @@ Feed root RDF image resource:
 
 Categories by way of Dublin Core subjects:
     input: >
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
             <channel>
                 <dc:subject>Category, sort  of</dc:subject>
-                <dc:subject>blah</dc:subject>
+                <term:subject>blah</term:subject>
             </channel>
         </rdf:RDF>
     output:
@@ -559,12 +625,12 @@ Categories by way of Dublin Core subjects:
 
 Dublin Core creators and contributors:
     input: >
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
             <channel>
                 <dc:creator>John Doe &lt;john.doe@example.com&gt;</dc:creator>
-                <dc:creator>jane.doe@example.com (Jane Doe)</dc:creator>
+                <term:creator>jane.doe@example.com (Jane Doe)</term:creator>
                 <dc:contributor>Larry &lt;mailto:larry@example.net&gt;</dc:contributor>
-                <dc:contributor>@example.org (Curly)</dc:contributor>
+                <term:contributor>@example.org (Curly)</term:contributor>
             </channel>
         </rdf:RDF>
     output:

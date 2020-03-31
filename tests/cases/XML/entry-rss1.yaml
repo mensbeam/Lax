@@ -26,10 +26,13 @@ RDF identifier:
 
 Dublin Core identifier:
     input: >
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
             <channel>
                 <item rdf:about="bloo">
                     <dc:identifier>blah</dc:identifier>
+                </item>
+                <item rdf:about="bloo">
+                    <term:identifier>bloo</term:identifier>
                 </item>
             </channel>
         </rdf:RDF>
@@ -38,12 +41,16 @@ Dublin Core identifier:
         version: '1.0'
         entries:
             - id: blah
+            - id: bloo
 
 Dublin Core language:
     input: >
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
             <item rdf:about="blah">
                 <dc:language>fr</dc:language>
+            </item>
+            <item rdf:about="bloo">
+                <term:language>de</term:language>
             </item>
         </rdf:RDF>
     output:
@@ -52,6 +59,8 @@ Dublin Core language:
         entries:
             - id: blah
               lang: fr
+            - id: bloo
+              lang: de
 
 Entry link:
     input: >
@@ -65,6 +74,28 @@ Entry link:
         version: '1.0'
         entries:
             - link: 'http://example.com/'
+
+Dublin Core related link:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item><dc:references>http://example.com/</dc:references></item>
+            <item><dc:relation>http://example.com/</dc:relation></item>
+            <item><term:references>http://example.com/</term:references></item>
+            <item><term:relation>http://example.com/</term:relation></item>
+            <item>
+                <term:references>http://example.net/</term:references>
+                <term:relation>http://example.com/</term:relation>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/'
+            - relatedLink: 'http://example.com/' # 'relation' is preferred over 'references' because the former's semantics are more likely to be a URL
 
 Dublin Core dates:
     input: >

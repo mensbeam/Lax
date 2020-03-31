@@ -135,8 +135,9 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     protected function getRelatedLinkDefinitive(): ?url {
-        // Only Atom related links are definitive for now
-        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"]);  // Atom related relation
+        return $this->fetchAtomRelation("related", ["text/html", "application/xhtml+xml"])  // Atom related relation
+            ?? $this->fetchUrl("dc:relation|dct:relation")                                  // Dublin Core 'related' term
+            ?? $this->fetchUrl("dc:references|dct:references");                             // Dublin Core 'references' term
     }
 
     /** Returns an indexed array containing the entry link (or null)
