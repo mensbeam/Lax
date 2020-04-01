@@ -111,3 +111,39 @@ Creation and update dates:
         entries:
             - dateCreated: '2020-01-01T00:00:00Z'
               dateModified: '2020-04-01T00:00:00Z'
+
+Entry title:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry><title type="html" xml:base="http://example.com/">HTML  title</title></entry>
+            <entry><title>Plain  title</title></entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - title: {html: 'HTML  title', htmlBase: 'http://example.com/'}
+            - title: 'Plain title'
+
+Content and summary:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <content>Plain content</content>
+                <summary>Plain summary</summary>
+            </entry>
+            <entry>
+                <content>Plain content</content>
+            </entry>
+            <entry>
+                <summary>Plain summary</summary>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - content: 'Plain content'
+              summary: 'Plain summary'
+            - content: 'Plain content'
+            - summary: 'Plain summary'

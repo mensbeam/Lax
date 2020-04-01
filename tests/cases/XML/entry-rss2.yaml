@@ -116,3 +116,27 @@ Update and creation dates:
             - dateCreated: '2020-01-01T00:00:00Z'
               dateModified: '2020-03-03T00:00:00Z'
             - dateModified: '2020-03-03T01:00:00+01:00'
+
+Entry title:
+    input: >
+        <rss><channel>
+            <item>
+                <title>  Loose  title</title>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - title: {loose: 'Loose  title'}
+
+Entry content:
+    input: >
+        <rss><channel>
+            <item>
+                <description>  Loose  content</description>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - content: {loose: 'Loose  content'}

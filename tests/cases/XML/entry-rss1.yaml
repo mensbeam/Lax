@@ -165,3 +165,72 @@ Dublin Core terms dates:
             - dateModified: '2020-03-03T00:00:00Z'
             - dateModified: '2020-03-03T00:00:00Z'
             - dateModified: '2020-03-03T00:00:00Z'
+
+Entry and Dublin Core titles:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item><title>Loose  title</title></item>
+            <item><dc:title>Plain  title</dc:title></item>
+            <item><term:title>Plain  title</term:title></item>
+            <item>
+                <dc:title>Plain  title</dc:title>
+                <title>Loose  title</title>
+            </item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - title: {loose: 'Loose  title'}
+            - title: {plain: 'Plain title'}
+            - title: {plain: 'Plain title'}
+            - title: {loose: 'Loose  title'} # Native titles take precedence over DC titles 
+
+Entry content:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/">
+            <item>
+                <description>Loose  content</description>
+            </item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - content: {loose: 'Loose  content'}
+
+Explicitly encoded content:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+            <item>
+                <description>Loose  content</description>
+                <content:encoded>HTML  content</content:encoded>
+            </item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - content: {html: 'HTML  content'}
+
+Dublin Core summary:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item><dc:description>Plain  summary</dc:description></item>
+            <item><dc:abstract>Plain  summary</dc:abstract></item>
+            <item><term:description>Plain  summary</term:description></item>
+            <item><term:abstract>Plain  summary</term:abstract></item>
+            <item>
+                <term:description>Description</term:description>
+                <term:abstract>Abstract</term:abstract>
+            </item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - summary: 'Plain summary'
+            - summary: 'Plain summary'
+            - summary: 'Plain summary'
+            - summary: 'Plain summary'
+            - summary: 'Abstract'

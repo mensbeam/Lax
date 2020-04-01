@@ -89,7 +89,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             formats are equal, and we want the latest date, whatever it is.
         */
         return $this->fetchDate("atom:updated", self::DATE_LATEST)                  // Atom update date
-            ?? $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_LATEST);    // Latest other datee
+            ?? $this->fetchDate(self::QUERY_AMBIGUOUS_DATES, self::DATE_LATEST);    // Latest other date
     }
 
     public function getDateCreated(): ?Date {

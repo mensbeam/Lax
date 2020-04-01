@@ -28,3 +28,27 @@ Entry link:
         entries:
             - link: 'http://example.com/'
             - link: 'http://example.com/'
+
+Entry title:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <item>
+                <title>Loose  title</title>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'
+        entries:
+            - title: {loose: 'Loose  title'}
+
+Entry content: # RSS 0.90 didn't have entry descriptions
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://channel.netscape.com/rdf/simple/0.9/">
+            <item>
+                <description>Bogus description</description>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '0.90'

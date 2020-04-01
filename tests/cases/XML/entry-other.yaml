@@ -1,0 +1,50 @@
+# This file tests extensions primarily designed for RSS 2
+
+iTunes title:
+    input: >
+        <rss><channel xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <item>
+                <itunes:title> Plain  title</itunes:title>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - title: 'Plain title'
+
+Explicitly encoded content:
+    input: >
+        <rss><channel xmlns:content="http://purl.org/rss/1.0/modules/content/">
+            <item>
+                <description>Loose  content</description>
+                <content:encoded>HTML  content</content:encoded>
+            </item>
+         </channel></rss>
+    output:
+        format: rss
+        entries:
+            - content: {html: 'HTML  content'}
+
+iTunes summary:
+    input: >
+        <rss><channel xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <item>
+                <itunes:summary> Plain  summary</itunes:summary>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - summary: 'Plain summary'
+
+Google Play summary:
+    input: >
+        <rss><channel xmlns:play="http://www.google.com/schemas/play-podcasts/1.0">
+            <item>
+                <play:description> Plain  summary</play:description>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - summary: 'Plain summary'
