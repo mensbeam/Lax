@@ -123,7 +123,21 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getPeople(): PersonCollection {
-        return new PersonCollection;
+        // first try getting authors and contributors in the entry itself
+        $authors = $this->getAuthors($this->subject);
+        $contributors = $this->getContributors($this->subject) ?? new PersonCollection;
+        // if there are no authors but there is an Atom <source> element, get both authors and contributors from the source
+        if (!$authors) {
+            $src = $this->fetchElement("atom:source");
+            if ($src) {
+                $authors = $this->getAuthors($src) ?? new PersonCollection;
+                $srcContributors = $this->getContributors($src) ?? new PersonCollection;
+            } else {
+                $authors = new PersonCollection;
+            }
+        }
+        // merge all three lists
+        return $authors->merge($contributors, $srcContributors ?? new PersonCollection);
     }
 
     public function getCategories(): CategoryCollection {
@@ -165,5 +179,18 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             return $dates[0];
         }
         return null;
+    }
+
+    protected function getAuthors(\DOMNode $context): ?PersonCollection {
+        return $this->fetchAtomPeople("atom:author", "author", $context)            // Atom authors
+            ?? $this->fetchPeople("dc:creator|dct:creator", "author", $context)     // Dublin Core creators
+            ?? $this->fetchPeople("rss2:author", "author", $context)                // RSS 2.0 authors
+            ?? $this->fetchPeople("gplay:author", "author", $context)               // Google Play authors
+            ?? $this->fetchPeople("apple:author", "author", $context);              // iTunes authors
+    }
+
+    protected function getContributors(\DOMNode $context): ?PersonCollection {
+        return $this->fetchAtomPeople("atom:contributor", "contributor", $context)              // Atom contributors
+            ?? $this->fetchPeople("dc:contributor|dct:contributor", "contributor", $context);   // Dublin Core contributors
     }
 }

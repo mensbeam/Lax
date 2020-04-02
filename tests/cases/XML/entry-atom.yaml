@@ -147,3 +147,105 @@ Content and summary:
               summary: 'Plain summary'
             - content: 'Plain content'
             - summary: 'Plain summary'
+
+Authors and contributors:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <author><name>John Doe</name></author>
+            </entry>
+            <entry>
+                <author><name>John Doe</name></author>
+                <author><name>Jane Doe</name></author>
+            </entry>
+            <entry>
+                <author><name>John Doe</name></author>
+                <contributor><name>Larry</name></contributor>
+            </entry>
+            <entry>
+                <author><name>John Doe</name></author>
+                <author><name>Jane Doe</name></author>
+                <contributor><name>Larry</name></contributor>
+                <contributor><name>Curly</name></contributor>
+                <contributor><name>Moe</name></contributor>
+            </entry>
+            <entry>
+                <author><name>John Doe</name></author>
+                <source>
+                    <author><name>Jane Doe</name></author>
+                </source>
+            </entry>
+            <entry>
+                <author><name>John Doe</name></author>
+                <source>
+                    <contributor><name>Larry</name></contributor>
+                </source>
+            </entry>
+            <entry>
+                <source>
+                    <author><name>Jane Doe</name></author>
+                </source>
+            </entry>
+            <entry>
+                <source>
+                    <author><name>Jane Doe</name></author>
+                    <contributor><name>Curly</name></contributor>
+                </source>
+            </entry>
+            <entry>
+                <source>
+                    <author><name>Jane Doe</name></author>
+                    <contributor><name>Curly</name></contributor>
+                </source>
+                <contributor><name>Larry</name></contributor>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - people:
+                    - name: 'John Doe'
+                      role: author
+            - people:
+                    - name: 'John Doe'
+                      role: author
+                    - name: 'Jane Doe'
+                      role: author
+            - people:
+                    - name: 'John Doe'
+                      role: author
+                    - name: Larry
+                      role: contributor
+            - people:
+                    - name: 'John Doe'
+                      role: author
+                    - name: 'Jane Doe'
+                      role: author
+                    - name: Larry
+                      role: contributor
+                    - name: Curly
+                      role: contributor
+                    - name: Moe
+                      role: contributor
+            - people:
+                    - name: 'John Doe'
+                      role: author
+            - people:
+                    - name: 'John Doe'
+                      role: author
+            - people:
+                    - name: 'Jane Doe'
+                      role: author
+            - people:
+                    - name: 'Jane Doe'
+                      role: author
+                    - name: Curly
+                      role: contributor
+            - people:
+                    - name: 'Jane Doe'
+                      role: author
+                    - name: Larry
+                      role: contributor
+                    - name: Curly
+                      role: contributor

@@ -39,3 +39,57 @@ Update and creation dates:
             - dateCreated: '2020-03-03T00:00:00Z'
               dateModified: '2020-01-01T00:00:00Z'
             - dateModified: '2020-03-03T01:00:00+01:00'
+
+Entry author:
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <item>
+                <dc:creator>jane.doe@example.com (Jane Doe)</dc:creator>
+                <author>john.doe@example.com (John Doe)</author>
+            </item>
+            <item>
+                <dc:contributor>Larry</dc:contributor>
+                <author>john.doe@example.com (John Doe)</author>
+            </item>
+            <item>
+                <dc:contributor>Larry</dc:contributor>
+                <dc:contributor>Curly</dc:contributor>
+                <atom:source>
+                    <author>jane.doe@example.com (Jane Doe)</author>
+                    <dc:contributor>Moe</dc:contributor>
+                </atom:source>
+            </item>
+            <item>
+                <author>Jane Doe</author>
+                <atom:source>
+                    <atom:author><atom:name>John Doe</atom:name></atom:author>
+                    <dc:contributor>Moe</dc:contributor>
+                </atom:source>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - people:
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+            - people:
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author
+                    - name: Larry
+                      role: contributor
+            - people:
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+                    - name: Larry
+                      role: contributor
+                    - name: Curly
+                      role: contributor
+                    - name: Moe
+                      role: contributor
+            - people:
+                    - name: 'Jane Doe'
+                      role: author

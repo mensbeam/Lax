@@ -140,3 +140,22 @@ Entry content:
         format: rss
         entries:
             - content: {loose: 'Loose  content'}
+
+Entry author:
+    input: >
+        <rss><channel>
+            <item>
+                <author>jane.doe@example.com (Jane Doe)</author>
+                <author>john.doe@example.com (John Doe)</author>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - people:
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author

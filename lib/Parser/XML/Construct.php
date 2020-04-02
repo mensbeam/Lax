@@ -159,9 +159,9 @@ abstract class Construct {
      * - Full Name <user@example.com>
      * - Full Name <mailto:user@example.com>
      */
-    protected function fetchPeople(string $query, string $role): ?PersonCollection {
+    protected function fetchPeople(string $query, string $role, ?\DOMNode $context = null): ?PersonCollection {
         $out = new PersonCollection;
-        foreach ($this->fetchString($query, ".+", true) ?? [] as $person) {
+        foreach ($this->fetchString($query, ".+", true, $context) ?? [] as $person) {
             $p = new Person;
             if (preg_match("/^([^@\s]+@\S+) \((.+?)\)$/", $person, $match)) { // tests "user@example.com (Full Name)" form
                 if ($this->validateMail($match[1])) {
@@ -304,8 +304,8 @@ abstract class Construct {
     }
 
     /** Finds and parses Atom person-constructs, and returns a collection of Person objects */
-    protected function fetchAtomPeople(string $query, string $role): ?PersonCollection {
-        $nodes = $this->xpath->query($query, $this->subject);
+    protected function fetchAtomPeople(string $query, string $role, \DOMNode $context = null): ?PersonCollection {
+        $nodes = $this->xpath->query($query, $context ?? $this->subject);
         $out = new PersonCollection;
         foreach ($nodes as $node) {
             $p = new Person;

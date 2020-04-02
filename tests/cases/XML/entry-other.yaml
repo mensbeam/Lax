@@ -48,3 +48,57 @@ Google Play summary:
         format: rss
         entries:
             - summary: 'Plain summary'
+
+iTunes authors:
+    input: >
+        <rss><channel xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <item>
+                <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
+                <itunes:author>john.doe@example.com (John Doe)</itunes:author>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - people:
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author
+
+Google Play authors:
+    input: >
+        <rss><channel xmlns:play="http://www.google.com/schemas/play-podcasts/1.0">
+            <item>
+                <play:author>jane.doe@example.com (Jane Doe)</play:author>
+                <play:author>john.doe@example.com (John Doe)</play:author>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - people:
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author
+
+Mixed podcast authors: # Google Play is arbitrarily preferred
+    input: >
+        <rss><channel xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:play="http://www.google.com/schemas/play-podcasts/1.0">
+            <item>
+                <itunes:author>jane.doe@example.com (Jane Doe)</itunes:author>
+                <play:author>john.doe@example.com (John Doe)</play:author>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - people:
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author

@@ -234,3 +234,29 @@ Dublin Core summary:
             - summary: 'Plain summary'
             - summary: 'Plain summary'
             - summary: 'Abstract'
+
+Dublin Core creators and contributors:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item>
+                <dc:creator>john.doe@example.com (John Doe)</dc:creator>
+                <term:creator>jane.doe@example.com (Jane Doe)</term:creator>
+                <dc:contributor>Larry</dc:contributor>
+                <term:contributor>Curly</term:contributor>
+            </item>
+         </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - people:
+                    - name: 'John Doe'
+                      mail: 'john.doe@example.com'
+                      role: author
+                    - name: 'Jane Doe'
+                      mail: 'jane.doe@example.com'
+                      role: author
+                    - name: Larry
+                      role: contributor
+                    - name: Curly
+                      role: contributor
