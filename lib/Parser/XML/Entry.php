@@ -11,6 +11,7 @@ use MensBeam\Lax\Entry as EntryStruct;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
+use MensBeam\Lax\Enclosure\Enclosure;
 use MensBeam\Lax\Date;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
@@ -154,7 +155,11 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getEnclosures(): EnclosureCollection {
-        return new EnclosureCollection;
+        return $this->getEnclosuresMediaRss()
+            ?? $this->getEnclosuresAtom()
+            ?? $this->getEnclosuresRss1()
+            ?? $this->getEnclosuresRss2()
+            ?? new EnclosureCollection;
     }
 
     protected function getRelatedLinkDefinitive(): ?url {
@@ -201,5 +206,30 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     protected function getContributors(\DOMNode $context): ?PersonCollection {
         return $this->fetchAtomPeople("atom:contributor", "contributor", $context)              // Atom contributors
             ?? $this->fetchPeople("dc:contributor|dct:contributor", "contributor", $context);   // Dublin Core contributors
+    }
+
+    protected function getEnclosuresAtom(): ?EnclosureCollection {
+        $out = new EnclosureCollection;
+        foreach ($this->fetchAtomRelations("enclosure") as $el) {
+            $enc = new Enclosure;
+            $enc->url = $this->fetchUrl("@href", $el);
+            $enc->type = $this->parseMediaType($el->getAttribute("type"), $enc->url);
+            $enc->title = $this->fetchString("@title", ".+", false, $el); 
+            $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
+            $out[] = $enc;
+        }
+        return sizeof($out) ? $out : null;
+    }
+
+    protected function getEnclosuresMediaRss(): ?EnclosureCollection {
+        return null;
+    }
+
+    protected function getEnclosuresRss1(): ?EnclosureCollection {
+        return null;
+    }
+
+    protected function getEnclosuresRss2(): ?EnclosureCollection {
+        return null;
     }
 }

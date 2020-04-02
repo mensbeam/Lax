@@ -283,3 +283,26 @@ Categories:
                 - name: eek
             - categories:
                 - name: ack
+
+Enclosures:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <link rel="enclosure" href="http://example.com/" type="image/svg+xml" length="2112"/>
+                <link rel="enclosure" href="http://example.net/" type="image" title=" Plain  title"/>
+                <link rel="enclosure" href="http://example.net/enclosure.png" length="bogus"/>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - enclosures:
+                - url: 'http://example.com/'
+                  type: 'image/svg+xml'
+                  size: 2112
+                - url: 'http://example.net/'
+                  type: 'image'
+                  title: 'Plain title'
+                - url: 'http://example.net/enclosure.png'
+                  type: 'image/png'

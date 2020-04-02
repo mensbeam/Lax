@@ -177,7 +177,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
     private function makeEnclosure(\stdClass $enclosure): Enclosure {
         $e = new Enclosure;
         foreach ($enclosure as $k => $v) {
-            if ($k === "urli") {
+            if ($k === "url") {
                 $e->$k = $this->makeUrl($v);
             } else {
                 $e->$k = $v;
