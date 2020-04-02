@@ -389,9 +389,17 @@ abstract class Construct {
         return $this->fetchText("apple:title", self::TEXT_PLAIN);
     }
 
-    protected function getCategoriesAtom(): ?CategoryCollection {
+    protected function getCategoriesFromNode(\DOMNode $context): ?CategoryCollection {
+        return $this->getCategoriesAtom($context)
+            ?? $this->getCategoriesRss2($context)
+            ?? $this->getCategoriesGPlay($context)
+            ?? $this->getCategoriesTunes($context)
+            ?? $this->getCategoriesDC($context);
+    }
+
+    protected function getCategoriesAtom(\DOMNode $context): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("atom:category[@term]") as $node) {
+        foreach ($this->xpath->query("atom:category[@term]", $context) as $node) {
             $c = new Category;
             $c->domain = $this->trimText($node->getAttribute("scheme"));
             $c->label = $this->trimText($node->getAttribute("label"));
@@ -403,9 +411,9 @@ abstract class Construct {
         return count($out) ? $out : null;
     }
 
-    protected function getCategoriesRss2(): ?CategoryCollection {
+    protected function getCategoriesRss2(\DOMNode $context): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("rss2:category", $this->subject) as $node) {
+        foreach ($this->xpath->query("rss2:category", $context) as $node) {
             $c = new Category;
             $c->domain = $this->trimText($node->getAttribute("domain"));
             $c->name = $this->trimText($node->textContent);
@@ -417,9 +425,9 @@ abstract class Construct {
     }
 
     /** Dublin Core doesn't have an obvious category type, so we use 'subject' as a nearest approximation */
-    protected function getCategoriesDC(): ?CategoryCollection {
+    protected function getCategoriesDC(\DOMNode $context): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->fetchString("dc:subject|dct:subject", null, true) ?? [] as $text) {
+        foreach ($this->fetchString("dc:subject|dct:subject", null, true, $context) ?? [] as $text) {
             if (strlen($text)) {
                 $c = new Category;
                 $c->name = $text;
@@ -429,9 +437,9 @@ abstract class Construct {
         return count($out) ? $out : null;
     }
 
-    protected function getCategoriesTunes(): ?CategoryCollection {
+    protected function getCategoriesTunes(\DOMNode $context): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("apple:category", $this->subject) as $node) {
+        foreach ($this->xpath->query("apple:category", $context) as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {
@@ -448,9 +456,9 @@ abstract class Construct {
         return count($out) ? $out : null;
     }
 
-    protected function getCategoriesGPlay(): ?CategoryCollection {
+    protected function getCategoriesGPlay(\DOMNode $context): ?CategoryCollection {
         $out = new CategoryCollection;
-        foreach ($this->xpath->query("gplay:category", $this->subject) as $node) {
+        foreach ($this->xpath->query("gplay:category", $context) as $node) {
             $c = new Category;
             $c->name = $this->trimText($node->getAttribute("text"));
             if (strlen($c->name)) {

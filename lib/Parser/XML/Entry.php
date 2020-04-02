@@ -141,7 +141,16 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     public function getCategories(): CategoryCollection {
-        return new CategoryCollection;
+        // first try to get categories from the entry itself
+        $list = $this->getCategoriesFromNode($this->subject);
+        if (!$list) {
+            // if there are none, try to get some from the entry's Atom <source> element, if any
+            $src = $this->fetchElement("atom:source");
+            if ($src) {
+                $list = $this->getCategoriesFromNode($src);
+            }
+        }
+        return $list ?? new CategoryCollection;
     }
 
     public function getEnclosures(): EnclosureCollection {

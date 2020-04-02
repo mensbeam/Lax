@@ -159,3 +159,20 @@ Entry author:
                     - name: 'John Doe'
                       mail: 'john.doe@example.com'
                       role: author
+
+Categories:
+    input: >
+        <rss><channel>
+            <item>
+                <category>Category the  first  </category>
+                <category domain="ook  eek">Category the  second  </category>
+                <category/>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - categories:
+                - name: 'Category the first'
+                - name: 'Category the second'
+                  domain: 'ook eek'

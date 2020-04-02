@@ -249,3 +249,37 @@ Authors and contributors:
                       role: contributor
                     - name: Curly
                       role: contributor
+
+Categories:
+    input: >
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+                <category term="ook"/>
+                <category term="eek"/>
+            </entry>
+            <entry>
+                <source>
+                    <category term="ook"/>
+                    <category term="eek"/>
+                </source>
+            </entry>
+            <entry>
+                <category term="ack"/>
+                <source>
+                    <category term="ook"/>
+                    <category term="eek"/>
+                </source>
+            </entry>
+        </feed>
+    output:
+        format: atom
+        version: '1.0'
+        entries:
+            - categories:
+                - name: ook
+                - name: eek
+            - categories:
+                - name: ook
+                - name: eek
+            - categories:
+                - name: ack

@@ -93,3 +93,31 @@ Entry author:
             - people:
                     - name: 'Jane Doe'
                       role: author
+
+Categories:
+    input: >
+        <rss><channel xmlns:atom="http://www.w3.org/2005/Atom">
+            <item>
+                <category>ook</category>
+            </item>
+            <item>
+                <atom:source>
+                    <category>ook</category>
+                </atom:source>
+            </item>
+            <item>
+                <category>eek</category>
+                <atom:source>
+                    <category>ook</category>
+                </atom:source>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - categories:
+                - name: ook
+            - categories:
+                - name: ook
+            - categories:
+                - name: eek

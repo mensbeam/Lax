@@ -260,3 +260,19 @@ Dublin Core creators and contributors:
                       role: contributor
                     - name: Curly
                       role: contributor
+
+Categories by way of Dublin Core subjects:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:term="http://purl.org/dc/terms/">
+            <item>
+                <dc:subject>Category, sort  of</dc:subject>
+                <term:subject>blah</term:subject>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - categories:
+                - name: 'Category, sort of'
+                - name: 'blah'

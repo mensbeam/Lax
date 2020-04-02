@@ -102,3 +102,47 @@ Mixed podcast authors: # Google Play is arbitrarily preferred
                     - name: 'John Doe'
                       mail: 'john.doe@example.com'
                       role: author
+
+iTunes categories:
+    input: >
+        <rss><channel xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+            <item>
+                <itunes:category text="Arts"/>
+                <itunes:category text="Arts  ">
+                    <itunes:category text="  Fashion    &amp; Beauty"/>
+                </itunes:category>
+                <itunes:category text="Arts  ">
+                    <itunes:category text="   "/>
+                    <itunes:category text="Books"/>
+                    <itunes:category text="Design"/>
+                </itunes:category>
+                <itunes:category text="   "/>
+                <itunes:category>Bogus</itunes:category>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - categories:
+                - name: Arts
+                - name: Arts
+                  subcategory: 'Fashion & Beauty'
+                - name: Arts
+                  subcategory: Books
+
+Google Play categories:
+    input: >
+        <rss><channel xmlns:play="http://www.google.com/schemas/play-podcasts/1.0">
+            <item>
+                <play:category text="Arts"/>
+                <play:category text="   "/>
+                <play:category>Bogus</play:category>
+                <play:category text="Music"/>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - categories:
+                - name: Arts
+                - name: Music
