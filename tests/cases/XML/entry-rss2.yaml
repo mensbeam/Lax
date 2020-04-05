@@ -176,3 +176,24 @@ Categories:
                 - name: 'Category the first'
                 - name: 'Category the second'
                   domain: 'ook eek'
+
+Enclosures:
+    input: >
+        <rss><channel>
+            <item>
+                <enclosure url="http://example.com/" type="image/svg+xml" length="2112"/>
+                <enclosure url="http://example.net/" type="image"/>
+                <enclosure url="http://example.net/enclosure.png" length="bogus"/>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - enclosures:
+                - url: 'http://example.com/'
+                  type: 'image/svg+xml'
+                  size: 2112
+                - url: 'http://example.net/'
+                  type: 'image'
+                - url: 'http://example.net/enclosure.png'
+                  type: 'image/png'

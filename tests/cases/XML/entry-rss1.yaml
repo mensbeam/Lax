@@ -276,3 +276,29 @@ Categories by way of Dublin Core subjects:
             - categories:
                 - name: 'Category, sort of'
                 - name: 'blah'
+
+Enclosures:
+    input: >
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:enc="http://purl.oclc.org/net/rss_2.0/enc#">
+            <item>
+                <enc:enclosure rdf:resource="http://example.com/" enc:type="image/svg+xml" enc:length="2112"/>
+                <enc:enclosure enc:url="http://example.net/" enc:type="image"/>
+                <enc:enclosure rdf:resource="http://example.net/enclosure.png" enc:length="bogus"/>
+                <enc:enclosure rdf:resource="http://[/" url="http://example.org/" type="image/svg+xml" enc:length="bogus" length="002112"/>
+            </item>
+        </rdf:RDF>
+    output:
+        format: rdf
+        version: '1.0'
+        entries:
+            - enclosures:
+                - url: 'http://example.com/'
+                  type: 'image/svg+xml'
+                  size: 2112
+                - url: 'http://example.net/'
+                  type: 'image'
+                - url: 'http://example.net/enclosure.png'
+                  type: 'image/png'
+                - url: 'http://example.org/'
+                  type: 'image/svg+xml'
+                  size: 2112

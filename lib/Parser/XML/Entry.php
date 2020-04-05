@@ -213,7 +213,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         foreach ($this->fetchAtomRelations("enclosure") as $el) {
             $enc = new Enclosure;
             $enc->url = $this->fetchUrl("@href", $el);
-            $enc->type = $this->parseMediaType($el->getAttribute("type"), $enc->url);
+            $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
             $enc->title = $this->fetchString("@title", ".+", false, $el); 
             $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
             $out[] = $enc;
@@ -226,10 +226,35 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     protected function getEnclosuresRss1(): ?EnclosureCollection {
-        return null;
+        $out = new EnclosureCollection;
+        foreach ($this->xpath->query("rss1file:enclosure", $this->subject) as $el) {
+            $url = $this->fetchUrl("@rdf:resource", $el)
+                ?? $this->fetchUrl("@rss1file:url", $el)    // the url attribute is deprecated, but still theoretically possible
+                ?? $this->fetchUrl("@url", $el);            // the url attribute might also appear in the null namespace
+            if ($url) {
+                $enc = new Enclosure;
+                $enc->url = $url;
+                // the enclosure module uses namespaced attributes, but it's conceivable documents might use attributes in the null namespace (which is more usual)
+                $enc->type = $this->parseMediaType($this->fetchString("@rss1file:type", ".+", false, $el) ?? $this->fetchString("@type", ".+", false, $el) ?? "", $enc->url);
+                $enc->size = ((int) ($this->fetchString("@rss1file:length", "\d+", false, $el) ?? $this->fetchString("@length", "\d+", false, $el))) ?: null;
+                $out[] = $enc;
+            }
+        }
+        return sizeof($out) ? $out : null;
     }
 
     protected function getEnclosuresRss2(): ?EnclosureCollection {
-        return null;
+        $out = new EnclosureCollection;
+        foreach ($this->xpath->query("rss2:enclosure", $this->subject) as $el) {
+            $url = $this->fetchUrl("@url", $el);
+            if ($url) {
+                $enc = new Enclosure;
+                $enc->url = $url;
+                $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
+                $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
+                $out[] = $enc;
+            }
+        }
+        return sizeof($out) ? $out : null;
     }
 }
