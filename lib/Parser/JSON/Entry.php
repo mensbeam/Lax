@@ -156,6 +156,7 @@ class Entry implements \MensBeam\Lax\Parser\Entry {
             $out[] = $m;
         }
         // handle other attachments
+        $titled = [];
         foreach ($this->fetchMember("attachments", "array") ?? [] as $attachment) {
             $url = $this->fetchUrl("url", $attachment);
             if ($url) {
@@ -165,7 +166,18 @@ class Entry implements \MensBeam\Lax\Parser\Entry {
                 $m->title = $this->fetchMember("title", "str", $attachment);
                 $m->size = $this->fetchMember("size_in_bytes", "int", $attachment);
                 $m->duration = $this->fetchMember("duration_in_seconds", "int", $attachment);
-                $out[] = $m;
+                if (isset($m->title)) {
+                    // if the enclosure has a title, it should be part of a set
+                    // the set may need to be created
+                    if (isset($titled[$m->title])) {
+                        $titled[$m->title][] = $m;
+                    } else {
+                        $titled[$m->title] = new Enclosure($m);
+                        $out[] = $titled[$m->title];
+                    }
+                } else {
+                    $out[] = $m;
+                }
             }
         }
         return $out;

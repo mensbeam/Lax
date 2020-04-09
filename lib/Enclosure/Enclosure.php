@@ -15,7 +15,6 @@ namespace MensBeam\Lax\Enclosure;
  * @property int $duration
  * @property int $bitrate
  * @property int $size
- * @property bool $preferred
  */
 class Enclosure implements \IteratorAggregate, \ArrayAccess, \Countable {
     public $preferred;

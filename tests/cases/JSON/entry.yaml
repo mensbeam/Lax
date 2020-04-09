@@ -495,22 +495,25 @@ Entry attachments:
         entries:
             - id: '1'
               enclosures:
-                - url: 'http://example.com/image'
-                  type: 'image/svg+xml'
-                  title: Logo
-                  size: 2345
+                - data:
+                    - url: 'http://example.com/image'
+                      type: 'image/svg+xml'
+                      title: Logo
+                      size: 2345
                 - url: 'http://example.com/graphic.png'
                   type: 'image/png'
                 - url: 'http://example.com/graphic.PNG'
                   type: 'image/png'
-                - url: 'data:text/rtf,Hello%20World!'
-                  type: 'text/rtf'
-                  title: 'Example text'
-                - url: 'data:,Hello%20World!'
-                  type: 'text/plain'
-                  title: 'Example text'
-                - url: 'urn:bogus:example.jpg'
-                  title: 'Sneaky URN'
+                - data:
+                    - url: 'data:text/rtf,Hello%20World!'
+                      type: 'text/rtf'
+                      title: 'Example text'
+                    - url: 'data:,Hello%20World!'
+                      type: 'text/plain'
+                      title: 'Example text'
+                - data:
+                    - url: 'urn:bogus:example.jpg'
+                      title: 'Sneaky URN'
                 - url: 'http://example.com/talk'
                   type: 'audio'
                   duration: 72
@@ -541,7 +544,8 @@ Entry image and attachments:
                 - url: 'http://example.com/image'
                   type: image
                   preferred: true
-                - url: 'http://example.com/logo'
-                  type: 'image/svg+xml'
-                  title: Logo
-                  size: 2345
+                - data:
+                    - url: 'http://example.com/logo'
+                      type: 'image/svg+xml'
+                      title: Logo
+                      size: 2345
