@@ -7,13 +7,6 @@ declare(strict_types=1);
 namespace MensBeam\Lax\Category;
 
 class Collection extends \MensBeam\Lax\Collection {
-    protected static $ranks = [
-        'webmaster'   => 10,
-        'editor'      => 20,
-        'contributor' => 30,
-        'author'      => 40,
-    ];
-
     /** Returns the collection formatted as an array of strings
      *
      * The $humanFriendly parameter controls whether or not an effort is made to return human-friendly category names. Only Atom categories have this distinction

@@ -52,7 +52,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
      *
      * The returned collection is the original instance, modified
      */
-    public function merge(Collection ...$coll): self {
+    public function merge(self ...$coll): self {
         foreach ($coll as $c) {
             foreach ($c as $p) {
                 $this[] = $p;
