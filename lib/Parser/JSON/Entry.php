@@ -163,17 +163,18 @@ class Entry implements \MensBeam\Lax\Parser\Entry {
                 $m = new Enclosure;
                 $m->url = $url;
                 $m->type = $this->fetchType("mime_type", $url, $attachment);
-                $m->title = $this->fetchMember("title", "str", $attachment);
+                $m->title = $this->fetchText("title", $attachment);
                 $m->size = $this->fetchMember("size_in_bytes", "int", $attachment);
                 $m->duration = $this->fetchMember("duration_in_seconds", "int", $attachment);
                 if (isset($m->title)) {
                     // if the enclosure has a title, it should be part of a set
                     // the set may need to be created
-                    if (isset($titled[$m->title])) {
-                        $titled[$m->title][] = $m;
+                    $title = $m->title ? $m->title->plain : null;
+                    if (isset($titled[$title])) {
+                        $titled[$title][] = $m;
                     } else {
-                        $titled[$m->title] = new Enclosure($m);
-                        $out[] = $titled[$m->title];
+                        $titled[$title] = new Enclosure($m);
+                        $out[] = $titled[$title];
                     }
                 } else {
                     $out[] = $m;

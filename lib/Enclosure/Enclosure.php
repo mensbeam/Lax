@@ -8,8 +8,8 @@ namespace MensBeam\Lax\Enclosure;
 
 /**
  * @property \MensBeam\Lax\Url $url
+ * @property \MensBeam\Lax\Text $title
  * @property string $type
- * @property string $title
  * @property int $height
  * @property int $width
  * @property int $duration
