@@ -185,6 +185,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
             foreach ($enclosure as $k => $v) {
                 if ($k === "url") {
                     $e->$k = $this->makeUrl($v);
+                } elseif ($k === "title") {
+                    $e->$k = $this->makeText($v);
                 } else {
                     $e->$k = $v;
                 }

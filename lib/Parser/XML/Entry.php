@@ -17,6 +17,14 @@ use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
 class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
+    protected const ENCLOSURE_ATTR_INTEGERS = [
+        'size'     => "@fileSize",
+        'width'    => "@width",
+        'height'   => "@height",
+        'duration' => "@duration",
+        'bitrate'  => "@bitrate"
+    ];
+
     public function __construct(\DOMElement $data, XPath $xpath, FeedStruct $feed) {
         $this->subject = $data;
         $this->xpath = $xpath;
@@ -211,10 +219,11 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     protected function getEnclosuresAtom(): ?EnclosureCollection {
         $out = new EnclosureCollection;
         foreach ($this->fetchAtomRelations("enclosure") as $el) {
+            $title = $this->fetchString("@title", ".+", false, $el);
             $enc = new Enclosure;
             $enc->url = $this->fetchUrl("@href", $el);
             $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
-            $enc->title = $this->fetchString("@title", ".+", false, $el); 
+            $enc->title = isset($title) ? new Text($title) : null; 
             $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
             $out[] = $enc;
         }
@@ -222,7 +231,29 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
     }
 
     protected function getEnclosuresMediaRss(): ?EnclosureCollection {
-        return null;
+        $out = new EnclosureCollection;
+        $entryTitle = $this->fetchTitleMediaRss($this->subject);
+        foreach ($this->xpath->query("media:content|media:group", $this->subject) as $node) {
+            if ($node->localName === "group") {
+                $groupTitle = $this->fetchTitleMediaRss($node) ?? $entryTitle;
+                $group = new Enclosure;
+                foreach ($this->xpath->query("media:content", $node) as $subNode) {
+                    if ($enc = $this->parseMediaRssEnclosure($subNode, true)) {
+                        $enc->title = $enc->title ?? $groupTitle;
+                        $group[] = $enc;
+                    }
+                }
+                if (sizeof($group)) {
+                    $out[] = $group;
+                }
+            } else {
+                if ($enc = $this->parseMediaRssEnclosure($node, false)) {
+                    $enc->title = $enc->title ?? $entryTitle;
+                    $out[] = $enc;
+                }
+            }
+        }
+        return sizeof($out) ? $out : null;
     }
 
     protected function getEnclosuresRss1(): ?EnclosureCollection {
@@ -256,5 +287,24 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             }
         }
         return sizeof($out) ? $out : null;
+    }
+
+    protected function parseMediaRssEnclosure(\DOMElement $node, bool $group): ?Enclosure {
+        assert($node->localName === "content" && $node->namespaceURI === XPath::NS['media']);
+        
+        $out = new Enclosure;
+        $out->url = $this->fetchUrl("@url", $node);
+        $out->type = $this->parseMediaType($this->fetchString("@type", ".+", false, $node)) ?? $this->fetchString("@medium", "image|audio|video|document|executable", false, $node);
+        $out->title = $this->fetchTitleMediaRss($node);
+        foreach (self::ENCLOSURE_ATTR_INTEGERS as $prop => $query) {
+            $value = (int) $this->fetchString($query, "\d+", false, $node);
+            $out->$prop = $value ?: null;
+        }
+        return $out->url ? $out : null;
+    }
+
+    protected function fetchTitleMediaRss(\DOMElement $context): ?Text {
+        return $this->fetchText("media:title[normalize-space(@type)='html']", "html", $context)
+            ?? $this->fetchText("media:title", "plain", $context);
     }
 }
