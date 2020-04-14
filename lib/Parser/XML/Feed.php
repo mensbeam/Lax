@@ -19,6 +19,13 @@ use MensBeam\Lax\Url;
 
 class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     protected const LIBXML_OPTIONS = \LIBXML_BIGLINES | \LIBXML_COMPACT | \LIBXML_HTML_NODEFDTD | \LIBXML_NOCDATA | \LIBXML_NOENT | \LIBXML_NONET | \LIBXML_NOERROR | LIBXML_NOWARNING;
+    public const MIME_TYPES = [
+        "application/atom+xml",     // Atom
+        "application/rss+xml",      // RSS 2.0
+        "application/rdf+xml",      // RSS 1.0 (possibly)
+        "application/xml",          // generic XML
+        "text/xml",                 // generic XML (as text)
+    ];
 
     /** @var string */
     protected $data;
@@ -42,6 +49,10 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
+        $type = $this->parseMediaType($this->contentType) ?? "";
+        if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
+            throw new Exception("notXMLType");
+        }
         $this->document = new \DOMDocument();
         if (!$this->document->loadXML($this->data, self::LIBXML_OPTIONS)) {
             throw new Exception("notXML");

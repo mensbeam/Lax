@@ -1,3 +1,8 @@
+Content-Type mismatch:
+    type: application/feed+json
+    input: '<rss><channel/></rss>'
+    exception: notXMLType
+
 Malformed XML:
     input: >
         <rss>

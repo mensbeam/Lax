@@ -19,14 +19,14 @@ use MensBeam\Lax\Url;
 class Feed implements \MensBeam\Lax\Parser\Feed {
     use Construct;
 
-    protected const MIME_TYPES = [
-        "application/json",         // generic JSON
-        "application/feed+json",    // JSON Feed-specific type
-        "text/json",                // obsolete type for JSON
-    ];
     protected const VERSIONS = [
         'https://jsonfeed.org/version/1'   => "1",
         'https://jsonfeed.org/version/1.1' => "1.1",
+    ];
+    public const MIME_TYPES = [
+        "application/feed+json",    // JSON Feed-specific type
+        "application/json",         // generic JSON
+        "text/json",                // obsolete type for JSON
     ];
 
     protected $data;
