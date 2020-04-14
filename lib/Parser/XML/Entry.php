@@ -24,6 +24,10 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         'duration' => "@duration",
         'bitrate'  => "@bitrate"
     ];
+    protected const ENCLOSURE_ATTR_BOOLEANS = [
+        'preferred' => "@isDefault[normalize-space()='true']",
+        'sample'    => "@expression[normalize-space()='sample']",
+    ];
 
     public function __construct(\DOMElement $data, XPath $xpath, FeedStruct $feed) {
         $this->subject = $data;
@@ -238,16 +242,19 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
                 $groupTitle = $this->fetchTitleMediaRss($node) ?? $entryTitle;
                 $group = new Enclosure;
                 foreach ($this->xpath->query("media:content", $node) as $subNode) {
-                    if ($enc = $this->parseMediaRssEnclosure($subNode, true)) {
+                    if ($enc = $this->parseMediaRssEnclosure($subNode)) {
                         $enc->title = $enc->title ?? $groupTitle;
                         $group[] = $enc;
                     }
                 }
                 if (sizeof($group)) {
+                    if ($this->fetchString("@isDefault", "(?-i:true)", false, $node)) {
+                        $group->preferred = true;
+                    }
                     $out[] = $group;
                 }
             } else {
-                if ($enc = $this->parseMediaRssEnclosure($node, false)) {
+                if ($enc = $this->parseMediaRssEnclosure($node)) {
                     $enc->title = $enc->title ?? $entryTitle;
                     $out[] = $enc;
                 }
@@ -289,18 +296,26 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         return sizeof($out) ? $out : null;
     }
 
-    protected function parseMediaRssEnclosure(\DOMElement $node, bool $group): ?Enclosure {
+    protected function parseMediaRssEnclosure(\DOMElement $node): ?Enclosure {
         assert($node->localName === "content" && $node->namespaceURI === XPath::NS['media']);
-        
-        $out = new Enclosure;
-        $out->url = $this->fetchUrl("@url", $node);
-        $out->type = $this->parseMediaType($this->fetchString("@type", ".+", false, $node)) ?? $this->fetchString("@medium", "image|audio|video|document|executable", false, $node);
-        $out->title = $this->fetchTitleMediaRss($node);
-        foreach (self::ENCLOSURE_ATTR_INTEGERS as $prop => $query) {
-            $value = (int) $this->fetchString($query, "\d+", false, $node);
-            $out->$prop = $value ?: null;
+        $url = $this->fetchUrl("@url", $node);
+        if ($url) {
+            $out = new Enclosure;
+            $out->url = $url;
+            $out->type = $this->parseMediaType($this->fetchString("@type", ".+", false, $node) ?? "", $url) ?? $this->fetchString("@medium", "(?-i:image|audio|video|document|executable)", false, $node);
+            $out->title = $this->fetchTitleMediaRss($node);
+            foreach (self::ENCLOSURE_ATTR_INTEGERS as $prop => $query) {
+                $value = (int) $this->fetchString($query, "\d+", false, $node);
+                $out->$prop = $value ?: null;
+            }
+            foreach (self::ENCLOSURE_ATTR_BOOLEANS as $prop => $query) {
+                if (!is_null($this->fetchString($query, null, false, $node))) {
+                    $out->$prop = true;
+                }
+            }
+            return $out;
         }
-        return $out->url ? $out : null;
+        return null;
     }
 
     protected function fetchTitleMediaRss(\DOMElement $context): ?Text {

@@ -10,6 +10,7 @@ namespace MensBeam\Lax\Enclosure;
  * @property \MensBeam\Lax\Url $url
  * @property \MensBeam\Lax\Text $title
  * @property string $type
+ * @property bool $sample
  * @property int $height
  * @property int $width
  * @property int $duration
@@ -19,9 +20,11 @@ namespace MensBeam\Lax\Enclosure;
 class Enclosure implements \IteratorAggregate, \ArrayAccess, \Countable {
     public $preferred;
     protected $data = [];
+
     private $url;
-    private $type;
     private $title;
+    private $type;
+    private $sample;
     private $height;
     private $width;
     private $duration;

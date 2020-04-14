@@ -200,9 +200,9 @@ abstract class Construct {
         $custom = false;
         $rel = trim($rel);
         if ($rel === "") {
-            $rel = "alternate";
+            $rel = "alternate"; // @codeCoverageIgnore
         } elseif (strpos(strtolower($rel), "http://www.iana.org/assignments/relation/") === 0) {
-            $rel = substr($rel, 41);
+            $rel = substr($rel, 41); // @codeCoverageIgnore
         } elseif (preg_match("<^[a-z\.\-]+$>i", $rel)) {
             $rel = strtolower($rel);
         } else {

@@ -146,3 +146,88 @@ Google Play categories:
             - categories:
                 - name: Arts
                 - name: Music
+
+Media RSS enclosures:
+    input: >
+        <rss><channel xmlns:media="http://search.yahoo.com/mrss/">
+            <item>
+                <media:content url="http://[/"/>
+                <media:content url="http://example.com/"/>
+                <media:content url="http://example.com/" type="image/svg+xml"/>
+                <media:content url="http://example.com/" medium="image"/>
+                <media:content url="http://example.com/entry.m4a" medium="image"/>
+            </item>
+            <item>
+                <media:content url="http://example.com/">
+                    <media:title>Plain  title</media:title>
+                </media:content>
+                <media:content url="http://example.com/">
+                    <media:title type=" html ">HTML  title</media:title>
+                </media:content>
+                <media:content url="http://example.com/">
+                    <media:title type="HTML">Plain  title</media:title>
+                </media:content>
+            </item>
+            <item>
+                <media:content url="http://example.com/" isDefault="true" expression="sample"/>
+                <media:content url="http://example.com/" fileSize="002567" duration="000000001" width="bogus" height="-20" bitrate="0"/>
+                <media:content url="http://example.com/" fileSize="1.0" duration="2e6" width="800" height="0600" bitrate="500"/>
+            </item>
+            <item>
+                <media:title>Entry title</media:title>
+                <media:content url="http://example.com/"/>
+                <media:group>
+                    <media:title>Group title</media:title>
+                    <media:content url="http://example.com/" isDefault="true"/>
+                    <media:content url="http://example.com/">
+                        <media:title>Enclosure title</media:title>
+                    </media:content>
+                </media:group>
+                <media:group isDefault="true">
+                    <media:content url="http://example.com/"/>
+                </media:group>
+                <media:group isDefault="true">
+                    <media:content url="http://[/"/>
+                </media:group>
+            </item>
+        </channel></rss>
+    output:
+        format: rss
+        entries:
+            - enclosures:
+                - url: 'http://example.com/'
+                - url: 'http://example.com/'
+                  type: 'image/svg+xml'
+                - url: 'http://example.com/'
+                  type: 'image'
+                - url: 'http://example.com/entry.m4a'
+                  type: 'audio/mp4'
+            - enclosures:
+                - url: 'http://example.com/'
+                  title: 'Plain title'
+                - url: 'http://example.com/'
+                  title: {html: 'HTML  title'}
+                - url: 'http://example.com/'
+                  title: 'Plain title'
+            - enclosures:
+                - url: 'http://example.com/'
+                  preferred: true
+                  sample: true
+                - url: 'http://example.com/'
+                  size: 2567
+                  duration: 1
+                - url: 'http://example.com/'
+                  width: 800
+                  height: 600
+                  bitrate: 500
+            - enclosures:
+                - url: 'http://example.com/'
+                  title: 'Entry title'
+                - data:
+                    - url: 'http://example.com/'
+                      title: 'Group title'
+                      preferred: true
+                    - url: 'http://example.com/'
+                      title: 'Enclosure title'
+                - data: [{url: 'http://example.com/', title: 'Entry title'}]
+                  preferred: true
