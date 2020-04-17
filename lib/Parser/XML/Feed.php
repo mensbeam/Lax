@@ -202,7 +202,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     }
 
     public function getCategories(): CategoryCollection {
-            return $this->getCategoriesFromNode($this->subject) ?? new CategoryCollection;
+        return $this->getCategoriesFromNode($this->subject) ?? new CategoryCollection;
     }
 
     public function getPeople(): PersonCollection {

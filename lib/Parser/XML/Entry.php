@@ -22,7 +22,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         'width'    => "@width",
         'height'   => "@height",
         'duration' => "@duration",
-        'bitrate'  => "@bitrate"
+        'bitrate'  => "@bitrate",
     ];
     protected const ENCLOSURE_ATTR_BOOLEANS = [
         'preferred' => "@isDefault[normalize-space()='true']",
@@ -227,7 +227,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             $enc = new Enclosure;
             $enc->url = $this->fetchUrl("@href", $el);
             $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
-            $enc->title = isset($title) ? new Text($title) : null; 
+            $enc->title = isset($title) ? new Text($title) : null;
             $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
             $out[] = $enc;
         }
