@@ -16,19 +16,6 @@ trait Construct {
         return trim(preg_replace("<\s{2,}>s", " ", $text));
     }
 
-    /** Takes an HTML string as input and returns a sanitized version of that string
-     *
-     * The $outputHtml parameter, when false, outputs only the plain-text content of the sanitized HTML
-     */
-    protected function sanitizeString(string $markup, bool $outputHtml = true): string {
-        if (!preg_match("/<\S/", $markup)) {
-            // if the string does not appear to actually contain markup besides entities, we can skip most of the sanitization
-            return $outputHtml ? $markup : $this->trimText(html_entity_decode($markup, \ENT_QUOTES | \ENT_HTML5, "UTF-8"));
-        } else {
-            return "OOK!";
-        }
-    }
-
     /** Tests whether a string is a valid e-mail address
      *
      * Accepts IDN hosts and Unicode localparts
@@ -64,35 +51,8 @@ trait Construct {
     }
 
     protected function parseMediaType(string $type, ?Url $url = null): ?string {
-        if (preg_match('<^\s*([0-9a-z]+(?:/[!#$%&\'\*\+\-\.^_`|~0-9a-z]+)?)(?:\s|;|,|$)>i', $type, $match)) {
-            /* NOTE: The pattern used here is a subset of what is
-                technically allowed by RFC 7231: the "type" portion
-                is supposed to be as general as the "subtype" portion,
-                but in practice only alphabetic types have ever been
-                registered, making a more specific pattern more
-                practically useful for detecting media types.
-
-                See:
-                <https://tools.ietf.org/html/rfc7231#section-3.1.1.1>
-                <https://tools.ietf.org/html/rfc7230#section-3.2.6>
-
-                Additionally, types without subtypes are accepted as
-                we foresee the general type still being useful to
-                feed processors.
-            */
-            return strtolower($match[1]);
-        }
-        if ($url && (strlen($url->getScheme()) && $url->host !== null)) {
-            $file = substr($url->getPath(), (int) strrpos($url->getPath(), "/"));
-            $ext = strrpos($file, ".");
-            if ($ext !== false) {
-                $ext = substr($file, $ext + 1);
-                if (strlen($ext)) {
-                    return ($this->mime ?? ($this->mime = new \Mimey\MimeTypes))->getMimeType($ext);
-                }
-            }
-        } elseif ($url && $url->getScheme() === "data") {
-            return $this->parseMediaType($url->getPath()) ?? "text/plain";
+        if ($normalized = MimeType::parseLoose($type, $url)) {
+            return $normalized->essence;
         }
         return null;
     }

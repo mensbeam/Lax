@@ -6,121 +6,59 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser;
 
-use function PHPSTORM_META\type;
+use MensBeam\Lax\Url;
 
-/** @property-read string $essence */
-class MimeType {
-    protected const TYPE_PATTERN = <<<'PATTERN'
-        <^
-            [\t\r\n ]*                              # optional leading whitespace
-            ([^/]+)                                 # type  
-            /                                       # type/subtype delimiter
-            ([^;]+)                                 # subtype (possibly with trailing whitespace)
-            (;.*)?                                  # optional parameters, to be parsed separately
-            [\t\r\n ]*                              # optional trailing whitespace
-        $>sx
-PATTERN;
-    protected const PARAM_PATTERN = <<<'PATTERN'
-        <
-            [;\t\r\n ]*                             # parameter delimiter and leading whitespace, all optional
-            ([^=;]*)                                # parameter name; may be empty
-            (?:=                                    # parameter name/value delimiter
-                (
-                    "(?:\\"|[^"])*(?:"|$)[^;]*      # quoted parameter value and optional garbage
-                    |[^;]*                          # unquoted parameter value (possibly with trailing whitespace)
-                )
-            )?
-            ;?                                      # optional trailing parameter delimiter
-            [\t\r\n ]*                              # optional trailing whitespace
-        >sx
-PATTERN;
-    protected const TOKEN_PATTERN = '<^[A-Za-z0-9!#$%&\'*+\-\.\^_`|~]+$>s';
-    protected const BARE_VALUE_PATTERN = '<^[\t\x{20}-\x{7E}\x{80}-\x{FF}]+$>su';
-    protected const QUOTED_VALUE_PATTERN = '<^"((?:\\\"|[\t !\x{23}-\x{7E}\x{80}-\x{FF}])*)(?:"|$)>su';
-    protected const ESCAPE_PATTERN = '<\\\(.)>s';
+/** {@inheritDoc} */
+class MimeType extends \MensBeam\Mime\MimeType {
+    protected const MEDIUM_PATTERN = '<^[\t\r\n ]*(audio|video|image|text|application|document|executable)(?:$|[\t\r\n ;])>i';
+    protected const ATOM_TYPE_PATTERN = '<^\s*(|text|x?html)\s*$>i';
 
-    public $type = "";
-    public $subtype = "";
-    public $params = [];
-    private $essence;
-
-    public function __construct(string $type = "", string $subtype = "", array $params = []) {
-        $this->type = $type;
-        $this->subtype = $subtype;
-        $this->params = $params;
-    }
-
-    public function __get(string $name) {
-        if ($name === "essence") {
-            return $this->type."/".$this->subtype;
-        }
-        return $this->$name ?? null;
-    }
-
-    public function __toString(): string {
-        $out = $this->__get("essence");
-        if (is_array($this->params) && sizeof($this->params)) {
-            foreach ($this->params as $name => $value) {
-                $out .= ";$name=".(preg_match(self::TOKEN_PATTERN, $value) ? $value : '"'.str_replace(["\\", '"'], ["\\\\", "\\\""], $value).'"');
-            }
-        }
-        return $out;
-    }
-
-    public static function parse(string $mimeType): ?self {
-        if (preg_match(self::TYPE_PATTERN, $mimeType, $match)) {
-            [$mimeType, $type, $subtype, $params] = array_pad($match, 4, "");
-            if (strlen($type = static::parseHttpToken($type)) && strlen($subtype = static::parseHttpToken(rtrim($subtype, "\t\r\n ")))) {
-                return new static(strtolower($type), strtolower($subtype), static::parseParams($params));
-            }
-        }
-        return null;
-    }
-
-    protected static function parseParams(string $params): array {
-        $out = [];
-        if (preg_match_all(self::PARAM_PATTERN, $params, $matches, \PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                [$param, $name, $value] = array_pad($match, 3, "");
-                $name = strtolower(static::parseHttpToken($name));
-                if (!strlen($name) || isset($out[$name])) {
-                    continue;
-                } elseif (strlen($value) && $value[0] === '"') {
-                    $value = static::parseHttpQuotedValue($value);
-                    if (is_null($value)) {
-                        continue;
-                    }
-                } else {
-                    $value = static::parseHttpBareValue($value);
-                    if (!strlen($value)) {
-                        continue;
+    protected static $mime;
+    
+    /** Parses a MIME type, accepting types without a subtype */
+    public static function parseLoose(string $type, ?Url $url = null): ?self {
+        if ($normalized = self::parse($type)) {
+            return $normalized;
+        } elseif (preg_match(self::MEDIUM_PATTERN, $type, $match)) {
+            $type = strtolower($match[1]);
+            $type = ['document' => "text", 'executable' => "application"][$type] ?? $type;
+            return new self($type);
+        } elseif ($url && (strlen($url->getScheme()) && $url->host !== null)) {
+            $file = substr($url->getPath(), (int) strrpos($url->getPath(), "/"));
+            $ext = strrpos($file, ".");
+            if ($ext !== false) {
+                $ext = substr($file, $ext + 1);
+                if (strlen($ext)) {
+                    $type = (self::$mime ?? (self::$mime = new \Mimey\MimeTypes))->getMimeType($ext);
+                    if (!is_null($type)) {
+                        return self::parse($type);
                     }
                 }
-                $out[$name] = $value;
             }
-        }
-        return $out;
-    }
-
-    protected static function parseHttpToken(string $token): string {
-        if (preg_match(self::TOKEN_PATTERN, $token, $match)) {
-            return $token;
-        }
-        return "";
-    }
-
-    protected static function parseHttpBareValue(string $value): string {
-        $value = rtrim($value, "\t\r\n ");
-        if (preg_match(self::BARE_VALUE_PATTERN, $value, $match)) {
-            return $value;
-        }
-        return "";
-    }
-
-    protected static function parseHttpQuotedValue(string $value): ?string {
-        if (preg_match(self::QUOTED_VALUE_PATTERN, $value, $match)) {
-            return preg_replace(self::ESCAPE_PATTERN, '$1', $match[1]);
+        } elseif ($url && $url->getScheme() === "data") {
+            $data = $url->getPath();
+            $candidate = substr($data, 0, (int) strpos($data, ","));
+            return self::parseLoose($candidate) ?? self::parse("text/plain");
         }
         return null;
+    }
+
+    /** Parses an Atom content type, which may be either a MIME type or the strings "text", "html", or "xhtml"
+     *
+     * If the supplied type is invalid "unknown/unknown" is returned
+     */
+    public static function parseAtom(string $type): self {
+        if (preg_match(self::ATOM_TYPE_PATTERN, $type, $match)) {
+            $type = ['' => "text/plain", 'text' => "text/plain", 'html' => "text/html", 'xhtml' => "application/xhtml+xml"][$match[1]] ?? null;
+            assert(!is_null($type));
+        }
+        return self::parse($type) ?? self::parse("unknown/unknown");
+    }
+    
+    public function __get(string $name) {
+        if ($name === "essence") {
+            return $this->type.(strlen($this->subtype ?? "") ? "/".$this->subtype : "");
+        }
+        return $this->$name ?? null;
     }
 }

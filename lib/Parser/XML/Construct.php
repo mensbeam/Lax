@@ -12,6 +12,7 @@ use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\Parser\MimeType;
 use MensBeam\Lax\Url;
 
 abstract class Construct {
@@ -275,29 +276,33 @@ abstract class Construct {
             // get the content type; assume "text" if not provided
             $type = trim($node->getAttribute("type"));
             $type = $this->parseMediaType((!strlen($type)) ? "text" : $type);
-            if ($type === "text" || $type === "text/plain") {
-                if (is_null($out->plain)) {
-                    $plain = $this->trimText($node->textContent);
-                    if (strlen($plain)) {
-                        $out->plain = $plain;
+            switch (MimeType::parseAtom(trim($node->getAttribute("type")))->essence) {
+                case "text/plain":
+                    if (is_null($out->plain)) {
+                        $plain = $this->trimText($node->textContent);
+                        if (strlen($plain)) {
+                            $out->plain = $plain;
+                            $populated = true;
+                        }
+                    }
+                    break;
+                case "text/html":
+                    if (is_null($out->html)) {
+                        $html = trim($node->textContent);
+                        if (strlen($html)) {
+                            $out->html = $html;
+                            $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
+                            $populated = true;
+                        }
+                    }
+                    break;
+                case "application/xhtml+xml":
+                    if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("xhtml:div", $node))) {
+                        $out->xhtml = $xhtml->ownerDocument->saveXML($xhtml);
+                        $out->xhtmlBase = strlen($xhtml->baseURI) ? $xhtml->baseURI : null;
                         $populated = true;
                     }
-                }
-            } elseif ($type === "html" || $type === "text/html") {
-                if (is_null($out->html)) {
-                    $html = trim($node->textContent);
-                    if (strlen($html)) {
-                        $out->html = $html;
-                        $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
-                        $populated = true;
-                    }
-                }
-            } elseif ($type === "xhtml" || $type === "application/xhtml+xml") {
-                if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("xhtml:div", $node))) {
-                    $out->xhtml = $xhtml->ownerDocument->saveXML($xhtml);
-                    $out->xhtmlBase = strlen($xhtml->baseURI) ? $xhtml->baseURI : null;
-                    $populated = true;
-                }
+                    break;
             }
         }
         return $populated ? $out : null;
