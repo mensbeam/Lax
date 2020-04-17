@@ -201,7 +201,7 @@ Media RSS enclosures:
                 - url: 'http://example.com/'
                   type: 'image'
                 - url: 'http://example.com/entry.m4a'
-                  type: 'audio/mp4'
+                  type: 'image'
             - enclosures:
                 - url: 'http://example.com/'
                   title: 'Plain title'

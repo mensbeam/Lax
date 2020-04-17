@@ -4,9 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\Parser;
-
-use MensBeam\Lax\Url;
+namespace MensBeam\Lax;
 
 /** {@inheritDoc} */
 class MimeType extends \MensBeam\Mime\MimeType {

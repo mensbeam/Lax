@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace MensBeam\Lax\Parser\JSON;
 
 use MensBeam\Lax\Date;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Person\Person;
@@ -44,9 +45,9 @@ trait Construct {
     }
 
     /** Returns a media type from an object member or from a URL's file name when possible */
-    protected function fetchType(string $key, ?Url $url, ?\stdClass $obj = null): ?string {
+    protected function fetchType(string $key, ?Url $url, ?\stdClass $obj = null): ?MimeType {
         $type = $this->fetchMember($key, "str", $obj) ?? "";
-        return $this->parseMediaType($type, $url);
+        return MimeType::parseLoose($type, $url);
     }
 
     /** Returns an object member as a parsed date */

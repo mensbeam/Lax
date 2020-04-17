@@ -42,6 +42,7 @@ use MensBeam\Lax\Url;
 use MensBeam\Lax\Entry;
 use MensBeam\Lax\Metadata;
 use MensBeam\Lax\Schedule;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Category\Category;
 use MensBeam\Lax\Enclosure\Enclosure;
@@ -187,6 +188,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                     $e->$k = $this->makeUrl($v);
                 } elseif ($k === "title") {
                     $e->$k = $this->makeText($v);
+                } elseif ($k === "type") {
+                    $e->$k = MimeType::parseLoose($v);
                 } else {
                     $e->$k = $v;
                 }

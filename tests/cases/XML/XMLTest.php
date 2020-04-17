@@ -7,10 +7,9 @@ declare(strict_types=1);
 namespace MensBeam\Lax\TestCase\XML;
 
 /**
- * @covers MensBeam\Lax\Parser\Construct<extended>
  * @covers MensBeam\Lax\Parser\XML\Feed<extended>
  * @covers MensBeam\Lax\Parser\XML\Entry<extended>
- * @covers MensBeam\Lax\Parser\XML\XPath<extended>
+ * @covers MensBeam\Lax\Parser\XML\XPath
  */
 class XMLTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
     /** @dataProvider provideXML */

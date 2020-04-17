@@ -7,7 +7,6 @@ declare(strict_types=1);
 namespace MensBeam\Lax\TestCase\JSON;
 
 /**
- * @covers MensBeam\Lax\Parser\Construct<extended>
  * @covers MensBeam\Lax\Parser\JSON\Feed<extended>
  * @covers MensBeam\Lax\Parser\JSON\Entry<extended>
  */

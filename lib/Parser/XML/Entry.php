@@ -13,6 +13,7 @@ use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
 use MensBeam\Lax\Enclosure\Enclosure;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
@@ -226,7 +227,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             $title = $this->fetchString("@title", ".+", false, $el);
             $enc = new Enclosure;
             $enc->url = $this->fetchUrl("@href", $el);
-            $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
+            $enc->type = MimeType::parseLoose($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
             $enc->title = isset($title) ? new Text($title) : null;
             $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
             $out[] = $enc;
@@ -273,7 +274,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
                 $enc = new Enclosure;
                 $enc->url = $url;
                 // the enclosure module uses namespaced attributes, but it's conceivable documents might use attributes in the null namespace (which is more usual)
-                $enc->type = $this->parseMediaType($this->fetchString("@rss1file:type", ".+", false, $el) ?? $this->fetchString("@type", ".+", false, $el) ?? "", $enc->url);
+                $enc->type = MimeType::parseLoose($this->fetchString("@rss1file:type", ".+", false, $el) ?? $this->fetchString("@type", ".+", false, $el) ?? "", $enc->url);
                 $enc->size = ((int) ($this->fetchString("@rss1file:length", "\d+", false, $el) ?? $this->fetchString("@length", "\d+", false, $el))) ?: null;
                 $out[] = $enc;
             }
@@ -288,7 +289,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
             if ($url) {
                 $enc = new Enclosure;
                 $enc->url = $url;
-                $enc->type = $this->parseMediaType($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
+                $enc->type = MimeType::parseLoose($this->fetchString("@type", null, false, $el) ?? "", $enc->url);
                 $enc->size = ((int) $this->fetchString("@length", "\d+", false, $el)) ?: null;
                 $out[] = $enc;
             }
@@ -302,7 +303,9 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         if ($url) {
             $out = new Enclosure;
             $out->url = $url;
-            $out->type = $this->parseMediaType($this->fetchString("@type", ".+", false, $node) ?? "", $url) ?? $this->fetchString("@medium", "(?-i:image|audio|video|document|executable)", false, $node);
+            $out->type = MimeType::parseLoose($this->fetchString("@type", ".+", false, $node) ?? "") 
+                ?? MimeType::parseLoose($this->fetchString("@medium", ".+", false, $node) ?? "")
+                ?? MimeType::parseLoose("", $url);
             $out->title = $this->fetchTitleMediaRss($node);
             foreach (self::ENCLOSURE_ATTR_INTEGERS as $prop => $query) {
                 $value = (int) $this->fetchString($query, "\d+", false, $node);

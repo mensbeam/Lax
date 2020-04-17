@@ -452,7 +452,7 @@ Entry attachments:
                 "attachments": [
                     {
                         "url": "http://example.com/image",
-                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "mime_type": "image/svg+xml; charset=\"utf-8\"",
                         "title": "Logo",
                         "size_in_bytes": 2345
                     },
@@ -497,7 +497,7 @@ Entry attachments:
               enclosures:
                 - data:
                     - url: 'http://example.com/image'
-                      type: 'image/svg+xml'
+                      type: 'image/svg+xml;charset=utf-8'
                       title: Logo
                       size: 2345
                 - url: 'http://example.com/graphic.png'
@@ -527,7 +527,7 @@ Entry image and attachments:
                 "attachments": [
                     {
                         "url": "http://example.com/logo",
-                        "mime_type": "image/svg+xml; charset=\"urf-8\"",
+                        "mime_type": "image/svg+xml; charset=\"utf-8\"",
                         "title": "Logo",
                         "size_in_bytes": 2345
                     }
@@ -546,6 +546,6 @@ Entry image and attachments:
                   preferred: true
                 - data:
                     - url: 'http://example.com/logo'
-                      type: 'image/svg+xml'
+                      type: 'image/svg+xml;charset=utf-8'
                       title: Logo
                       size: 2345

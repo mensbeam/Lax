@@ -13,6 +13,7 @@ use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Feed as FeedStruct;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
@@ -49,8 +50,8 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
-        $type = $this->parseMediaType($this->contentType) ?? "";
-        if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
+        $type = MimeType::parse($this->contentType) ?? "";
+        if ($type && !in_array($type->essence, self::MIME_TYPES)) {
             throw new Exception("notXMLType");
         }
         $this->document = new \DOMDocument();

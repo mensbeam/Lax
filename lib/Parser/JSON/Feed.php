@@ -8,13 +8,14 @@ namespace MensBeam\Lax\Parser\JSON;
 
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\MimeType;
+use MensBeam\Lax\Schedule;
+use MensBeam\Lax\Url;
 use MensBeam\Lax\Feed as FeedStruct;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Parser\Exception;
 use MensBeam\Lax\Parser\JSON\Entry as EntryParser;
-use MensBeam\Lax\Schedule;
-use MensBeam\Lax\Url;
 
 class Feed implements \MensBeam\Lax\Parser\Feed {
     use Construct;
@@ -44,8 +45,8 @@ class Feed implements \MensBeam\Lax\Parser\Feed {
 
     /** Performs format-specific preparation and validation */
     protected function init(FeedStruct $feed): FeedStruct {
-        $type = $this->parseMediaType($this->contentType) ?? "";
-        if (strlen($type) && !in_array($type, self::MIME_TYPES)) {
+        $type = MimeType::parse($this->contentType);
+        if ($type && !in_array($type->essence, self::MIME_TYPES)) {
             throw new Exception("notJSONType");
         }
         $data = @json_decode($this->data, false, 20, \JSON_BIGINT_AS_STRING | JSON_INVALID_UTF8_SUBSTITUTE);

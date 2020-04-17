@@ -12,7 +12,7 @@ use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Date;
-use MensBeam\Lax\Parser\MimeType;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Url;
 
 abstract class Construct {
@@ -252,9 +252,9 @@ abstract class Construct {
             if (!strlen($t) && (!$best || $best[1] < -1)) {
                 return [$cur, -1]; // any preferred type will rank higher than -1
             }
-            $t = $this->parseMediaType($t);
+            $t = MimeType::parse($t);
             if ($t) {
-                $rank = $mediaTypes[$t] ?? -2; // even no type will rank higher than a non-preferred type
+                $rank = $mediaTypes[$t->essence] ?? -2; // even no type will rank higher than a non-preferred type
                 if (!$best || $rank > $best[1]) {
                     // if there is currently no candidate or the candidate ranks lower, use the current link
                     return [$cur, $rank];
@@ -274,15 +274,12 @@ abstract class Construct {
                 continue;
             }
             // get the content type; assume "text" if not provided
-            $type = trim($node->getAttribute("type"));
-            $type = $this->parseMediaType((!strlen($type)) ? "text" : $type);
             switch (MimeType::parseAtom(trim($node->getAttribute("type")))->essence) {
                 case "text/plain":
                     if (is_null($out->plain)) {
                         $plain = $this->trimText($node->textContent);
                         if (strlen($plain)) {
                             $out->plain = $plain;
-                            $populated = true;
                         }
                     }
                     break;
@@ -292,7 +289,6 @@ abstract class Construct {
                         if (strlen($html)) {
                             $out->html = $html;
                             $out->htmlBase = strlen($node->baseURI) ? $node->baseURI : null;
-                            $populated = true;
                         }
                     }
                     break;
@@ -300,12 +296,11 @@ abstract class Construct {
                     if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("xhtml:div", $node))) {
                         $out->xhtml = $xhtml->ownerDocument->saveXML($xhtml);
                         $out->xhtmlBase = strlen($xhtml->baseURI) ? $xhtml->baseURI : null;
-                        $populated = true;
                     }
                     break;
             }
         }
-        return $populated ? $out : null;
+        return (!$this->empty($out)) ? $out : null;
     }
 
     /** Finds and parses Atom person-constructs, and returns a collection of Person objects */

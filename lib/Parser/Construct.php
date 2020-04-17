@@ -8,6 +8,7 @@ namespace MensBeam\Lax\Parser;
 
 use MensBeam\Lax\Collection;
 use MensBeam\Lax\Date;
+use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Url;
 
 trait Construct {
@@ -48,13 +49,6 @@ trait Construct {
             }
         }
         return $out ?: null;
-    }
-
-    protected function parseMediaType(string $type, ?Url $url = null): ?string {
-        if ($normalized = MimeType::parseLoose($type, $url)) {
-            return $normalized->essence;
-        }
-        return null;
     }
 
     protected function empty($o, array $ignore = []): bool {
