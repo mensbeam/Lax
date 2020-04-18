@@ -8,7 +8,7 @@ namespace MensBeam\Lax;
 
 /** {@inheritDoc} */
 class MimeType extends \MensBeam\Mime\MimeType {
-    protected const MEDIUM_PATTERN = '<^[\t\r\n ]*(audio|video|image|text|application|document|executable)(?:$|[\t\r\n ;])>i';
+    protected const LOOSE_TYPE_PATTERN = '<^[\t\r\n ]*([^;\t\r\n ]+)(?:$|[\t\r\n ]*(?:;.*)?)$>is';
     protected const ATOM_TYPE_PATTERN = '<^\s*(|text|x?html)\s*$>i';
 
     protected static $mime;
@@ -17,7 +17,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
     public static function parseLoose(string $type, ?Url $url = null): ?self {
         if ($normalized = self::parse($type)) {
             return $normalized;
-        } elseif (preg_match(self::MEDIUM_PATTERN, $type, $match)) {
+        } elseif (preg_match(self::LOOSE_TYPE_PATTERN, $type, $match) && preg_match(self::TOKEN_PATTERN, $match[1])) {
             $type = strtolower($match[1]);
             $type = ['document' => "text", 'executable' => "application"][$type] ?? $type;
             return new self($type);
@@ -47,7 +47,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
      */
     public static function parseAtom(string $type): self {
         if (preg_match(self::ATOM_TYPE_PATTERN, $type, $match)) {
-            $type = ['' => "text/plain", 'text' => "text/plain", 'html' => "text/html", 'xhtml' => "application/xhtml+xml"][$match[1]] ?? null;
+            $type = ['' => "text/plain", 'text' => "text/plain", 'html' => "text/html", 'xhtml' => "application/xhtml+xml"][strtolower($match[1])] ?? null;
             assert(!is_null($type));
         }
         return self::parse($type) ?? self::parse("unknown/unknown");
