@@ -19,7 +19,7 @@
         "ext-intl": "*",
         "ralouphie/mimey": "^2.1",
         "psr/http-message": "^1.0",
-        "mensbeam/mimesniff": "^0.1.1"
+        "mensbeam/mimesniff": "^0.2.0"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.3"

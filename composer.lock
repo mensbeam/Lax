@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c8eb2468138219eddb42a853c7c0bc6",
+    "content-hash": "07fe7f69bf2ed4719a7cf36df9df3644",
     "packages": [
         {
             "name": "mensbeam/mimesniff",
-            "version": "0.1.1",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mensbeam/mime.git",
-                "reference": "cce75a26cba20fe9bc275237775f90a2a311abba"
+                "reference": "d3f6c031687d532c1bb32e3eb362da4a948d4750"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mensbeam/mime/zipball/cce75a26cba20fe9bc275237775f90a2a311abba",
-                "reference": "cce75a26cba20fe9bc275237775f90a2a311abba",
+                "url": "https://api.github.com/repos/mensbeam/mime/zipball/d3f6c031687d532c1bb32e3eb362da4a948d4750",
+                "reference": "d3f6c031687d532c1bb32e3eb362da4a948d4750",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 "mime",
                 "mimesniff"
             ],
-            "time": "2020-04-17T16:23:45+00:00"
+            "time": "2020-04-19T16:07:41+00:00"
         },
         {
             "name": "psr/http-message",

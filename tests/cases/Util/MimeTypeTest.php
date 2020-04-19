@@ -67,5 +67,7 @@ class MimeTypeTest extends \PHPUnit\Framework\TestCase {
         $this->assertSame("", $t->subtype);
         $this->assertSame("text", $t->essence);
         $this->assertSame([], $t->params);
+        $t = MimeType::parseLoose("image");
+        $this->assertTrue($t->isImage);
     }
 }

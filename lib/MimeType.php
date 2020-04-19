@@ -53,10 +53,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
         return self::parse($type) ?? self::parse("unknown/unknown");
     }
     
-    public function __get(string $name) {
-        if ($name === "essence") {
-            return $this->type.(strlen($this->subtype ?? "") ? "/".$this->subtype : "");
-        }
-        return $this->$name ?? null;
+    protected function essence(): string {
+        return $this->type.(strlen($this->subtype ?? "") ? "/".$this->subtype : "");
     }
 }
