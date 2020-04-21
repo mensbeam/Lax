@@ -303,7 +303,7 @@ class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
         if ($url) {
             $out = new Enclosure;
             $out->url = $url;
-            $out->type = MimeType::parseLoose($this->fetchString("@type", ".+", false, $node) ?? "") 
+            $out->type = MimeType::parseLoose($this->fetchString("@type", ".+", false, $node) ?? "")
                 ?? MimeType::parseLoose($this->fetchString("@medium", ".+", false, $node) ?? "")
                 ?? MimeType::parseLoose("", $url);
             $out->title = $this->fetchTitleMediaRss($node);

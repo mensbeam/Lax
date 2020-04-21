@@ -12,7 +12,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
     protected const ATOM_TYPE_PATTERN = '<^\s*(|text|x?html)\s*$>i';
 
     protected static $mime;
-    
+
     /** Parses a MIME type, accepting types without a subtype */
     public static function parseLoose(string $type, ?Url $url = null): ?self {
         if ($normalized = self::parse($type)) {
@@ -52,7 +52,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
         }
         return self::parse($type) ?? self::parse("unknown/unknown");
     }
-    
+
     protected function essence(): string {
         return $this->type.(strlen($this->subtype ?? "") ? "/".$this->subtype : "");
     }

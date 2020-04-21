@@ -8,8 +8,6 @@ namespace MensBeam\Lax\Parser;
 
 use MensBeam\Lax\Collection;
 use MensBeam\Lax\Date;
-use MensBeam\Lax\MimeType;
-use MensBeam\Lax\Url;
 
 trait Construct {
     /** Trims plain text and collapses whitespace */

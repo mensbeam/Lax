@@ -61,7 +61,7 @@ class MimeTypeTest extends \PHPUnit\Framework\TestCase {
         ];
     }
 
-    public function testManipulateAnIncompleteType():void {
+    public function testManipulateAnIncompleteType(): void {
         $t = MimeType::parseLoose("text; charset=utf-8");
         $this->assertSame("text", $t->type);
         $this->assertSame("", $t->subtype);
