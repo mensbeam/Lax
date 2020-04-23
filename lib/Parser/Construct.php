@@ -34,21 +34,6 @@ trait Construct {
         return false;
     }
 
-    protected function parseDate(string $date): ?Date {
-        $out = null;
-        $date = $this->trimText($date);
-        if (strlen($date)) {
-            $tz = new \DateTimeZone("UTC");
-            foreach (Date::$supportedFormats as $format) {
-                $out = Date::createFromFormat($format, $date, $tz);
-                if ($out) {
-                    break;
-                }
-            }
-        }
-        return $out ?: null;
-    }
-
     protected function empty($o, array $ignore = []): bool {
         return !array_filter((array) $o, function($v, $k) use ($ignore) {
             return !in_array($k, $ignore) && !is_null($v) && (!$v instanceof Collection || sizeof($v) > 0);

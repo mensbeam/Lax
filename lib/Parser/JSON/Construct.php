@@ -52,7 +52,7 @@ trait Construct {
 
     /** Returns an object member as a parsed date */
     protected function fetchDate(string $key, ?\stdClass $obj = null): ?Date {
-        return $this->parseDate($this->fetchMember($key, "str", $obj) ?? "");
+        return Date::createFromString($this->fetchMember($key, "str", $obj) ?? "");
     }
 
     /** Returns a plain-text string object member wrapped in a Text object */

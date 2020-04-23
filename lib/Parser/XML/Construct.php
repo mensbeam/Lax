@@ -88,7 +88,7 @@ abstract class Construct {
         $tz = new \DateTimeZone("UTC");
         assert(in_array($mode, [self::DATE_ANY, self::DATE_ALL, self::DATE_EARLIEST, self::DATE_LATEST]));
         foreach ((array) $this->fetchString($query, null, true, $context) as $d) {
-            if ($d = $this->parseDate($d ?? "")) {
+            if ($d = Date::createFromString($d ?? "")) {
                 if ($mode === self::DATE_ANY) {
                     return $d;
                 } else {
