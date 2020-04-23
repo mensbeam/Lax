@@ -19,14 +19,17 @@
 </filter>
 
 <testsuites>
+    <testsuite name="Util">
+        <directory>cases/Util</directory>
+    </testsuite>
+    <testsuite name="Date">
+        <directory>cases/Date</directory>
+    </testsuite>
     <testsuite name="JSON">
         <directory>cases/JSON</directory>
     </testsuite>
     <testsuite name="XML">
         <directory>cases/XML</directory>
-    </testsuite>
-    <testsuite name="Util">
-        <directory>cases/Util</directory>
     </testsuite>
 </testsuites>
 </phpunit>
