@@ -8,6 +8,7 @@ namespace MensBeam\Lax;
 
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\Lax\Parser\Parser;
 
 /** Represents a newsfeed, in arbitrary format
  *
@@ -79,11 +80,13 @@ class Feed {
      * Most users will probably rather want the Feed::fetch() method
      *
      * @param string $data The newsfeed to parse
-     * @param string|null $contentType The HTTP Content-Type of the document, if available
+     * @param string|null $contentType The HTTP Content-Type of the document; it is considered authoritative if supplied
      * @param string|null $url The URL used to retrieve the newsfeed, if applicable
      */
     public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
-        $out = new self;
-        return $out;
+        $type = $contentType ?? Parser::findTypeForContent($data);
+        $class = Parser::findParserForType($type);
+        $parser = new $class($data, $contentType, $url);
+        return $parser->parse();
     }
 }
