@@ -8,7 +8,7 @@ namespace MensBeam\Lax;
 
 class Date extends \DateTimeImmutable implements \JsonSerializable {
     protected const PATTERN_RFC3339 = '/^(\d{4}-\d\d-\d\d)[Tt ](\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([Zz]|[+\-]\d\d:?\d\d)?$/';
-    protected const PATTERN_RFC822 = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4}) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?$/';
+    protected const PATTERN_RFC822 = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?$/';
     protected const PATTERN_RFC850 = '/^(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day, (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?$/';
     protected const PATTERN_ASCTIME = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?) (\d{4})$/';
     protected const INPUT_FORMAT = '!Y-m-d\TH:i:s.uO';
@@ -83,8 +83,8 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
      * Subsets of RFC 822 and RFC 850 formats and asctime() format are used 
      * by RFC 7231 (HTTP), and the latter definition was consulted for
      * guidance. RFC 3339 and RFC 822 formats are both supported in full, and
-     * the ambiguous century of RFC 850 format is interpreted per RFC 7231.
-     * Timezones used for RFC 822 are also accepted for RFC 850.
+     * the ambiguous century of RFC 822 and RFC 850 formats is interpreted per
+     *  RFC 7231. Timezones used for RFC 822 are also accepted for RFC 850.
      * 
      * All formats additionally are accepted with subsecond precision, or with
      * minute precision. Whitespace before the timezone may be omitted or used
@@ -113,6 +113,12 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             $year = $match[3];
             $time = self::parseTime($match[4]);
             $zone = self::parseZone($match[5] ?? "");
+            if (strlen($year) === 2) {
+                $ambiguousCentury = true;
+                // get the current century
+                $century = intdiv((int) $now->format("Y"), 100);
+                $year = (string) ($century + (int) $year);
+            }
             $date = "$year-$month-$day";
         } elseif (preg_match(self::PATTERN_RFC850, $timeSpec, $match)) {
             $day = $match[1];
