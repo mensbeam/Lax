@@ -309,13 +309,13 @@ RFC 822 with no time zone:
         - 'Thu, 05 Mar 2020 23:08:55 J'
     output: '2020-03-05T23:08:55-00:00'
 
-RFC 822 far ambiguous date:
+RFC 822 with far ambiguous date:
     input:
         - 'Fri, 05 Mar 1999 23:08:55Z'
         - 'Fri, 05 Mar 99 23:08:55Z'
     output: '1999-03-05T23:08:55+00:00'
 
-RFC 822 accepted syntax variations:
+RFC 822 with accepted syntax variations:
     input:
         - 'thu, 05 Mar 2020 23:08:55Z'
         - 'tHU, 05 Mar 2020 23:08:55Z'
@@ -326,4 +326,15 @@ RFC 822 accepted syntax variations:
         - 'Thu, 05 mar 2020 23:08:55Z'
         - 'Thu, 05 mAR 2020 23:08:55Z'
         - 'Thu, 05 MAR 2020 23:08:55Z'
+        - 'Thu, 05MAR2020 23:08:55Z'
     output: '2020-03-05T23:08:55+00:00'
+
+RFC 822 with invalid data:
+    input:
+        - 'Wan, 05 Mar 2020 23:08:55Z' # bad weekday
+        - 'Thu, 31 Feb 2020 23:08:55Z' # impossible day of month
+        - 'Thu, 05 Fro 2020 23:08:55Z' # bad month
+        - 'Thu, 05 Mar 2020 24:08:55Z' # impossible hour
+        - 'Thu, 05 Mar 2020 23:74:55Z' # impossible minute
+        - 'Thu, 05 Mar 2020 23:08:88Z' # impossible second
+    output: null

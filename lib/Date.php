@@ -8,7 +8,7 @@ namespace MensBeam\Lax;
 
 class Date extends \DateTimeImmutable implements \JsonSerializable {
     protected const PATTERN_RFC3339 = '/^(\d{4}-\d\d-\d\d)[Tt ](\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([Zz]|[+\-]\d\d:?\d\d)?$/';
-    protected const PATTERN_RFC8XX = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day)(?:, ?| )(?|(\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d(?:\d\d)?)|(\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d(?:\d\d)?)) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*(?-i:([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?)$/i';
+    protected const PATTERN_RFC8XX = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day)(?:, ?| )(\d\d)(?<dd> |-|)(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?P=dd)(\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*(?-i:([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?)$/i';
     protected const PATTERN_ASCTIME = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?) (\d{4})$/';
     protected const INPUT_FORMAT = '!Y-m-d\TH:i:s.uO';
     protected const MICROTIME_PRECSISION = 6;
@@ -107,11 +107,11 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             $zone = self::parseZone($match[3] ?? "");
         } elseif (preg_match(self::PATTERN_RFC8XX, $timeSpec, $match)) {
             $day = $match[1];
-            $month = self::MONTH_MAP[ucfirst(strtolower($match[2]))] ?? null;
+            $month = self::MONTH_MAP[ucfirst(strtolower($match[3]))] ?? null;
             assert(!is_null($month));
-            $year = $match[3];
-            $time = self::parseTime($match[4]);
-            $zone = self::parseZone($match[5] ?? "");
+            $year = $match[4];
+            $time = self::parseTime($match[5]);
+            $zone = self::parseZone($match[6] ?? "");
             if (strlen($year) === 2) {
                 $ambiguousCentury = true;
                 // get the current century

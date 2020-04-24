@@ -308,3 +308,23 @@ RFC 850 with no time zone:
         - 'Thursday, 05-Mar-2020 23:08:55 -00:00'
         - 'Thursday, 05-Mar-2020 23:08:55 J'
     output: '2020-03-05T23:08:55-00:00'
+
+RFC 850 with far ambiguous date:
+    input:
+        - 'Friday, 05-Mar-1999 23:08:55Z'
+        - 'Friday, 05-Mar-99 23:08:55Z'
+    output: '1999-03-05T23:08:55+00:00'
+
+RFC 850 with accepted syntax variations:
+    input:
+        - 'thursday, 05-Mar-2020 23:08:55Z'
+        - 'tHURSDAY, 05-Mar-2020 23:08:55Z'
+        - 'THURSDAY, 05-Mar-2020 23:08:55Z'
+        - 'Thursday,05-Mar-2020 23:08:55Z'
+        - 'Thursday 05-Mar-2020 23:08:55Z'
+        - 'Thursday, 05 Mar 2020 23:08:55Z'
+        - 'Thursday, 05-mar-2020 23:08:55Z'
+        - 'Thursday, 05-mAR-2020 23:08:55Z'
+        - 'Thursday, 05-MAR-2020 23:08:55Z'
+        - 'Thursday, 05MAR2020 23:08:55Z'
+    output: '2020-03-05T23:08:55+00:00'
