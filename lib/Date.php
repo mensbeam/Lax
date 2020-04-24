@@ -8,8 +8,7 @@ namespace MensBeam\Lax;
 
 class Date extends \DateTimeImmutable implements \JsonSerializable {
     protected const PATTERN_RFC3339 = '/^(\d{4}-\d\d-\d\d)[Tt ](\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([Zz]|[+\-]\d\d:?\d\d)?$/';
-    protected const PATTERN_RFC822 = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?$/';
-    protected const PATTERN_RFC850 = '/^(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day, (\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?$/';
+    protected const PATTERN_RFC8XX = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day)(?:, ?| )(?|(\d\d) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d(?:\d\d)?)|(\d\d)-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d\d(?:\d\d)?)) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*(?-i:([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?)$/i';
     protected const PATTERN_ASCTIME = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?) (\d{4})$/';
     protected const INPUT_FORMAT = '!Y-m-d\TH:i:s.uO';
     protected const MICROTIME_PRECSISION = 6;
@@ -106,9 +105,9 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             $date = $match[1];
             $time = self::parseTime($match[2]);
             $zone = self::parseZone($match[3] ?? "");
-        } elseif (preg_match(self::PATTERN_RFC822, $timeSpec, $match) || preg_match(self::PATTERN_RFC850, $timeSpec, $match)) {
+        } elseif (preg_match(self::PATTERN_RFC8XX, $timeSpec, $match)) {
             $day = $match[1];
-            $month = self::MONTH_MAP[$match[2]] ?? null;
+            $month = self::MONTH_MAP[ucfirst(strtolower($match[2]))] ?? null;
             assert(!is_null($month));
             $year = $match[3];
             $time = self::parseTime($match[4]);
