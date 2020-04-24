@@ -106,7 +106,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             $date = $match[1];
             $time = self::parseTime($match[2]);
             $zone = self::parseZone($match[3] ?? "");
-        } elseif (preg_match(self::PATTERN_RFC822, $timeSpec, $match)) {
+        } elseif (preg_match(self::PATTERN_RFC822, $timeSpec, $match) || preg_match(self::PATTERN_RFC850, $timeSpec, $match)) {
             $day = $match[1];
             $month = self::MONTH_MAP[$match[2]] ?? null;
             assert(!is_null($month));
@@ -116,21 +116,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
             if (strlen($year) === 2) {
                 $ambiguousCentury = true;
                 // get the current century
-                $century = intdiv((int) $now->format("Y"), 100);
-                $year = (string) ($century + (int) $year);
-            }
-            $date = "$year-$month-$day";
-        } elseif (preg_match(self::PATTERN_RFC850, $timeSpec, $match)) {
-            $day = $match[1];
-            $month = self::MONTH_MAP[$match[2]] ?? null;
-            assert(!is_null($month));
-            $year = $match[3];
-            $time = self::parseTime($match[4]);
-            $zone = self::parseZone($match[5] ?? "");
-            if (strlen($year) === 2) {
-                $ambiguousCentury = true;
-                // get the current century
-                $century = intdiv((int) $now->format("Y"), 100);
+                $century = intdiv((int) $now->format("Y"), 100) * 100;
                 $year = (string) ($century + (int) $year);
             }
             $date = "$year-$month-$day";
