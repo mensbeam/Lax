@@ -1,0 +1,310 @@
+RFC 850 Zulu time:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:55Z'
+        - 'Thursday, 05-Mar-20 23:08:55Z'
+        - 'Thursday, 05-Mar-2020 23:08:55 Z'
+        - 'Thursday, 05-Mar-20 23:08:55 Z'
+        - 'Thursday, 05-Mar-2020 23:08:55 GMT'
+        - 'Thursday, 05-Mar-20 23:08:55 GMT'
+        - 'Thursday, 05-Mar-2020 23:08:55GMT'
+        - 'Thursday, 05-Mar-20 23:08:55GMT'
+        - 'Thursday, 05-Mar-2020 23:08:55 UTC'
+        - 'Thursday, 05-Mar-20 23:08:55 UTC'
+        - 'Thursday, 05-Mar-2020 23:08:55UTC'
+        - 'Thursday, 05-Mar-20 23:08:55UTC'
+        - 'Thursday, 05-Mar-2020 23:08:55 UT'
+        - 'Thursday, 05-Mar-20 23:08:55 UT'
+        - 'Thursday, 05-Mar-2020 23:08:55UT'
+        - 'Thursday, 05-Mar-20 23:08:55UT'
+        - 'Monday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+        - 'Tuesday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+        - 'Wednesday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+        - 'Friday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+        - 'Saturday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+        - 'Sunday, 05-Mar-2020 23:08:55Z' # weekday is ignored
+    output: '2020-03-05T23:08:55+00:00'
+
+RFC 850 UTC+1:
+    input:
+        - 'Sunday, 05-Jan-2020 23:08:55A'
+        - 'Sunday, 05-Jan-2020 23:08:55+0100'
+        - 'Sunday, 05-Jan-2020 23:08:55+01:00'
+        - 'Sunday, 05-Jan-2020 23:08:55 A'
+        - 'Sunday, 05-Jan-2020 23:08:55 +0100'
+        - 'Sunday, 05-Jan-2020 23:08:55 +01:00'
+    output: '2020-01-05T23:08:55+01:00'
+
+RFC 850 UTC+2:
+    input:
+        - 'Wednesday, 05-Feb-2020 23:08:55B'
+        - 'Wednesday, 05-Feb-2020 23:08:55+0200'
+        - 'Wednesday, 05-Feb-2020 23:08:55+02:00'
+        - 'Wednesday, 05-Feb-2020 23:08:55 B'
+        - 'Wednesday, 05-Feb-2020 23:08:55 +0200'
+        - 'Wednesday, 05-Feb-2020 23:08:55 +02:00'
+    output: '2020-02-05T23:08:55+02:00'
+
+RFC 850 UTC+3:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:55C'
+        - 'Thursday, 05-Mar-2020 23:08:55+0300'
+        - 'Thursday, 05-Mar-2020 23:08:55+03:00'
+        - 'Thursday, 05-Mar-2020 23:08:55 C'
+        - 'Thursday, 05-Mar-2020 23:08:55 +0300'
+        - 'Thursday, 05-Mar-2020 23:08:55 +03:00'
+    output: '2020-03-05T23:08:55+03:00'
+
+RFC 850 UTC+4:
+    input:
+        - 'Sunday, 05-Apr-2020 23:08:55D'
+        - 'Sunday, 05-Apr-2020 23:08:55+0400'
+        - 'Sunday, 05-Apr-2020 23:08:55+04:00'
+        - 'Sunday, 05-Apr-2020 23:08:55 D'
+        - 'Sunday, 05-Apr-2020 23:08:55 +0400'
+        - 'Sunday, 05-Apr-2020 23:08:55 +04:00'
+    output: '2020-04-05T23:08:55+04:00'
+
+RFC 850 UTC+5:
+    input:
+        - 'Tuesday, 05-May-2020 23:08:55E'
+        - 'Tuesday, 05-May-2020 23:08:55+0500'
+        - 'Tuesday, 05-May-2020 23:08:55+05:00'
+        - 'Tuesday, 05-May-2020 23:08:55 E'
+        - 'Tuesday, 05-May-2020 23:08:55 +0500'
+        - 'Tuesday, 05-May-2020 23:08:55 +05:00'
+    output: '2020-05-05T23:08:55+05:00'
+
+RFC 850 UTC+6:
+    input:
+        - 'Friday, 05-Jun-2020 23:08:55F'
+        - 'Friday, 05-Jun-2020 23:08:55+0600'
+        - 'Friday, 05-Jun-2020 23:08:55+06:00'
+        - 'Friday, 05-Jun-2020 23:08:55 F'
+        - 'Friday, 05-Jun-2020 23:08:55 +0600'
+        - 'Friday, 05-Jun-2020 23:08:55 +06:00'
+    output: '2020-06-05T23:08:55+06:00'
+
+RFC 850 UTC+7:
+    input:
+        - 'Sunday, 05-Jul-2020 23:08:55G'
+        - 'Sunday, 05-Jul-2020 23:08:55+0700'
+        - 'Sunday, 05-Jul-2020 23:08:55+07:00'
+        - 'Sunday, 05-Jul-2020 23:08:55 G'
+        - 'Sunday, 05-Jul-2020 23:08:55 +0700'
+        - 'Sunday, 05-Jul-2020 23:08:55 +07:00'
+    output: '2020-07-05T23:08:55+07:00'
+
+RFC 850 UTC+8:
+    input:
+        - 'Wednesday, 05-Aug-2020 23:08:55H'
+        - 'Wednesday, 05-Aug-2020 23:08:55+0800'
+        - 'Wednesday, 05-Aug-2020 23:08:55+08:00'
+        - 'Wednesday, 05-Aug-2020 23:08:55 H'
+        - 'Wednesday, 05-Aug-2020 23:08:55 +0800'
+        - 'Wednesday, 05-Aug-2020 23:08:55 +08:00'
+    output: '2020-08-05T23:08:55+08:00'
+
+RFC 850 UTC+9:
+    input:
+        - 'Saturday, 05-Sep-2020 23:08:55I'
+        - 'Saturday, 05-Sep-2020 23:08:55+0900'
+        - 'Saturday, 05-Sep-2020 23:08:55+09:00'
+        - 'Saturday, 05-Sep-2020 23:08:55 I'
+        - 'Saturday, 05-Sep-2020 23:08:55 +0900'
+        - 'Saturday, 05-Sep-2020 23:08:55 +09:00'
+    output: '2020-09-05T23:08:55+09:00'
+
+RFC 850 UTC+10:
+    input:
+        - 'Monday, 05-Oct-2020 23:08:55K'
+        - 'Monday, 05-Oct-2020 23:08:55+1000'
+        - 'Monday, 05-Oct-2020 23:08:55+10:00'
+        - 'Monday, 05-Oct-2020 23:08:55 K'
+        - 'Monday, 05-Oct-2020 23:08:55 +1000'
+        - 'Monday, 05-Oct-2020 23:08:55 +10:00'
+    output: '2020-10-05T23:08:55+10:00'
+
+RFC 850 UTC+11:
+    input:
+        - 'Thursday, 05-Nov-2020 23:08:55L'
+        - 'Thursday, 05-Nov-2020 23:08:55+1100'
+        - 'Thursday, 05-Nov-2020 23:08:55+11:00'
+        - 'Thursday, 05-Nov-2020 23:08:55 L'
+        - 'Thursday, 05-Nov-2020 23:08:55 +1100'
+        - 'Thursday, 05-Nov-2020 23:08:55 +11:00'
+    output: '2020-11-05T23:08:55+11:00'
+
+RFC 850 UTC+12:
+    input:
+        - 'Saturday, 05-Dec-2020 23:08:55M'
+        - 'Saturday, 05-Dec-2020 23:08:55+1200'
+        - 'Saturday, 05-Dec-2020 23:08:55+12:00'
+        - 'Saturday, 05-Dec-2020 23:08:55 M'
+        - 'Saturday, 05-Dec-2020 23:08:55 +1200'
+        - 'Saturday, 05-Dec-2020 23:08:55 +12:00'
+    output: '2020-12-05T23:08:55+12:00'
+
+RFC 850 UTC-1:
+    input:
+        - 'Sunday, 05-Jan-2020 23:08:55N'
+        - 'Sunday, 05-Jan-2020 23:08:55-0100'
+        - 'Sunday, 05-Jan-2020 23:08:55-01:00'
+        - 'Sunday, 05-Jan-2020 23:08:55 N'
+        - 'Sunday, 05-Jan-2020 23:08:55 -0100'
+        - 'Sunday, 05-Jan-2020 23:08:55 -01:00'
+    output: '2020-01-05T23:08:55-01:00'
+
+RFC 850 UTC-2:
+    input:
+        - 'Wednesday, 05-Feb-2020 23:08:55O'
+        - 'Wednesday, 05-Feb-2020 23:08:55-0200'
+        - 'Wednesday, 05-Feb-2020 23:08:55-02:00'
+        - 'Wednesday, 05-Feb-2020 23:08:55 O'
+        - 'Wednesday, 05-Feb-2020 23:08:55 -0200'
+        - 'Wednesday, 05-Feb-2020 23:08:55 -02:00'
+    output: '2020-02-05T23:08:55-02:00'
+
+RFC 850 UTC-3:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:55P'
+        - 'Thursday, 05-Mar-2020 23:08:55-0300'
+        - 'Thursday, 05-Mar-2020 23:08:55-03:00'
+        - 'Thursday, 05-Mar-2020 23:08:55 P'
+        - 'Thursday, 05-Mar-2020 23:08:55 -0300'
+        - 'Thursday, 05-Mar-2020 23:08:55 -03:00'
+    output: '2020-03-05T23:08:55-03:00'
+
+RFC 850 UTC-4:
+    input:
+        - 'Sunday, 05-Apr-2020 23:08:55Q'
+        - 'Sunday, 05-Apr-2020 23:08:55-0400'
+        - 'Sunday, 05-Apr-2020 23:08:55-04:00'
+        - 'Sunday, 05-Apr-2020 23:08:55 Q'
+        - 'Sunday, 05-Apr-2020 23:08:55 -0400'
+        - 'Sunday, 05-Apr-2020 23:08:55 -04:00'
+        - 'Sunday, 05-Apr-2020 23:08:55EDT'
+        - 'Sunday, 05-Apr-2020 23:08:55 EDT'
+    output: '2020-04-05T23:08:55-04:00'
+
+RFC 850 UTC-5:
+    input:
+        - 'Tuesday, 05-May-2020 23:08:55R'
+        - 'Tuesday, 05-May-2020 23:08:55-0500'
+        - 'Tuesday, 05-May-2020 23:08:55-05:00'
+        - 'Tuesday, 05-May-2020 23:08:55 R'
+        - 'Tuesday, 05-May-2020 23:08:55 -0500'
+        - 'Tuesday, 05-May-2020 23:08:55 -05:00'
+        - 'Tuesday, 05-May-2020 23:08:55CDT'
+        - 'Tuesday, 05-May-2020 23:08:55EST'
+        - 'Tuesday, 05-May-2020 23:08:55 CDT'
+        - 'Tuesday, 05-May-2020 23:08:55 EST'
+    output: '2020-05-05T23:08:55-05:00'
+
+RFC 850 UTC-6:
+    input:
+        - 'Friday, 05-Jun-2020 23:08:55S'
+        - 'Friday, 05-Jun-2020 23:08:55-0600'
+        - 'Friday, 05-Jun-2020 23:08:55-06:00'
+        - 'Friday, 05-Jun-2020 23:08:55 S'
+        - 'Friday, 05-Jun-2020 23:08:55 -0600'
+        - 'Friday, 05-Jun-2020 23:08:55 -06:00'
+        - 'Friday, 05-Jun-2020 23:08:55MDT'
+        - 'Friday, 05-Jun-2020 23:08:55CST'
+        - 'Friday, 05-Jun-2020 23:08:55 MDT'
+        - 'Friday, 05-Jun-2020 23:08:55 CST'
+    output: '2020-06-05T23:08:55-06:00'
+
+RFC 850 UTC-7:
+    input:
+        - 'Sunday, 05-Jul-2020 23:08:55T'
+        - 'Sunday, 05-Jul-2020 23:08:55-0700'
+        - 'Sunday, 05-Jul-2020 23:08:55-07:00'
+        - 'Sunday, 05-Jul-2020 23:08:55 T'
+        - 'Sunday, 05-Jul-2020 23:08:55 -0700'
+        - 'Sunday, 05-Jul-2020 23:08:55 -07:00'
+        - 'Sunday, 05-Jul-2020 23:08:55PDT'
+        - 'Sunday, 05-Jul-2020 23:08:55MST'
+        - 'Sunday, 05-Jul-2020 23:08:55 PDT'
+        - 'Sunday, 05-Jul-2020 23:08:55 MST'
+    output: '2020-07-05T23:08:55-07:00'
+
+RFC 850 UTC-8:
+    input:
+        - 'Wednesday, 05-Aug-2020 23:08:55U'
+        - 'Wednesday, 05-Aug-2020 23:08:55-0800'
+        - 'Wednesday, 05-Aug-2020 23:08:55-08:00'
+        - 'Wednesday, 05-Aug-2020 23:08:55 U'
+        - 'Wednesday, 05-Aug-2020 23:08:55 -0800'
+        - 'Wednesday, 05-Aug-2020 23:08:55 -08:00'
+        - 'Wednesday, 05-Aug-2020 23:08:55PST'
+        - 'Wednesday, 05-Aug-2020 23:08:55 PST'
+    output: '2020-08-05T23:08:55-08:00'
+
+RFC 850 UTC-9:
+    input:
+        - 'Saturday, 05-Sep-2020 23:08:55V'
+        - 'Saturday, 05-Sep-2020 23:08:55-0900'
+        - 'Saturday, 05-Sep-2020 23:08:55-09:00'
+        - 'Saturday, 05-Sep-2020 23:08:55 V'
+        - 'Saturday, 05-Sep-2020 23:08:55 -0900'
+        - 'Saturday, 05-Sep-2020 23:08:55 -09:00'
+    output: '2020-09-05T23:08:55-09:00'
+
+RFC 850 UTC-10:
+    input:
+        - 'Monday, 05-Oct-2020 23:08:55W'
+        - 'Monday, 05-Oct-2020 23:08:55-1000'
+        - 'Monday, 05-Oct-2020 23:08:55-10:00'
+        - 'Monday, 05-Oct-2020 23:08:55 W'
+        - 'Monday, 05-Oct-2020 23:08:55 -1000'
+        - 'Monday, 05-Oct-2020 23:08:55 -10:00'
+    output: '2020-10-05T23:08:55-10:00'
+
+RFC 850 UTC-11:
+    input:
+        - 'Thursday, 05-Nov-2020 23:08:55X'
+        - 'Thursday, 05-Nov-2020 23:08:55-1100'
+        - 'Thursday, 05-Nov-2020 23:08:55-11:00'
+        - 'Thursday, 05-Nov-2020 23:08:55 X'
+        - 'Thursday, 05-Nov-2020 23:08:55 -1100'
+        - 'Thursday, 05-Nov-2020 23:08:55 -11:00'
+    output: '2020-11-05T23:08:55-11:00'
+
+RFC 850 UTC-12:
+    input:
+        - 'Saturday, 05-Dec-2020 23:08:55Y'
+        - 'Saturday, 05-Dec-2020 23:08:55-1200'
+        - 'Saturday, 05-Dec-2020 23:08:55-12:00'
+        - 'Saturday, 05-Dec-2020 23:08:55 Y'
+        - 'Saturday, 05-Dec-2020 23:08:55 -1200'
+        - 'Saturday, 05-Dec-2020 23:08:55 -12:00'
+    output: '2020-12-05T23:08:55-12:00'
+
+RFC 850 with various precision:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:00Z'
+        - 'Thursday, 05-Mar-2020 23:08Z'
+        - 'Thursday, 05-Mar-2020 23:08:00.0Z'
+        - 'Thursday, 05-Mar-2020 23:08:00.000000000000Z'
+    output: '2020-03-05T23:08:00+00:00'
+
+RFC 850 with subseconds:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:00.123456Z'
+        - 'Thursday, 05-Mar-2020 23:08:00.123456+0000'
+        - 'Thursday, 05-Mar-2020 23:08:00.123456+00:00'
+        - 'Thursday, 05-Mar-2020 23:08:00.123456 Z'
+        - 'Thursday, 05-Mar-2020 23:08:00.123456 +0000'
+        - 'Thursday, 05-Mar-2020 23:08:00.123456 +00:00'
+    output: '2020-03-05T23:08:00.123456+00:00'
+
+RFC 850 with no time zone:
+    input:
+        - 'Thursday, 05-Mar-2020 23:08:55'
+        - 'Thursday, 05-Mar-2020 23:08:55-0000'
+        - 'Thursday, 05-Mar-2020 23:08:55-00:00'
+        - 'Thursday, 05-Mar-2020 23:08:55J'
+        - 'Thursday, 05-Mar-2020 23:08:55 -0000'
+        - 'Thursday, 05-Mar-2020 23:08:55 -00:00'
+        - 'Thursday, 05-Mar-2020 23:08:55 J'
+    output: '2020-03-05T23:08:55-00:00'

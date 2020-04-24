@@ -66,18 +66,20 @@ class DateTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function provideParsableStrings(): iterable {
-        foreach ((new YamlParser)->parseFile(__DIR__."/date-tests.yaml", Yaml::PARSE_OBJECT_FOR_MAP) as $description => $test) {
-            if (!is_null($test->output) &&  substr($test->output, -6) === "-00:00") {
-                // PHP does not preserve the -0000 timezone
-                $test->output[-6] = "+";
-            }
-            if (is_array($test->input)) {
-                foreach($test->input as $input) {
-                    yield "$description ($input)" => [$input, $test->output];
-
+        foreach (new \GlobIterator(__DIR__."/test-*.yaml", \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::KEY_AS_FILENAME) as $file => $path) {
+            foreach ((new YamlParser)->parseFile($path, Yaml::PARSE_OBJECT_FOR_MAP) as $description => $test) {
+                if (!is_null($test->output) &&  substr($test->output, -6) === "-00:00") {
+                    // PHP does not preserve the -0000 timezone
+                    $test->output[-6] = "+";
                 }
-            } else {
-                yield "$description" => [$test->input, $test->output];
+                if (is_array($test->input)) {
+                    foreach($test->input as $input) {
+                        yield "$description ($input)" => [$input, $test->output];
+
+                    }
+                } else {
+                    yield "$description" => [$test->input, $test->output];
+                }
             }
         }
     }
