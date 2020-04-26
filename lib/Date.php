@@ -8,8 +8,8 @@ namespace MensBeam\Lax;
 
 class Date extends \DateTimeImmutable implements \JsonSerializable {
     protected const PATTERN_RFC3339 = '/^(\d{4}-\d\d-\d\d)[Tt ](\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*([Zz]|[+\-]\d\d:?\d\d)?$/';
-    protected const PATTERN_RFC8XX = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day)(?:, ?| )(\d\d)(?<dd> |-|)(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?P=dd)(\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*(?-i:([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?)$/i';
-    protected const PATTERN_ASCTIME = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?) (\d{4})$/';
+    protected const PATTERN_RFC8XX = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day)(?:, ?| )(\d\d)(?<dd> |-)(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?P=dd)(\d\d(?:\d\d)?) (\d\d:\d\d(?::\d\d(?:\.\d+)?)?)\s*(?-i:([A-Z]|GMT|UTC?|[ECMP][SD]T|[+\-]\d\d:?\d\d)?)$/i';
+    protected const PATTERN_ASCTIME = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d?) (\d\d:\d\d:\d\d) (\d{4})$/';
     protected const INPUT_FORMAT = '!Y-m-d\TH:i:s.uO';
     protected const MICROTIME_PRECSISION = 6;
     protected const MONTH_MAP = ['Jan' => "01", 'Feb' => "02", 'Mar' => "03", 'Apr' => "04", 'May' => "05", 'Jun' => "06", 'Jul' => "07", 'Aug' => "08", 'Sep' => "09", 'Oct' => "10", 'Nov' => "11", 'Dec' => "12"];
@@ -85,10 +85,10 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
      * the ambiguous century of RFC 822 and RFC 850 formats is interpreted per
      *  RFC 7231. Timezones used for RFC 822 are also accepted for RFC 850.
      * 
-     * All formats additionally are accepted with subsecond precision, or with
-     * minute precision. Whitespace before the timezone may be omitted or used
-     * in all formats as well (RFC 3339 does not normally allow whitespace, 
-     * while other formats require it). 
+     * All formats except asctime() are also accepted with subsecond precision,
+     * or with minute precision. Whitespace before the timezone may be omitted
+     * or used in all formats as well (RFC 3339 does not normally allow 
+     * whitespace, while other formats require it). 
      * 
      * If no timezone is specified, -00:00 is used.
      * 
@@ -149,9 +149,6 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
     }
 
     protected static function parseZone(string $zone): string {
-        if (!strlen($zone)) {
-            return "-0000";
-        }
         $out = self::TZ_MAP[strtoupper($zone)] ?? null;
         if ($out) {
             return $out;

@@ -326,7 +326,6 @@ RFC 822 with accepted syntax variations:
         - 'Thu, 05 mar 2020 23:08:55Z'
         - 'Thu, 05 mAR 2020 23:08:55Z'
         - 'Thu, 05 MAR 2020 23:08:55Z'
-        - 'Thu, 05MAR2020 23:08:55Z'
     output: '2020-03-05T23:08:55+00:00'
 
 RFC 822 with invalid data:
@@ -337,4 +336,17 @@ RFC 822 with invalid data:
         - 'Thu, 05 Mar 2020 24:08:55Z' # impossible hour
         - 'Thu, 05 Mar 2020 23:74:55Z' # impossible minute
         - 'Thu, 05 Mar 2020 23:08:88Z' # impossible second
+        - 'Thu, 05 Mar 2020 23:08:55 EET' # not an allowed time zone
+    output: null
+
+RFC 822 with invalid syntax:
+    input:
+        - '05 Mar 2020 23:08:55Z'
+        - 'Thu, 5 Mar 2020 23:08:55Z'
+        - 'Thu, 05Mar2020 23:08:55Z'
+        - 'Thu, 05 Mar 202 23:08:55Z'
+        - 'Thu, 05 Mar 2020 3:08:55Z'
+        - 'Thu, 05 Mar 2020 23:8:55Z'
+        - 'Thu, 05 Mar 2020 23:08:5Z'
+        - 'Thu, 05 Mar 2020 23:08:55z' # timezone must be uppercase
     output: null

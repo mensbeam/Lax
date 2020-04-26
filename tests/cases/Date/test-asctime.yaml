@@ -1,0 +1,24 @@
+asctime():
+    input:
+        - 'Thu Mar  5 23:08:55 2020'
+        - 'Thu Mar 5 23:08:55 2020' # This is the only syntax variation allowed
+    output: '2020-03-05T23:08:55-00:00'
+
+asctime() with invalid data:
+    input:
+        - 'Thu Feb 31 23:08:55 2020' # impossible date (February 31)
+        - 'Thu Mar  5 25:08:55 2020' # impossible hour
+        - 'Thu Mar  5 23:65:55 2020' # impossible minute
+        - 'Thu Mar  5 23:08:74 2020' # impossible second
+    output: null
+
+asctime() with invalid syntax:
+    input:
+        - 'Thu, Mar  5 23:08:55 2020'
+        - 'Thursday Mar  5 23:08:55 2020'
+        - 'Thu Mar  5 23:08:55 2020 GMT'
+        - 'Thu Mar  5 2:08:55 2020'
+        - 'Thu Mar  5 23:8:55 2020'
+        - 'Thu Mar  5 23:08:5 2020'
+        - 'Thu Mar  5 23:08:55 20'
+    output: null

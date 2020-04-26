@@ -326,5 +326,27 @@ RFC 850 with accepted syntax variations:
         - 'Thursday, 05-mar-2020 23:08:55Z'
         - 'Thursday, 05-mAR-2020 23:08:55Z'
         - 'Thursday, 05-MAR-2020 23:08:55Z'
-        - 'Thursday, 05MAR2020 23:08:55Z'
     output: '2020-03-05T23:08:55+00:00'
+
+RFC 850 with invalid data:
+    input:
+        - 'Wandsday, 05-Mar-2020 23:08:55Z' # bad weekday
+        - 'Thursday, 31-Feb-2020 23:08:55Z' # impossible day of month
+        - 'Thursday, 05-Fro-2020 23:08:55Z' # bad month
+        - 'Thursday, 05-Mar-2020 24:08:55Z' # impossible hour
+        - 'Thursday, 05-Mar-2020 23:74:55Z' # impossible minute
+        - 'Thursday, 05-Mar-2020 23:08:88Z' # impossible second
+        - 'Thursday, 05-Mar-2020 23:08:55 EET' # not an allowed time zone
+    output: null
+
+RFC 850 with invalid syntax:
+    input:
+        - '05-Mar-2020 23:08:55Z'
+        - 'Thursday, 5-Mar-2020 23:08:55Z'
+        - 'Thursday, 05Mar2020 23:08:55Z'
+        - 'Thursday, 05-Mar-202 23:08:55Z'
+        - 'Thursday, 05-Mar-2020 3:08:55Z'
+        - 'Thursday, 05-Mar-2020 23:8:55Z'
+        - 'Thursday, 05-Mar-2020 23:08:5Z'
+        - 'Thursday, 05-Mar-2020 23:08:55z' # timezone must be uppercase
+    output: null
