@@ -6,6 +6,7 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\Parser;
 
+use MensBeam\Lax\Feed;
 use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Parser\JSON\Feed as JSONParser;
 use MensBeam\Lax\Parser\XML\Feed as XMLParser;
@@ -51,5 +52,20 @@ abstract class Parser {
         } else {
             return "application/octet-stream";
         }
+    }
+
+    /** Parses a string into a supplied feed, irrespective of format
+     *
+     * @param \MensBeam\Lax\Feed $feed The newfeed object to populate
+     * @param string $data The newsfeed to parse
+     * @param string|null $contentType The HTTP Content-Type of the document; it is considered authoritative if supplied
+     * @param string|null $url The URL used to retrieve the newsfeed, if applicable
+     */
+    public static function parseIntoFeed(Feed $feed, string $data, ?string $contentType = null, ?string $url = null): Feed {
+        $type = $contentType ?? $feed->meta->type ?? self::findTypeForContent($data);
+        $url = $url ?? $feed->meta->url;
+        $class = self::findParserForType($type);
+        $parser = new $class($data, (string) $contentType, (string) $url);
+        return $parser->parse($feed);
     }
 }

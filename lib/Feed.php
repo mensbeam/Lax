@@ -84,9 +84,10 @@ class Feed {
      * @param string|null $url The URL used to retrieve the newsfeed, if applicable
      */
     public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
-        $type = $contentType ?? Parser::findTypeForContent($data);
-        $class = Parser::findParserForType($type);
-        $parser = new $class($data, $contentType, $url);
-        return $parser->parse();
+        return Parser::parseIntoFeed(new self, $data, $contentType, $url);
+    }
+
+    public static function parseMessage(\Psr\Http\Message\MessageInterface $msg, ?string $url): self {
+        return new self;
     }
 }
