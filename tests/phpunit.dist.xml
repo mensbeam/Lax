@@ -31,5 +31,8 @@
     <testsuite name="XML">
         <directory>cases/XML</directory>
     </testsuite>
+    <testsuite name="HTTP">
+        <directory>cases/HTTP</directory>
+    </testsuite>
 </testsuites>
 </phpunit>

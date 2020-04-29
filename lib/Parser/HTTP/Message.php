@@ -14,12 +14,15 @@ use Psr\Http\Message\MessageInterface;
 
 class Message {
     protected const TYPE_PATTERN = '/^[A-Za-z0-9!#$%&\'*+\-\.\^_`|~]+\/[A-Za-z0-9!#$%&\'*+\-\.\^_`|~]+\s*(;.*)?$/s';
-    protected const DATE_PATTERN = '/^(?:(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d\d:\d\d:\d\d GMT|(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day, \d\d-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d\d \d\d:\d\d:\d\d GMT|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:\d\d| \d) \d\d:\d\d:\d\d \d{4})$/';
+    protected const DATE_PATTERN = '/^(?|(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d\d:\d\d:\d\d GMT|(Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day, \d\d-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d\d \d\d:\d\d:\d\d GMT|(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:\d\d| \d) \d\d:\d\d:\d\d \d{4})$/';
     protected const ETAG_PATTERN = '/^.+$/';
     protected const CCON_PATTERN = '/(?:^|,)\s*[^=,]+(?:=(?:"(?:\\"|[^"])*"[^,]*|[^,]*))?/';
+    protected const SDAY_MAP = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    protected const FDAY_MAP = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     /** @var \Psr\Http\Message\MessageInterface */
     protected $msg;
+    protected $url;
 
     public function __construct(MessageInterface $msg, string $url = null) {
         $this->msg = $msg;
@@ -29,6 +32,7 @@ class Message {
     }
 
     public function parse(FeedStruct $feed = null): FeedStruct {
+        $feed = $feed ?? new FeedStruct;
         $feed->meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
         $feed->meta->type = $this->getContentType();
         $feed->meta->date = $this->getDate();
@@ -55,9 +59,17 @@ class Message {
     }
 
     protected function parseDate(string $name): ?Date {
-        $d = $this->parseHeader($name, self::DATE_PATTERN);
-        if ($d) {
-            return Date::createFromString($d[0]);
+        foreach ($this->msg->getHeader($name) as $h) {
+            if (preg_match(self::DATE_PATTERN, $h, $match)) {
+                $out = Date::createFromString($match[0]);
+                if ($out) {
+                    // ensure the weekday is the correct day for the date
+                    $day = $out->format("w");
+                    if (self::SDAY_MAP[$day] === $match[1] || self::FDAY_MAP[$day] === $match[1]) {
+                        return $out;
+                    }
+                }
+            }
         }
         return null;
     }
@@ -88,7 +100,8 @@ class Message {
 
     public function getMaxAge(): ?\DateInterval {
         $c = $this->parseHeader("Cache-Control", self::CCON_PATTERN, true);
-        var_export($c);
-        exit;
+        //var_export($c);
+        //exit;
+        return null;
     }
 }

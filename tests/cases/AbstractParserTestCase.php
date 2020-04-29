@@ -6,35 +6,6 @@
 declare(strict_types=1);
 namespace MensBeam\Lax\TestCase;
 
-/* Test format is as follows:
-
-    Each test is a YAML map with the following keys:
-
-    - `input`: The test input as a string
-    - `output`: The result of the parsing upon success; described in more detail below
-    - `exception`: The exception ID thrown upon failure
-    - `type`: An HTTP Content-Type (with or without parameters) for the document
-    - `doc_url`: A fictitious URL where a newsfeed might be located, used for relative URL resolution
-
-    The 'input' key along with either 'output' or 'exception' are required for all tests.
-
-    The test output is necessarily mangled due to the limits of YAML:
-
-    - Any field which should be an absolute URL should be written as a string,
-      which will be transformed accordingly. Relative URLs should be represented
-      as a sequence with the relative part first, followed by the base that should
-      be applied to it
-    - Any collections should be represented as sequences of maps, which will
-      all be transformed accordingly
-    - Rich text can either be supplied as a string (which will yield a Text object
-      with plain-text content) or as a map with any of the properties of the
-      Text class listed
-
-    The transformations as performed by the `makeFeed` and `makeEntry` methods
-    of the abstract test case.
-
-*/
-
 use MensBeam\Lax\Feed;
 use MensBeam\Lax\Date;
 use MensBeam\Lax\Text;
@@ -52,6 +23,7 @@ use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
 use MensBeam\Lax\Parser\Exception;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Parser as YamlParser;
+use GuzzleHttp\Psr7\Response;
 
 class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
     protected function provideParserTests(string $glob): iterable {
@@ -62,6 +34,10 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                 } else {
                     $test->output = $this->makeFeed($test->output);
                 }
+                if (is_object($test->input)) {
+                    assert((isset($test->input->head) && $test->input->head instanceof \stdClass) || (isset($test->input->body) && is_string($test->input->body)), "Input is not in a correct format");
+                    $test->input = new Response($test->input->status ?? 200, (array) ($test->input->head ?? []), $test->input->body ?? null);
+                }  
                 yield "$file: {$description}" => [
                     $test->input,
                     $test->type ?? "",
@@ -203,6 +179,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         foreach ($meta as $k => $v) {
             if ($k === 'url') {
                 $m->$k = new Url($v);
+            } elseif (in_array($k, ["date", "lastModified", "expires"])) {
+                $m->$k = new Date($v);
             } else {
                 $m->$k = $v;
             }

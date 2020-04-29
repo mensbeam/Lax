@@ -1,6 +1,8 @@
 {
     "require-dev": {
         "phpunit/phpunit": "^9.0",
-        "symfony/yaml": "^5.0"
+        "symfony/yaml": "^5.0",
+        "guzzlehttp/guzzle": "^6.5",
+        "guzzlehttp/psr7": "^1.6"
     }
 }
