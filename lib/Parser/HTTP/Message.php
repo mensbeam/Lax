@@ -98,13 +98,13 @@ class Message {
     }
 
     public function getEtag(): ?string {
-        return $this->parseHeader("ETag", self::ETAG_PATTERN);
+        return $this->parseHeader("ETag", self::ETAG_PATTERN)[0] ?? null;
     }
 
     public function getAge(): ?\DateInterval {
-        $a = $this->parseHeader("Age", self::DSEC_PATTERN);
+        $a = (int) ($this->parseHeader("Age", self::DSEC_PATTERN)[0] ?? 0);
         if ($a) {
-            return new \DateInterval("PT".(int) $a."S");
+            return new \DateInterval("PT{$a}S");
         }
         return null;
     }

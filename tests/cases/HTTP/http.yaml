@@ -61,12 +61,61 @@ Invalid content type:
     output:
         meta: {}
 
-Max age:
+ETag:
+    input:
+        head:
+            ETag: '"jwhwh"'
+    output:
+        meta:
+            etag: '"jwhwh"'
+
+Age:
+    input:
+        head:
+            Age: '012345'
+    output:
+        meta:
+            age: 'PT12345S'
+
+Max age 1:
+    input:
+        head:
+            Cache-Control: 'max-age=123'
+    output:
+        meta:
+            maxAge: 'PT123S'
+
+Max age 2:
+    input:
+        head:
+            Cache-Control: 'max-age="123"'
+    output:
+        meta:
+            maxAge: 'PT123S'
+
+Max age 3:
+    input:
+        head:
+            Cache-Control: 'max-age="001\23"blah'
+    output:
+        meta:
+            maxAge: 'PT123S'
+
+Max age 4:
+    input:
+        head:
+            Cache-Control: 's-maxage=123, s-maxage=22'
+    output:
+        meta:
+            maxAge: 'PT123S'
+
+Max age 5:
     input:
         head:
             Cache-Control: 
-                - 'max-age="\"I say\!\"", max-age=567 , must-revalidate,s-maxage="1\23"blah, no-cache="Via,Content-Type",private="ook\"eek'
-                - 'no-transform,no-store'
+               - 'no-store, max-age=123'
+               - 'must-revalidate'
+               - 's-maxage=22'
     output:
         meta:
-            maxAge: 'PT123S'        
+            maxAge: 'PT22S'
