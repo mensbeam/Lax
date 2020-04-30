@@ -177,10 +177,14 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
     private function makeMeta(\stdClass $meta): Metadata {
         $m = new Metadata;
         foreach ($meta as $k => $v) {
-            if ($k === 'url') {
+            if ($k === "url") {
                 $m->$k = new Url($v);
+            } elseif ($k === "type") {
+                $m->$k = MimeType::parse($v);
             } elseif (in_array($k, ["date", "lastModified", "expires"])) {
                 $m->$k = new Date($v);
+            } elseif (in_array($k, ["age", "maxAge"])) {
+                $m->$k = new \DateInterval($v);
             } else {
                 $m->$k = $v;
             }

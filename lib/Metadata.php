@@ -23,4 +23,6 @@ class Metadata {
     public $etag;
     /** @var \DateInterval */
     public $maxAge;
+    /** @var \DateInterval */
+    public $age;
 }

@@ -14,9 +14,11 @@ use Psr\Http\Message\MessageInterface;
 
 class Message {
     protected const TYPE_PATTERN = '/^[A-Za-z0-9!#$%&\'*+\-\.\^_`|~]+\/[A-Za-z0-9!#$%&\'*+\-\.\^_`|~]+\s*(;.*)?$/s';
-    protected const DATE_PATTERN = '/^(?|(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d\d:\d\d:\d\d GMT|(Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day, \d\d-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d\d \d\d:\d\d:\d\d GMT|(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:\d\d| \d) \d\d:\d\d:\d\d \d{4})$/';
+    protected const DATE_PATTERN = '/^(?|(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d\d (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d\d:\d\d:\d\d GMT|((?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day), \d\d-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d\d \d\d:\d\d:\d\d GMT|(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:\d\d| \d) \d\d:\d\d:\d\d \d{4})$/';
+    protected const CCON_PATTERN = '/[,\s]*(?:[^=,]*)(?:=(?:"(?:\\\"|[^"])*(?:"|$)[^,]*|[^,]*))?/';
+    protected const DSEC_PATTERN = '/^\d+$/';
     protected const ETAG_PATTERN = '/^.+$/';
-    protected const CCON_PATTERN = '/(?:^|,)\s*[^=,]+(?:=(?:"(?:\\"|[^"])*"[^,]*|[^,]*))?/';
+    protected const DTOK_PATTERN = '/^(?|(\d+)|"((?:\\\(?=\d)|\d)+)".*)$/';
     protected const SDAY_MAP = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     protected const FDAY_MAP = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -39,6 +41,7 @@ class Message {
         $feed->meta->expires = $this->getExpires();
         $feed->meta->lastModified = $this->getLastModified();
         $feed->meta->etag = $this->getEtag();
+        $feed->meta->age = $this->getAge();
         $feed->meta->maxAge = $this->getMaxAge();
         return $feed;
     }
@@ -98,10 +101,39 @@ class Message {
         return $this->parseHeader("ETag", self::ETAG_PATTERN);
     }
 
+    public function getAge(): ?\DateInterval {
+        $a = $this->parseHeader("Age", self::DSEC_PATTERN);
+        if ($a) {
+            return new \DateInterval("PT".(int) $a."S");
+        }
+        return null;
+    }
+
     public function getMaxAge(): ?\DateInterval {
-        $c = $this->parseHeader("Cache-Control", self::CCON_PATTERN, true);
-        //var_export($c);
-        //exit;
+        $out  = 0;
+        $maxAge = 0;
+        $sharedMaxAge = 0;
+        foreach ($this->parseHeader("Cache-Control", self::CCON_PATTERN, true)[0] ?? [] as $t) {
+            $t = explode("=", trim($t, ", \t"), 2);
+            $k = strtolower($t[0]);
+            if (($k === "max-age" || $k === "s-maxage") && isset($t[1]) && strlen($t[1])) {
+                if (preg_match(self::DTOK_PATTERN, $t[1], $match)) {
+                    if ($k === "max-age" && !$maxAge) {
+                        $maxAge = (int) str_replace("\\", "", $match[1]);
+                    } elseif ($k === "s-maxage" && !$sharedMaxAge) {
+                        $sharedMaxAge = (int) str_replace("\\", "", $match[1]);
+                    }
+                }
+            }
+        }
+        if ($maxAge && $sharedMaxAge) {
+            $out = min($maxAge, $sharedMaxAge);
+        } elseif ($maxAge || $sharedMaxAge) {
+            $out = max($maxAge, $sharedMaxAge);
+        }
+        if ($out) {
+            return new \DateInterval("PT".$out."S");
+        }
         return null;
     }
 }

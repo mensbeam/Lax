@@ -1,20 +1,72 @@
-Dates:
+Dates in preferred format:
     input:
         head:
             Date: 'Thu, 05 Mar 2020 23:08:55 GMT'
-            Expires: 'Fri, 06 Mar 2020 09:22:00 GMT'
+            Expires: 'Wed, 11 Mar 2020 09:22:00 GMT'
             Last-Modified: 'Tue, 03 Mar 2020 06:14:00 GMT'
     output:
         meta:
             date: '2020-03-05T23:08:55Z'
-            expires: '2020-03-06T09:22:00Z'
+            expires: '2020-03-11T09:22:00Z'
+            lastModified: '2020-03-03T06:14:00Z'
+
+Dates in RFC 850 format:
+    input:
+        head:
+            Date: 'Thursday, 05-Mar-20 23:08:55 GMT'
+            Expires: 'Wednesday, 11-Mar-20 09:22:00 GMT'
+            Last-Modified: 'Tuesday, 03-Mar-20 06:14:00 GMT'
+    output:
+        meta:
+            date: '2020-03-05T23:08:55Z'
+            expires: '2020-03-11T09:22:00Z'
+            lastModified: '2020-03-03T06:14:00Z'
+            
+Dates in asctime() format:
+    input:
+        head:
+            Date: 'Thu Mar  5 23:08:55 2020'
+            Expires: 'Wed Mar 11 09:22:00 2020'
+            Last-Modified: 'Tue Mar  3 06:14:00 2020'
+    output:
+        meta:
+            date: '2020-03-05T23:08:55Z'
+            expires: '2020-03-11T09:22:00Z'
             lastModified: '2020-03-03T06:14:00Z'
 
 Invalid dates:
     input:
         head:
-            Date: 'Thu, 05 Mar 2020 25:08:55 GMT'
-            Expires: 'Fri, 06 Mar 2020 09:22:00 EST'
-            Last-Modified: 'Wed, 03 Mar 2020 06:14:00 GMT'
+            Date: 
+                - 'Thu, 05 Mar 2020 25:08:55 GMT' # impossible time
+                - 'Fri, 06 Mar 2020 09:22:00 EST' # bad timezone
+                - 'Wed, 03 Mar 2020 06:14:00 GMT' # wrong weekday
+                - 'Tue Mar 3 06:14:00 2020'       # missing padding before single-digit day of month
+                - 'thu, 05 Mar 2020 23:08:55 GMT' # bad casing
     output:
         meta: {}
+
+Content type:
+    input:
+        head:
+            Content-Type: 'application/atom+xml'
+    output:
+        meta:
+            type: 'application/atom+xml'
+
+Invalid content type:
+    input:
+        head:
+            Content-Type: 'application/atom/xml'
+    output:
+        meta: {}
+
+Max age:
+    input:
+        head:
+            Cache-Control: 
+                - 'max-age="\"I say\!\"", max-age=567 , must-revalidate,s-maxage="1\23"blah, no-cache="Via,Content-Type",private="ook\"eek'
+                - 'no-transform,no-store'
+    output:
+        meta:
+            maxAge: 'PT123S'        
