@@ -86,6 +86,14 @@ PCRE;
         return ($uri instanceof self) ? $uri : new self((string) $uri);
     }
 
+    public static function fromString(string $url, string $baseUrl = null): ?self {
+        try {
+            return new static($url, $baseUrl);
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
+    }
+
     public function __construct(string $url, string $baseUrl = null) {
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");

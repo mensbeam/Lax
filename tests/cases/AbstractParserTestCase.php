@@ -14,9 +14,11 @@ use MensBeam\Lax\Entry;
 use MensBeam\Lax\Metadata;
 use MensBeam\Lax\Schedule;
 use MensBeam\Lax\MimeType;
+use MensBeam\Lax\Link\Link;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Category\Category;
 use MensBeam\Lax\Enclosure\Enclosure;
+use MensBeam\Lax\Link\Collection as LinkCollection;
 use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Enclosure\Collection as EnclosureCollection;
@@ -178,9 +180,11 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         $m = new Metadata;
         foreach ($meta as $k => $v) {
             if ($k === "url") {
-                $m->$k = new Url($v);
+                $m->$k = $this->makeUrl($v);
             } elseif ($k === "type") {
                 $m->$k = MimeType::parse($v);
+            } elseif ($k === "links") {
+                $m->$k = $this->makeLinks($v);
             } elseif (in_array($k, ["date", "lastModified", "expires"])) {
                 $m->$k = new Date($v);
             } elseif (in_array($k, ["age", "maxAge"])) {
@@ -212,5 +216,23 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
         } else {
             return new Url($url);
         }
+    }
+
+    private function makeLinks(array $links): LinkCollection {
+        $out = new LinkCollection;
+        foreach ($links as $link) {
+            $m = new Link;
+            foreach ((array) $link as $k => $v) {
+                if ($k === "type") {
+                    $m->$k = MimeType::parse($v);
+                } elseif (in_array($k, ["url", "anchor"])) {
+                    $m->$k = $this->makeUrl($v);
+                } else {
+                    $m->$k = $v;
+                }
+            }
+            $out[] = $m;
+        }
+        return $out;
     }
 }

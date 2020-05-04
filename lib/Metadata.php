@@ -6,6 +6,8 @@
 declare(strict_types=1);
 namespace MensBeam\Lax;
 
+use MensBeam\Lax\Link\Collection as LinkCollection;
+
 class Metadata {
     /** @var bool */
     public $cached = false;
@@ -25,4 +27,10 @@ class Metadata {
     public $maxAge;
     /** @var \DateInterval */
     public $age;
+
+    public $links;
+
+    public function __construct() {
+        $this->links = new LinkCollection;
+    }
 }

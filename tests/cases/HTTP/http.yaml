@@ -119,3 +119,21 @@ Max age 5:
     output:
         meta:
             maxAge: 'PT22S'
+
+Links:
+    doc_url: 'http://example.org/blah'
+    input:
+        head:
+            Link: '<http://example.com/>; rel="alternate"; type="appplication/atom+xml; charset=\"UTF-8\";", </>; rel=alternate; type="application/rss+xml"'
+    output:
+        meta:
+            url: 'http://example.org/blah'
+            links:
+                - url: 'http://example.com/'
+                  anchor: 'http://example.org/blah'
+                  rel: alternate
+                  type: 'appplication/atom+xml;charset=UTF-8'
+                - url: ['/', 'http://example.org/blah']
+                  anchor: 'http://example.org/blah'
+                  rel: alternate
+                  type: 'application/rss+xml'
