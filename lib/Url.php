@@ -56,21 +56,31 @@ PCRE;
 )?
 (
     \[[a-f0-9:]*\] |    # IPv6 address
-    [^:]+               # domain or IPv4 address
+    [^:]*               # domain or IPv4 address
 )
 (?:
-    :(\d*)              # port part
+    :([^/]*)            # port part
 )?
 $>six
 PCRE;
-    protected const SCHEME_PATTERN = "<^(?:[a-z][a-z0-9\.\-\+]*|)$>i";
-    protected const IPV6_PATTERN = "<^\[[a-f0-9:]+\]$>i";
-    protected const PORT_PATTERN = "<^\d*$>";
+    protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
+    protected const IPV6_PATTERN = '/^\[[a-f0-9:]+\]$/i';
+    protected const PORT_PATTERN = '/^\d*$/';
+    protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
+    protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
     protected const ESCAPE_CHARS = [
         'user'  => [":", "@", "/", "?", "#"],
         'pass'  => ["@", "/", "?", "#"],
         'path'  => ["?", "#"],
         'query' => ["#"],
+    ];
+    protected const SPECIAL_SCHEMES = [
+        'ftp'   => 21,
+        'file'  => null,
+        'http'  => 80,
+        'https' => 443,
+        'ws'    => 80,
+        'wss'   => 443,
     ];
 
     protected $scheme = null;
@@ -95,6 +105,7 @@ PCRE;
     }
 
     public function __construct(string $url, string $baseUrl = null) {
+        $url = str_replace(["\t", "\n", "\r"], "", trim($url, self::WHITESPACE_CHARS));
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
             foreach (["scheme", "path", "query", "fragment"] as $part) {
@@ -111,12 +122,14 @@ PCRE;
                     foreach (["user", "pass", "host", "port"] as $part) {
                         $this->set($part, $$part);
                     }
+                } else {
+                    assert(false, "Authority did not match pattern");
                 }
             }
-            if ($baseUrl && !$this->scheme) {
+            if ((!$this->scheme || ($this->host === null && array_key_exists($this->scheme, self::SPECIAL_SCHEMES))) && strlen($baseUrl ?? "")) {
                 $this->resolve(new static($baseUrl));
             }
-            foreach (["scheme", "path", "query", "fragment"] as $part) {
+            foreach (["scheme", "path"] as $part) {
                 $this->$part = $this->$part ?? "";
             }
         } else {
@@ -167,7 +180,11 @@ PCRE;
 
     public function withFragment($fragment) {
         $out = clone $this;
-        $out->set("fragment", $fragment);
+        if (!strlen((string) $fragment)) {
+            $out->fragment = null;
+        } else {
+            $out->set("fragment", $fragment);
+        }
         return $out;
     }
 
@@ -194,7 +211,11 @@ PCRE;
 
     public function withQuery($query) {
         $out = clone $this;
-        $out->set("query", $query);
+        if (!strlen((string) $query)) {
+            $out->query = null;
+        } else {
+            $out->set("query", $query);
+        }
         return $out;
     }
 
@@ -212,18 +233,19 @@ PCRE;
     }
 
     public function __toString() {
+        $auth = $this->getAuthority();
         $out = "";
         $out .= strlen($this->scheme) ? $this->scheme.":" : "";
         if (is_null($this->host)) {
             $out .= $this->path;
         } else {
             $out .= "//";
-            $out .= $this->getAuthority();
-            $out .= ($this->path[0] ?? "") === "/" ? "" : "/";
+            $out .= $auth;
+            $out .= ($this->path[0] ?? "") !== "/" && strlen($auth) ? "/" : "";
             $out .= preg_replace("<^/{2,}/>", "/", $this->path);
         }
-        $out .= strlen($this->query) ? "?".$this->query : "";
-        $out .= strlen($this->fragment) ? "#".$this->fragment : "";
+        $out .= is_string($this->query) ? "?".$this->query : "";
+        $out .= is_string($this->fragment) ? "#".$this->fragment : "";
         return $out;
     }
 
@@ -237,10 +259,17 @@ PCRE;
                 $this->host = $this->normalizeHost($value);
                 break;
             case "port":
-                if (preg_match(self::PORT_PATTERN, (string) $value, $match)) {
-                    $this->port = strlen($match[0]) ? (int) $value : null;
+                if (!strlen((string) $value)) {
+                    $this->port = null;
+                } elseif (preg_match(self::PORT_PATTERN, (string) $value) && (int) $value <= 0xFFFF) {
+                    $value = (int) $value;
+                    if (array_key_exists($this->scheme, self::SPECIAL_SCHEMES) && $value === self::SPECIAL_SCHEMES[$this->scheme]) {
+                        $this->port = null;
+                    } else {
+                        $this->port = $value;
+                    }
                 } else {
-                    throw new \InvalidArgumentException("Port must be an integer or null");
+                    throw new \InvalidArgumentException("Port must be an integer between 0 and 65535, or null");
                 }
                 break;
             case "scheme":
@@ -279,7 +308,9 @@ PCRE;
                     if ($path[-1] === "/") {
                         $this->path = $path.$this->path;
                     } else {
-                        $this->path = substr($path, 0, (int) strrpos($path, "/")).$this->path;
+                        $len = strrpos($path, "/");
+                        $len = ($len === false) ? 0 : $len + 1;
+                        $this->path = substr($path, 0, $len).$this->path;
                     }
                 }
             }
@@ -344,6 +375,8 @@ PCRE;
             }
             $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
             if ($idn === false) {
+                throw new \InvalidArgumentException("Invalid host in URL");
+            } elseif (preg_match(self::FORBIDDEN_HOST_PATTERN, $idn)) {
                 throw new \InvalidArgumentException("Invalid host in URL");
             }
             $host = idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46);
