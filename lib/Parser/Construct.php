@@ -7,7 +7,6 @@ declare(strict_types=1);
 namespace MensBeam\Lax\Parser;
 
 use MensBeam\Lax\Collection;
-use MensBeam\Lax\Date;
 
 trait Construct {
     /** Trims plain text and collapses whitespace */

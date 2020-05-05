@@ -39,7 +39,7 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
                 if (is_object($test->input)) {
                     assert((isset($test->input->head) && $test->input->head instanceof \stdClass) || (isset($test->input->body) && is_string($test->input->body)), "Input is not in a correct format");
                     $test->input = new Response($test->input->status ?? 200, (array) ($test->input->head ?? []), $test->input->body ?? null);
-                }  
+                }
                 yield "$file: {$description}" => [
                     $test->input,
                     $test->type ?? "",

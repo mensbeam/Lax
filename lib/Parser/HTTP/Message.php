@@ -119,7 +119,7 @@ class Message {
     }
 
     public function getMaxAge(): ?\DateInterval {
-        $out  = 0;
+        $out = 0;
         $maxAge = 0;
         $sharedMaxAge = 0;
         foreach ($this->parseHeader("Cache-Control", self::CCON_PATTERN, true) ?? [] as $t) {

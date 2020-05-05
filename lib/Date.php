@@ -52,7 +52,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
         'PST' => "-0800",
         'PDT' => "-0700",
     ];
-    
+
     /*
         Important formats:
 
@@ -73,25 +73,25 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
     }
 
     /** Returns a date parsed from a string in any of the following formats:
-     * 
+     *
      * - RFC 3339
      * - RFC 822
      * - RFC 850
      * - ANSI C asctime()
-     * 
-     * Subsets of RFC 822 and RFC 850 formats and asctime() format are used 
+     *
+     * Subsets of RFC 822 and RFC 850 formats and asctime() format are used
      * by RFC 7231 (HTTP), and the latter definition was consulted for
      * guidance. RFC 3339 and RFC 822 formats are both supported in full, and
      * the ambiguous century of RFC 822 and RFC 850 formats is interpreted per
      *  RFC 7231. Timezones used for RFC 822 are also accepted for RFC 850.
-     * 
+     *
      * All formats except asctime() are also accepted with subsecond precision,
      * or with minute precision. Whitespace before the timezone may be omitted
-     * or used in all formats as well (RFC 3339 does not normally allow 
-     * whitespace, while other formats require it). 
-     * 
+     * or used in all formats as well (RFC 3339 does not normally allow
+     * whitespace, while other formats require it).
+     *
      * If no timezone is specified, -00:00 is used.
-     * 
+     *
      * @see https://tools.ietf.org/html/rfc3339
      * @see https://tools.ietf.org/html/rfc822#section-5
      * @see https://tools.ietf.org/html/rfc850#section-2.1.4
