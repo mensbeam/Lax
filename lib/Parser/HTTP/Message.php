@@ -149,17 +149,17 @@ class Message {
     public function getLinks(): LinkCollection {
         $out = new LinkCollection;
         foreach ($this->parseHeader("Link", self::LINK_PATTERN, true) ?? [] as $h) {
-            if ($p = $this->parseParams($h[2])) {
-                $l = new Link;
-                $l->url = Url::fromString($h[1], $this->url);
+            $l = new Link;
+            $l->url = Url::fromString($h[1], $this->url);
+            if ($l->url && $p = $this->parseParams($h[2])) {
                 // normalize and deduplicate relations
                 $relations = ['f' => $this->normalizeRelations($p['rel'] ?? ""), 'r' => $this->normalizeRelations($p['rev'] ?? "")];
-                if (!$l->url || (!$relations['f'] && !$relations['r'])) {
-                    // if there are no relations or the URL is invalid, skip this link
+                if (!$relations['f'] && !$relations['r']) {
+                    // if there are no relations, skip this link
                     continue;
                 }
                 // build the link object with everything except the relation
-                $l->anchor = Url::fromString($p['anchor'] ?? "", $this->url);
+                $l->anchor = isset($p['anchor']) ? Url::fromString($p['anchor'], $this->url) : null;
                 $l->type = MimeType::parse($p['type'] ?? "");
                 foreach (['title' => "title", 'media' => "media", 'hreflang' => "lang"] as $src => $dst) {
                     $l->$dst = isset($p[$src]) ? $p[$src] : null;
@@ -180,7 +180,8 @@ class Message {
                     $i->rel = $r;
                     $i->rev = true;
                     $out[] = $i;
-                }   
+                }
+                // TODO: deduplicate results, maybe
             }
         }
         return $out;

@@ -124,16 +124,36 @@ Links:
     doc_url: 'http://example.org/blah'
     input:
         head:
-            Link: '<http://example.com/>; rel="alternate"; type="appplication/atom+xml; charset=\"UTF-8\";", </>; rel=alternate; type="application/rss+xml"'
+            Link: 
+                - '<http://example.com/>; rel="alternate"; type="appplication/atom+xml; charset=\"UTF-8\";", </>; rel=alternate; type="application/rss+xml"'
+                - '</favicon.ico>; rel="shortcut icon"'
+                - '<http://example.net/>;rev=help;rel=up'
+                - '<http://exampple.biz/>; rel="http://example.com/help" ; anchor="#ook" ; hreflang=en ; media=print ; title="Title!" ; title*="multilingual titles" ; ext="Extended Attribute"'
+                - '<http://[/>; rel="invalid URL"'
+                - '<>; rel= ; x="no relation"'
     output:
         meta:
             url: 'http://example.org/blah'
             links:
                 - url: 'http://example.com/'
-                  anchor: 'http://example.org/blah'
                   rel: alternate
                   type: 'appplication/atom+xml;charset=UTF-8'
                 - url: ['/', 'http://example.org/blah']
-                  anchor: 'http://example.org/blah'
                   rel: alternate
                   type: 'application/rss+xml'
+                - url: ['/favicon.ico', 'http://example.org/blah']
+                  rel: shortcut
+                - url: ['/favicon.ico', 'http://example.org/blah']
+                  rel: icon
+                - url: 'http://example.net/'
+                  rel: up
+                - url: 'http://example.net/'
+                  rel: help
+                  rev: true
+                - url: 'http://exampple.biz/'
+                  rel: 'http://example.com/help'
+                  anchor: ['#ook', 'http://example.org/blah']
+                  lang: en
+                  media: print
+                  title: 'Title!'
+                  attr: {title*: 'multilingual titles', ext: 'Extended Attribute'}

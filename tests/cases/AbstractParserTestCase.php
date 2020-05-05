@@ -225,6 +225,8 @@ class AbstractParserTestCase extends \PHPUnit\Framework\TestCase {
             foreach ((array) $link as $k => $v) {
                 if ($k === "type") {
                     $m->$k = MimeType::parse($v);
+                } elseif ($k === "attr") {
+                    $m->$k = (array) $v;
                 } elseif (in_array($k, ["url", "anchor"])) {
                     $m->$k = $this->makeUrl($v);
                 } else {
