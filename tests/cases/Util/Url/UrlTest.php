@@ -4,13 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\TestCase\Util;
+namespace MensBeam\Lax\TestCase\Util\Url;
 
 use MensBeam\Lax\Url;
-use MensBeam\Lax\TestCase\Util\Url\AbstractUriTestCase;
 
 /** @covers MensBeam\Lax\Url<extended> */
-class UrlTest extends AbstractUriTestCase {
+class UrlTest extends Psr7TestCase {
     protected function createUri($uri = '') {
         return new Url($uri);
     }

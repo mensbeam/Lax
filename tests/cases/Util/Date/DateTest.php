@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\TestCase\Date;
+namespace MensBeam\Lax\TestCase\Util\Date;
 
 use MensBeam\Lax\Date;
 use Symfony\Component\Yaml\Yaml;

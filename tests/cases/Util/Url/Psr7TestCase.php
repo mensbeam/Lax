@@ -6,7 +6,7 @@ use Psr\Http\Message\UriInterface;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 
-abstract class AbstractUriTestCase extends TestCase {
+abstract class Psr7TestCase extends TestCase {
     /**
      * @var UriInterface
      */
