@@ -2,7 +2,7 @@ Requirements for a minimally viable implementation:
 
 - ~~XML feed parser~~
 - ~~JSON Feed parser~~
-- HTTP message parser
+- ~~HTTP message parser~~
 - HTTP client
 - Content sanitizer
 - Feed discovery
