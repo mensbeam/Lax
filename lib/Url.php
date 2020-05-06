@@ -24,7 +24,6 @@ use Psr\Http\Message\UriInterface;
  *
  * - Handle non-standard schemes (e.g. ed2k)
  * - Collapse paths
- * - Drop default ports
  *
  * This class should not be used with XML namespace URIs,
  * as the normalizations performed will change the values
@@ -49,10 +48,10 @@ class Url implements UriInterface {
 (\#.*)?                                 # fragment part
 $>six
 PCRE;
-    protected const HOST_PATTERN = '/^(\[[a-f0-9:]*\]|[^:]*)(?::([^\/]*))?$/si';
+    protected const HOST_PATTERN = '/^(\[[a-f0-9:\.]*\]|[^:]*)(?::([^\/]*))?$/si';
     protected const USER_PATTERN = '/^([^:]*)(?::(.*))?$/s';
     protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
-    protected const IPV6_PATTERN = '/^\[[a-f0-9:]+\]$/i';
+    protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
@@ -394,11 +393,13 @@ PCRE;
     /** Normalizes a hostname per IDNA:2008 */
     protected function normalizeHost(?string $host): ?string {
         if (strlen($host ?? "")) {
-            if (preg_match(self::IPV6_PATTERN, $host)) {
+            if ($host[0] === "[" && $host[-1] === "]") {
                 // normalize IPv6 addresses
-                $addr = @inet_pton(substr($host, 1, strlen($host) - 2));
-                if ($addr !== false) {
-                    return "[".inet_ntop($addr)."]";
+                $addr = $this->normalizeIPv6(substr($host, 1, strlen($host) - 2));
+                if ($addr !== null) {
+                    return "[".$addr."]";
+                } else {
+                    throw new \InvalidArgumentException("Invalid host in URL");
                 }
             }
             $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
@@ -413,5 +414,143 @@ PCRE;
             }
         }
         return $host;
+    }
+
+    protected function normalizeIPv6(string $input): ?string {
+        // first parse the address; this is a literal implementation of https://url.spec.whatwg.org/#concept-ipv6-parser
+        $addr = array_fill(0, 16, 0);
+        $pieceIndex = 0;
+        $compress = null;
+        $p = 0;
+        $end = strlen($input);
+        if ($end && $input[$p] === ":") {
+            if (($input[$p + 1] ?? "") !== ":") {
+                return null;
+            }
+            $p += 2;
+            $compress = ++$pieceIndex;
+        }
+        while ($p < $end) {
+            $c = $input[$p];
+            if ($pieceIndex > 7) {
+                return null;
+            }
+            if ($c === ":") {
+                if (!is_null($compress)) {
+                    return null;
+                }
+                $p++;
+                $compress = ++$pieceIndex;
+                continue;
+            }
+            $value = $length = 0;
+            while ($length < 4 && strspn($c, "0123456789ABCDEFabcdef")) {
+                $value = $value * 0x10 + hexdec($c);
+                $c = $input[++$p] ?? "";
+                $length++;
+            }
+            if ($c === ".") {
+                if (!$length || $pieceIndex > 6) {
+                    return null;
+                }
+                $p -= $length;
+                $numbersSeen = 0;
+                while ($p < $end) {
+                    $ipv4Piece = null;
+                    if ($numbersSeen > 0) {
+                        if ($c === "." && $numbersSeen < 4) {
+                            $p++;
+                        } else {
+                            return null;
+                        }
+                    }
+                    if (!is_numeric($input[$p] ?? "")) {
+                        return null;
+                    }
+                    while (strspn($c = ($input[$p] ?? ""), "0123456789")) {
+                        if (is_null($ipv4Piece)) {
+                            $ipv4Piece = (int) $c;
+                        } elseif ($ipv4Piece === 0) {
+                            return null;
+                        } else {
+                            $ipv4Piece = $ipv4Piece * 10 + (int) $c;
+                        }
+                        if ($ipv4Piece > 255) {
+                            return null;
+                        }
+                        $p++;
+                    }
+                    $addr[$pieceIndex] = $addr[$pieceIndex] * 0x100 + $ipv4Piece;
+                    $numbersSeen++;
+                    if ($numbersSeen === 2 || $numbersSeen === 4) {
+                        $pieceIndex++;
+                    }
+                }
+                if ($numbersSeen !== 4) {
+                    return null;
+                }
+                break;
+            } elseif ($c === ":") {
+                $p++;
+                if ($p >= $end) {
+                    return null;
+                }
+            } elseif ($p < $end) {
+                return null;
+            }
+            $addr[$pieceIndex++] = $value;
+        }
+        if (!is_null($compress)) {
+            $swaps = $pieceIndex - $compress;
+            $pieceIndex = 7;
+            while ($pieceIndex !== 0 && $swaps > 0) {
+                $dst = $compress + $swaps - 1;
+                $cur = $addr[$dst];
+                $addr[$dst] = $addr[$pieceIndex];
+                $addr[$pieceIndex] = $cur;
+                $pieceIndex--;
+                $swaps--;
+            }
+        } elseif (is_null($compress) && $pieceIndex !== 8) {
+            return null;
+        }
+        // now serialize the address back; this in turn is a literal implementation of https://url.spec.whatwg.org/#concept-ipv6-serializer
+        $out = "";
+        // find the longest compressible span
+        $compress = ['index' => null, 'span' => 0];
+        $candidate = null;
+        $span = 0;
+        for ($a = 0; $a < sizeof($addr); $a++) {
+            if (!$addr[$a]) {
+                if (is_null($candidate)) {
+                    $candidate = $a;
+                }
+                $span++;
+            } elseif (!is_null($candidate)) {
+                if ($span > $compress['span']) {
+                    $compress['index'] = $candidate;
+                    $compress['span'] = $span;
+                }
+                $candidate = null;
+                $span = 0;
+            }
+        }
+        $compress = $compress['span'] > 1 ? $compress['index'] : null;
+        $ignoreZero = false;
+        for ($a = 0; $a < 8; $a++) {
+            if ($ignoreZero && $addr[$a] === 0) {
+                continue;
+            } elseif ($ignoreZero) {
+                $ignoreZero = false;
+            }
+            if ($a === $compress) {
+                $out .= !$a ? "::" : ":";
+                $ignoreZero = true;
+                continue;
+            }
+            $out .= dechex($addr[$a]);
+            $out .= $a !== 7 ? ":" : "";
+        }
+        return $out;
     }
 }
