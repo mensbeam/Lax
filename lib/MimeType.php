@@ -21,7 +21,7 @@ class MimeType extends \MensBeam\Mime\MimeType {
             $type = strtolower($match[1]);
             $type = ['document' => "text", 'executable' => "application"][$type] ?? $type;
             return new self($type);
-        } elseif ($url && (strlen($url->getScheme()) && $url->host !== null)) {
+        } elseif ($url && (strlen($url->getScheme()) && !$url->isUrn())) {
             $file = substr($url->getPath(), (int) strrpos($url->getPath(), "/"));
             $ext = strrpos($file, ".");
             if ($ext !== false) {

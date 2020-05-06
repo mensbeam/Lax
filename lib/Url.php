@@ -19,7 +19,6 @@ use Psr\Http\Message\UriInterface;
  * - Scheme normalization
  * - IDNA normalization
  * - IPv6 address normalization
- * - Empty query and fragment removal
  *
  * Some things this class does not do:
  *
@@ -34,7 +33,11 @@ use Psr\Http\Message\UriInterface;
 class Url implements UriInterface {
     protected const URI_PATTERN = <<<'PCRE'
 <^
-(?:
+(?|
+    (?:
+        (ftp|file|https?|wss?):         # special scheme
+    )
+    ([/\\]{2}[^/\?\#\\]*)? |            # authority part, accepting backslashes with special schemes
     (?:
         ([a-z][a-z0-9\.\-\+]*): |       # absolute URI
         :?(?=//)                        # scheme-relative URI
@@ -68,14 +71,15 @@ PCRE;
         'wss'   => 443,
     ];
 
-    protected $scheme = null;
+    protected $scheme = "";
     protected $user = "";
     protected $pass = "";
     protected $host = null;
     protected $port = null;
-    protected $path = null;
+    protected $path = "";
     protected $query = null;
     protected $fragment = null;
+    protected $specialScheme = false;
 
     public static function fromUri(UriInterface $uri): self {
         return ($uri instanceof self) ? $uri : new self((string) $uri);
@@ -93,40 +97,45 @@ PCRE;
         $url = str_replace(["\t", "\n", "\r"], "", trim($url, self::WHITESPACE_CHARS));
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
-            foreach (["scheme", "path", "query", "fragment"] as $part) {
-                if (strlen($$part)) {
-                    if ($part === "query" || $part === "fragment") {
-                        $$part = substr($$part, 1);
-                    }
-                    $this->set($part, $$part);
-                }
+            if (!$scheme && $baseUrl) {
+                $base = new static($baseUrl);
+                $scheme = $base->scheme;
+            }
+            $this->setScheme($scheme);
+            $this->setPath($path);
+            if ($query) {
+                $this->setQuery(substr($query, 1));
+            }
+            if ($fragment) {
+                $this->setFragment(substr($fragment, 1));
             }
             if (strlen($authority)) {
                 $authority = substr($authority, 2);
                 if (($cleft = strrpos($authority, "@")) !== false) {
                     if (preg_match(self::USER_PATTERN, substr($authority, 0, $cleft), $match)) {
-                        $this->set("user", $match[1]);
-                        $this->set("pass", $match[2] ?? "");
+                        $this->setUser($match[1]);
+                        $this->setPass($match[2] ?? "");
                     }
                     if (preg_match(self::HOST_PATTERN, substr($authority, $cleft + 1), $match)) {
-                        $this->set("host", $match[1]);
-                        $this->set("port", $match[2] ?? "");
+                        $this->setHost($match[1]);
+                        $this->setPort($match[2] ?? "");
                     }
                 } elseif (preg_match(self::HOST_PATTERN, $authority, $match)) {
-                    $this->set("host", $match[1]);
-                    $this->set("port", $match[2] ?? "");
+                    $this->setHost($match[1]);
+                    $this->setPort($match[2] ?? "");
                 }
 
             }
             if ((!$this->scheme || ($this->host === null && array_key_exists($this->scheme, self::SPECIAL_SCHEMES))) && strlen($baseUrl ?? "")) {
-                $this->resolve(new static($baseUrl));
-            }
-            foreach (["scheme", "path"] as $part) {
-                $this->$part = $this->$part ?? "";
+                $this->resolve($base ?? new static($baseUrl));
             }
         } else {
             throw new \InvalidArgumentException("String is not a valid URI");
         }
+    }
+
+    public function isUrn(): bool {
+        return $this->host === null && !$this->specialScheme;
     }
 
     public function getAuthority() {
@@ -175,7 +184,7 @@ PCRE;
         if (!strlen((string) $fragment)) {
             $out->fragment = null;
         } else {
-            $out->set("fragment", $fragment);
+            $out->setFragment((string) $fragment);
         }
         return $out;
     }
@@ -185,19 +194,19 @@ PCRE;
             $host = null;
         }
         $out = clone $this;
-        $out->set("host", $host);
+        $out->setHost($host);
         return $out;
     }
 
     public function withPath($path) {
         $out = clone $this;
-        $out->set("path", $path);
+        $out->setPath((string) $path);
         return $out;
     }
 
     public function withPort($port) {
         $out = clone $this;
-        $out->set("port", $port);
+        $out->setPort((string) $port);
         return $out;
     }
 
@@ -206,27 +215,27 @@ PCRE;
         if (!strlen((string) $query)) {
             $out->query = null;
         } else {
-            $out->set("query", $query);
+            $out->setQuery((string) $query);
         }
         return $out;
     }
 
     public function withScheme($scheme) {
         $out = clone $this;
-        $out->set("scheme", $scheme);
+        $out->setScheme((string) $scheme);
         return $out;
     }
 
     public function withUserInfo($user, $password = null) {
         $out = clone $this;
-        $out->set("user", $user);
-        $out->set("pass", $password);
+        $out->setUser((string) $user);
+        $out->setPass((string) $password);
         return $out;
     }
 
     public function __toString() {
         $out = "";
-        $out .= strlen($this->scheme) ? $this->scheme.":" : "";
+        $out .= strlen($this->scheme ?? "") ? $this->scheme.":" : "";
         if (is_null($this->host)) {
             $out .= $this->path;
         } else {
@@ -237,60 +246,84 @@ PCRE;
             $out .= "//";
             $out .= $auth;
             $out .= ($this->path[0] ?? "") !== "/" && strlen($auth) ? "/" : "";
-            $out .= preg_replace("<^/{2,}/>", "/", $this->path);
+            $out .= $this->specialScheme ? preg_replace("<^/{2,}/>", "/", $this->path) : $this->path;
         }
         $out .= is_string($this->query) ? "?".$this->query : "";
         $out .= is_string($this->fragment) ? "#".$this->fragment : "";
         return $out;
     }
 
-    public function __get(string $name) {
-        return $this->$name;
+    protected function setScheme(string $value): void {
+        if (preg_match(self::SCHEME_PATTERN, $value)) {
+            $this->scheme = strtolower($value);
+            $this->specialScheme = array_key_exists($this->scheme, self::SPECIAL_SCHEMES);
+        } else {
+            throw new \InvalidArgumentException("Invalid scheme specified");
+        }
     }
 
-    protected function set(string $name, $value): void {
-        switch ($name) {
-            case "host":
-                $this->host = $this->normalizeHost($value);
-                break;
-            case "port":
-                if (!strlen((string) $value)) {
-                    $this->port = null;
-                } elseif (preg_match(self::PORT_PATTERN, (string) $value) && (int) $value <= 0xFFFF) {
-                    $value = (int) $value;
-                    if (array_key_exists($this->scheme, self::SPECIAL_SCHEMES) && $value === self::SPECIAL_SCHEMES[$this->scheme]) {
-                        $this->port = null;
-                    } else {
-                        $this->port = $value;
-                    }
-                } else {
-                    throw new \InvalidArgumentException("Port must be an integer between 0 and 65535, or null");
-                }
-                break;
-            case "scheme":
-                if (preg_match(self::SCHEME_PATTERN, $value)) {
-                    $this->scheme = strtolower($value);
-                } else {
-                    throw new \InvalidArgumentException("Invalid scheme specified");
-                }
-                break;
-            default:
-                $this->$name = $this->normalizeEncoding((string) $value, $name);
+    protected function setUser(string $value): void {
+        $this->user = $this->normalizeEncoding($value, "user");
+    }
+
+    protected function setPass(string $value): void {
+        $this->pass = $this->normalizeEncoding($value, "pass");
+    }
+    
+    protected function setHost(?string $value): void {
+        $this->host = $this->normalizeHost($value);
+    }
+
+    protected function setPort(string $value): void {
+        if (!strlen($value)) {
+            $this->port = null;
+        } elseif (preg_match(self::PORT_PATTERN, (string) $value) && (int) $value <= 0xFFFF) {
+            $value = (int) $value;
+            if ($this->specialScheme && $value === self::SPECIAL_SCHEMES[$this->scheme]) {
+                $this->port = null;
+            } else {
+                $this->port = $value;
+            }
+        } else {
+            throw new \InvalidArgumentException("Port must be an integer between 0 and 65535, or null");
+        }
+    }
+
+    protected function setPath(string $value): void {
+        if ($this->specialScheme) {
+            $value = str_replace("\\", "/", $value);
+        }
+        $this->path = $this->normalizeEncoding($value, "path");
+    }
+
+    protected function setQuery(?string $value): void {
+        if (is_null($value)) {
+            $this->query = $value;
+        } else {
+            $this->query = $this->normalizeEncoding($value, "query");
+        }
+    }
+
+    protected function setFragment(?string $value): void {
+        if (is_null($value)) {
+            $this->fragment = $value;
+        } else {
+            $this->fragment = $this->normalizeEncoding($value, "fragment");
         }
     }
 
     protected function resolve(self $base): void {
-        [$scheme, $host, $user, $pass, $port, $path, $query, $fragment] = [$base->scheme, $base->host, $base->user, $base->pass, $base->port, $base->path, $base->query, $base->fragment];
-        if (strlen($scheme) && is_null($host)) {
+        if ($base->isUrn()) {
             throw new \InvalidArgumentException("URL base must not be a Uniform Resource Name");
         }
+        [$scheme, $host, $user, $pass, $port, $path, $query, $fragment] = [$base->scheme, $base->host, $base->user, $base->pass, $base->port, $base->path, $base->query, $base->fragment];
         $this->scheme = $this->scheme ?? $scheme;
         if (is_null($this->host)) {
             $this->host = $host;
             $this->user = $user;
             $this->pass = $pass;
             $this->port = $port;
-            if (is_null($this->path)) {
+            if (!strlen($this->path ?? "")) {
                 $this->path = $path;
                 if (is_null($this->query)) {
                     $this->query = $query;
@@ -360,7 +393,7 @@ PCRE;
 
     /** Normalizes a hostname per IDNA:2008 */
     protected function normalizeHost(?string $host): ?string {
-        if (!is_null($host) && strlen($host)) {
+        if (strlen($host ?? "")) {
             if (preg_match(self::IPV6_PATTERN, $host)) {
                 // normalize IPv6 addresses
                 $addr = @inet_pton(substr($host, 1, strlen($host) - 2));

@@ -10,13 +10,23 @@ use MensBeam\Lax\Url;
 
 /** @covers MensBeam\Lax\Url<extended> */
 class UrlTest extends Psr7TestCase {
+    private const INCOMPLETE_STD_INPUT = [
+        "a:\t foo.com",
+        "lolscheme:x x#x x",
+        "http://&a:foo(b]c@d:2/",
+    ];
+
     protected function createUri($uri = '') {
         return new Url($uri);
     }
 
     /** @dataProvider provideStandardParsingTests */
     public function xtestParsePerWhatwgRules(string $input, string $base, ?string $exp): void {
+        if (in_array($input, self::INCOMPLETE_STD_INPUT)) {
+            $this->markTestIncomplete();
+        }
         $act = Url::fromString($input, $base);
+        //var_export($act);
         if (is_null($exp)) {
             $this->assertNull($act);
         } else {
