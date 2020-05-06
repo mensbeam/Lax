@@ -46,23 +46,8 @@ class Url implements UriInterface {
 (\#.*)?                                 # fragment part
 $>six
 PCRE;
-    protected const AUTHORITY_PATTERN = <<<'PCRE'
-<^
-//
-(?:
-    ([^@:]*)            # username part
-    (?::([^@]*))?       # password part
-    @
-)?
-(
-    \[[a-f0-9:]*\] |    # IPv6 address
-    [^:]*               # domain or IPv4 address
-)
-(?:
-    :([^/]*)            # port part
-)?
-$>six
-PCRE;
+    protected const HOST_PATTERN = '/^(\[[a-f0-9:]*\]|[^:]*)(?::([^\/]*))?$/si';
+    protected const USER_PATTERN = '/^([^:]*)(?::(.*))?$/s';
     protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
     protected const IPV6_PATTERN = '/^\[[a-f0-9:]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
@@ -70,7 +55,7 @@ PCRE;
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
     protected const ESCAPE_CHARS = [
         'user'  => [":", "@", "/", "?", "#"],
-        'pass'  => ["@", "/", "?", "#"],
+        'pass'  => [":", "@", "/", "?", "#"],
         'path'  => ["?", "#"],
         'query' => ["#"],
     ];
@@ -117,14 +102,21 @@ PCRE;
                 }
             }
             if (strlen($authority)) {
-                if (preg_match(self::AUTHORITY_PATTERN, $authority, $match)) {
-                    [$authority, $user, $pass, $host, $port] = array_pad($match, 5, "");
-                    foreach (["user", "pass", "host", "port"] as $part) {
-                        $this->set($part, $$part);
+                $authority = substr($authority, 2);
+                if (($cleft = strrpos($authority, "@")) !== false) {
+                    if (preg_match(self::USER_PATTERN, substr($authority, 0, $cleft), $match)) {
+                        $this->set("user", $match[1]);
+                        $this->set("pass", $match[2] ?? "");
                     }
-                } else {
-                    assert(false, "Authority did not match pattern");
+                    if (preg_match(self::HOST_PATTERN, substr($authority, $cleft + 1), $match)) {
+                        $this->set("host", $match[1]);
+                        $this->set("port", $match[2] ?? "");
+                    }
+                } elseif (preg_match(self::HOST_PATTERN, $authority, $match)) {
+                    $this->set("host", $match[1]);
+                    $this->set("port", $match[2] ?? "");
                 }
+
             }
             if ((!$this->scheme || ($this->host === null && array_key_exists($this->scheme, self::SPECIAL_SCHEMES))) && strlen($baseUrl ?? "")) {
                 $this->resolve(new static($baseUrl));
@@ -233,12 +225,15 @@ PCRE;
     }
 
     public function __toString() {
-        $auth = $this->getAuthority();
         $out = "";
         $out .= strlen($this->scheme) ? $this->scheme.":" : "";
         if (is_null($this->host)) {
             $out .= $this->path;
         } else {
+            $auth = $this->host;
+            $auth .= (strlen($auth) && !is_null($this->port)) ? ":".$this->port : "";
+            $user = $this->user.(strlen($this->pass) ? ":".$this->pass : "");
+            $auth = (strlen($auth) && strlen($user)) ? "$user@$auth" : $auth;
             $out .= "//";
             $out .= $auth;
             $out .= ($this->path[0] ?? "") !== "/" && strlen($auth) ? "/" : "";
