@@ -103,10 +103,13 @@ PCRE;
                 $this->setScheme($scheme);
                 if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
                     // the URI is something like x:/example.com/
-                    if ($baseUrl && ($base = new static($baseUrl)) && $scheme === $base->scheme) {
+                    if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme) {
                         // URI is a relative URL; add authority to path instead
                         $path = $authority.$path;
                         $authority = "";
+                    } elseif ($this->scheme === "file") {
+                        $path = $authority.$path;
+                        $authority = "//";
                     } elseif ($this->specialScheme) {
                         // URI is an absolute URL with a typo; add a slash to the authority
                         $authority = "/$authority";
@@ -116,13 +119,6 @@ PCRE;
                         $authority = "";
                     }
                 }
-            }
-            $this->setPath($path);
-            if ($query) {
-                $this->setQuery(substr($query, 1));
-            }
-            if ($fragment) {
-                $this->setFragment(substr($fragment, 1));
             }
             if (strlen($authority)) {
                 $authority = substr($authority, 2);
@@ -139,10 +135,19 @@ PCRE;
                     $this->setHost($match[1]);
                     $this->setPort($match[2] ?? "");
                 }
-
             }
-            if ((!$this->scheme || ($this->host === null && array_key_exists($this->scheme, self::SPECIAL_SCHEMES))) && strlen($baseUrl ?? "")) {
+            $this->setPath($path);
+            if ($query) {
+                $this->setQuery(substr($query, 1));
+            }
+            if ($fragment) {
+                $this->setFragment(substr($fragment, 1));
+            }
+            if ((!$this->scheme || ($this->host === null && $this->specialScheme)) && strlen($baseUrl ?? "")) {
                 $this->resolve($base ?? new static($baseUrl));
+            }
+            if ($this->scheme === "file" && !($this->host === "" || $this->host === "localhost")) {
+                throw new \InvalidArgumentException("Invalid authority for file: scheme");
             }
         } else {
             throw new \InvalidArgumentException("String is not a valid URI");
