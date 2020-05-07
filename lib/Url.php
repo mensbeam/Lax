@@ -94,33 +94,45 @@ PCRE;
 
     public function __construct(string $url, string $baseUrl = null) {
         $url = str_replace(["\t", "\n", "\r"], "", trim($url, self::WHITESPACE_CHARS));
+        reprocess:
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
-            if (!$scheme && $baseUrl) {
-                $base = new static($baseUrl);
-                $this->setScheme($base->scheme);
-            } elseif ($scheme) {
-                $this->setScheme($scheme);
-                if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
-                    // the URI is something like x:/example.com/
-                    if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme) {
-                        // URI is a relative URL; add authority to path instead
-                        $path = $authority.$path;
-                        $authority = "";
-                    } elseif ($this->scheme === "file") {
-                        $path = $authority.$path;
-                        $authority = "//";
-                    } elseif ($this->specialScheme) {
-                        // URI is an absolute URL with a typo; add a slash to the authority
-                        $authority = "/$authority";
-                    } else {
-                        // URI is a URN; add authority to path instead
-                        $path = $authority.$path;
-                        $authority = "";
-                    }
+            $this->setScheme($scheme);
+            if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
+                // the URI is something like x:/example.com/
+                if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme && !$base->isUrn()) {
+                    // URI is a relative URL; add authority to path instead
+                    $path = $authority.$path;
+                    $authority = "";
+                } elseif ($this->scheme === "file") {
+                    // URI is an absolute file: URL; add authority to path and set the authority to the default authority
+                    $path = $authority.$path;
+                    $authority = "//";
+                } elseif ($this->specialScheme) {
+                    // URI is an absolute URL with a typo; add a slash to the authority
+                    $authority = "/$authority";
+                } else {
+                    // URI is a URN; add authority to path instead
+                    $path = $authority.$path;
+                    $authority = "";
+                }
+            } elseif ($scheme && !$authority) {
+                // the URI is something like x:example.com/
+                if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme && !$base->isUrn()) {
+                    // URI is a relative URL; continue processing
+                } elseif ($this->scheme === "file") {
+                    // URI is an absolute file: URL; add the authority delimiter and default authority to the URL and reprocess
+                    $url = preg_replace("/:/", ":///", $url, 1);
+                    goto reprocess;
+                } elseif ($this->specialScheme) {
+                    // URI is an absolute URL; add the authority delimiter to the URL and reprocess
+                    $url = preg_replace("/:/", "://", $url, 1);
+                    goto reprocess;
+                } else {
+                    // URI is a URN; continue processing
                 }
             }
-            if (strlen($authority)) {
+            if ($authority) {
                 $authority = substr($authority, 2);
                 if (($cleft = strrpos($authority, "@")) !== false) {
                     if (preg_match(self::USER_PATTERN, substr($authority, 0, $cleft), $match)) {
@@ -135,6 +147,11 @@ PCRE;
                     $this->setHost($match[1]);
                     $this->setPort($match[2] ?? "");
                 }
+            }
+            if (!$scheme && $baseUrl) {
+                // the effective URL scheme must be known to correctly process the path
+                $base = $base ?? new static($baseUrl);
+                $this->setScheme($base->scheme);
             }
             $this->setPath($path);
             if ($query) {
