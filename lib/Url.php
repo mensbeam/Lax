@@ -36,12 +36,12 @@ class Url implements UriInterface {
     (?:
         (ftp|file|https?|wss?):         # special scheme
     )
-    ([/\\]{2}[^/\?\#\\]*)? |            # authority part, accepting backslashes with special schemes
+    ([/\\]{1,2}[^/\?\#\\]*)? |          # authority part, accepting backslashes with special schemes
     (?:
         ([a-z][a-z0-9\.\-\+]*): |       # absolute URI
         :?(?=//)                        # scheme-relative URI
     )
-    (//[^/\?\#]*)?                      # authority part
+    (//?[^/\?\#]*)?                     # authority part
 )?
 ([^\?\#]*)                              # path part
 (\?[^\#]*)?                             # query part
@@ -98,9 +98,25 @@ PCRE;
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
             if (!$scheme && $baseUrl) {
                 $base = new static($baseUrl);
-                $scheme = $base->scheme;
+                $this->setScheme($base->scheme);
+            } elseif ($scheme) {
+                $this->setScheme($scheme);
+                if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
+                    // the URI is something like x:/example.com/
+                    if ($baseUrl && ($base = new static($baseUrl)) && $scheme === $base->scheme) {
+                        // URI is a relative URL; add authority to path instead
+                        $path = $authority.$path;
+                        $authority = "";
+                    } elseif ($this->specialScheme) {
+                        // URI is an absolute URL with a typo; add a slash to the authority
+                        $authority = "/$authority";
+                    } else {
+                        // URI is a URN; add authority to path instead
+                        $path = $authority.$path;
+                        $authority = "";
+                    }
+                }
             }
-            $this->setScheme($scheme);
             $this->setPath($path);
             if ($query) {
                 $this->setQuery(substr($query, 1));
