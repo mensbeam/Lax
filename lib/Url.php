@@ -55,6 +55,13 @@ PCRE;
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
+    protected const PERCENT_ENCODE_SETS = [
+        'C0'       => "",
+        'fragment' => " \"<>`",
+        'path'     => " \"<>`?#{}",
+        'userinfo' => " \"<>`?#{}/:;=@[\]^|",
+        'query'    => " \"<>#", // single-quote as well if scheme is special
+    ];
     protected const ESCAPE_CHARS = [
         'user'  => [":", "@", "/", "?", "#"],
         'pass'  => [":", "@", "/", "?", "#"],
@@ -300,11 +307,11 @@ PCRE;
     }
 
     protected function setUser(string $value): void {
-        $this->user = $this->normalizeEncoding($value, "user");
+        $this->user = $this->percentEncode($value, "userinfo");
     }
 
     protected function setPass(string $value): void {
-        $this->pass = $this->normalizeEncoding($value, "pass");
+        $this->pass = $this->percentEncode($value, "userinfo");
     }
     
     protected function setHost(?string $value): void {
@@ -330,14 +337,14 @@ PCRE;
         if ($this->specialScheme) {
             $value = str_replace("\\", "/", $value);
         }
-        $this->path = $this->normalizeEncoding($value, "path");
+        $this->path = $this->percentEncode($value, $this->isUrn() ? "C0" : "path");
     }
 
     protected function setQuery(?string $value): void {
         if (is_null($value)) {
             $this->query = $value;
         } else {
-            $this->query = $this->normalizeEncoding($value, "query");
+            $this->query = $this->percentEncode($value, "query");
         }
     }
 
@@ -345,8 +352,24 @@ PCRE;
         if (is_null($value)) {
             $this->fragment = $value;
         } else {
-            $this->fragment = $this->normalizeEncoding($value, "fragment");
+            $this->fragment = $this->percentEncode($value, "fragment");
         }
+    }
+
+    protected function percentEncode(string $data, string $type): string {
+        assert(array_key_exists($type, self::PERCENT_ENCODE_SETS), "Invalid percent-encoding set");
+        $out = "";
+        $end = strlen($data);
+        for ($p = 0; $p < $end; $p++) {
+            $c = $data[$p];
+            $o = ord($c);
+            if ($o > 0x1F && $o < 0x7F && !strspn($c, self::PERCENT_ENCODE_SETS[$type]) && !($this->specialScheme && $type === "query" && $c === "'")) {
+                $out .= $c;
+            } else {
+                $out .= strtoupper("%".str_pad(dechex($o), 2, "0", \STR_PAD_LEFT));
+            }
+        }
+        return $out;
     }
 
     protected function resolve(self $base): void {

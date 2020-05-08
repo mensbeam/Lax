@@ -215,7 +215,7 @@ abstract class Psr7TestCase extends TestCase {
 
     public function queryProvider() {
         return [
-            'normalized query' => ['foo.bar=%7evalue', 'foo.bar=~value'],
+            'normalized query' => ['foo.bar=%7evalue', 'foo.bar=%7evalue'],
             'empty query'      => ['', ''],
             'same param query' => ['foo.bar=1&foo.bar=1', 'foo.bar=1&foo.bar=1'],
             'same param query' => ['?foo=1', '?foo=1'],
@@ -286,7 +286,7 @@ abstract class Psr7TestCase extends TestCase {
                 'path'     => '/%7ejohndoe/%a1/index.php',
                 'query'    => 'foo.bar=%7evalue',
                 'fragment' => 'fragment',
-                'uri'      => 'https://iGoR:rAsMuZeN@master.example.com/~johndoe/%A1/index.php?foo.bar=~value#fragment',
+                'uri'      => 'https://iGoR:rAsMuZeN@master.example.com/%7ejohndoe/%a1/index.php?foo.bar=%7evalue#fragment',
             ],
             'URL without scheme' => [
                 'scheme'   => '',

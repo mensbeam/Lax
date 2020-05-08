@@ -11,9 +11,6 @@ use MensBeam\Lax\Url;
 /** @covers MensBeam\Lax\Url<extended> */
 class UrlTest extends Psr7TestCase {
     private const INCOMPLETE_STD_INPUT = [
-        "a:\t foo.com",
-        "lolscheme:x x#x x",
-        "http://&a:foo(b]c@d:2/",
     ];
 
     protected function createUri($uri = '') {
