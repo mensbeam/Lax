@@ -18,7 +18,7 @@ class UrlTest extends Psr7TestCase {
     }
 
     /** @dataProvider provideStandardParsingTests */
-    public function xtestParsePerWhatwgRules(string $input, string $base, ?string $exp): void {
+    public function testParsePerWhatwgRules(string $input, string $base, ?string $exp): void {
         if (in_array($input, self::INCOMPLETE_STD_INPUT)) {
             $this->markTestIncomplete();
         }

@@ -54,6 +54,7 @@ PCRE;
     protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
+    protected const WINDOWS_PATH_PATTERN = '/(?:^|\/)([a-zA-Z])[:|]($|[\/#\?].*)/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
     protected const PERCENT_ENCODE_SETS = [
         'C0'       => "",
@@ -61,12 +62,6 @@ PCRE;
         'path'     => " \"<>`?#{}",
         'userinfo' => " \"<>`?#{}/:;=@[\]^|",
         'query'    => " \"<>#", // single-quote as well if scheme is special
-    ];
-    protected const ESCAPE_CHARS = [
-        'user'  => [":", "@", "/", "?", "#"],
-        'pass'  => [":", "@", "/", "?", "#"],
-        'path'  => ["?", "#"],
-        'query' => ["#"],
     ];
     protected const SPECIAL_SCHEMES = [
         'ftp'   => 21,
@@ -101,13 +96,17 @@ PCRE;
 
     public function __construct(string $url, string $baseUrl = null) {
         $url = str_replace(["\t", "\n", "\r"], "", trim($url, self::WHITESPACE_CHARS));
+        $base = null;
         reprocess:
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
+            if (!$base && $baseUrl && ($scheme || substr($authority, 0, 2) !== "//")) {
+                $base = new static($baseUrl);
+            }
             $this->setScheme($scheme);
             if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
                 // the URI is something like x:/example.com/
-                if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme && !$base->isUrn()) {
+                if ($base && $this->scheme === $base->scheme && !$base->isUrn()) {
                     // URI is a relative URL; add authority to path instead
                     $path = $authority.$path;
                     $authority = "";
@@ -125,7 +124,7 @@ PCRE;
                 }
             } elseif ($scheme && !$authority) {
                 // the URI is something like x:example.com/
-                if ($baseUrl && ($base = new static($baseUrl)) && $this->scheme === $base->scheme && !$base->isUrn()) {
+                if ($base && $this->scheme === $base->scheme && !$base->isUrn()) {
                     // URI is a relative URL; continue processing
                 } elseif ($this->scheme === "file") {
                     // URI is an absolute file: URL; add the authority delimiter and default authority to the URL and reprocess
@@ -155,7 +154,7 @@ PCRE;
                     $this->setPort($match[2] ?? "");
                 }
             }
-            if (!$scheme && $baseUrl) {
+            if (!$scheme && $base) {
                 // the effective URL scheme must be known to correctly process the path
                 $base = $base ?? new static($baseUrl);
                 $this->setScheme($base->scheme);
@@ -167,11 +166,8 @@ PCRE;
             if ($fragment) {
                 $this->setFragment(substr($fragment, 1));
             }
-            if ((!$this->scheme || ($this->host === null && $this->specialScheme)) && strlen($baseUrl ?? "")) {
+            if ((!$scheme || ($this->host === null && $this->specialScheme)) && strlen($baseUrl ?? "")) {
                 $this->resolve($base ?? new static($baseUrl));
-            }
-            if ($this->scheme === "file" && !($this->host === "" || $this->host === "localhost")) {
-                throw new \InvalidArgumentException("Invalid authority for file: scheme");
             }
         } else {
             throw new \InvalidArgumentException("String is not a valid URI");
@@ -321,6 +317,8 @@ PCRE;
     protected function setPort(string $value): void {
         if (!strlen($value)) {
             $this->port = null;
+        } elseif ($this->scheme === "file") {
+            throw new \InvalidArgumentException("Port in file: scheme must always be null");
         } elseif (preg_match(self::PORT_PATTERN, (string) $value) && (int) $value <= 0xFFFF) {
             $value = (int) $value;
             if ($this->specialScheme && $value === self::SPECIAL_SCHEMES[$this->scheme]) {
@@ -336,6 +334,9 @@ PCRE;
     protected function setPath(string $value): void {
         if ($this->specialScheme) {
             $value = str_replace("\\", "/", $value);
+        }
+        if ($this->scheme === "file" && preg_match(self::WINDOWS_PATH_PATTERN, $value, $match)) {
+            $value = "/".$match[1].":".$match[2];
         }
         $this->path = $this->percentEncode($value, $this->isUrn() ? "C0" : "path");
     }
@@ -403,52 +404,6 @@ PCRE;
                 }
             }
         }
-    }
-
-    protected function normalizeEncoding(string $data, string $part = null): string {
-        $pos = 0;
-        $end = strlen($data);
-        $out = "";
-        $esc = self::ESCAPE_CHARS[$part] ?? [];
-        // process each character in sequence
-        while ($pos < $end) {
-            $c = $data[$pos];
-            if ($c === "%") {
-                // the % character signals an encoded character...
-                $d = substr($data, $pos + 1, 2);
-                if (!preg_match("/^[0-9a-fA-F]{2}$/", $d)) {
-                    // unless there are fewer than two characters left in the string or the two characters are not hex digits
-                    $d = ord($c);
-                } else {
-                    $d = hexdec($d);
-                    $pos += 2;
-                }
-            } else {
-                $d = ord($c);
-            }
-            $dc = chr($d);
-            if ($d < 0x21 || $d > 0x7E || $d == 0x25) {
-                // these characters are always encoded
-                $out .= "%".strtoupper(dechex($d));
-            } elseif (preg_match("/[a-zA-Z0-9\._~-]/", $dc)) {
-                // these characters are never encoded
-                $out .= $dc;
-            } else {
-                // these characters are passed through as-is...
-                if ($c === "%") {
-                    $out .= "%".strtoupper(dechex($d));
-                } else {
-                    // unless the part we're processing has delimiters which must be escaped
-                    if (in_array($dc, $esc)) {
-                        $out .= "%".strtoupper(dechex($d));
-                    } else {
-                        $out .= $c;
-                    }
-                }
-            }
-            $pos++;
-        }
-        return $out;
     }
 
     /** Normalizes a hostname per IDNA:2008 */
