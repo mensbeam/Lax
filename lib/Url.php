@@ -50,6 +50,7 @@ PCRE;
     protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
+    protected const WINDOWS_AUTHORITY_PATTERN = '/^[\/\\\\]{1,2}[a-zA-Z][:|]$/';
     protected const WINDOWS_PATH_PATTERN = '/(?:^|\/)([a-zA-Z])[:|]($|[\/#\?].*)/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
     protected const PERCENT_ENCODE_SETS = [
@@ -96,10 +97,13 @@ PCRE;
         reprocess:
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
+            // if the URI is not unambigously a URL, parse the base URI
             if (!$base && $baseUrl && (!$scheme || substr($authority, 0, 2) !== "//")) {
                 $base = new static($baseUrl);
             }
-            $this->setScheme($scheme);
+            // set the scheme; use the base scheme if necessary
+            $this->setScheme($scheme ?: ($base->scheme ?? ""));
+            // make various checks to see if the authority should actually be the starts of the path
             if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
                 // the URI is something like x:/example.com/
                 if ($base && $this->scheme === $base->scheme && !$base->isUrn()) {
@@ -133,6 +137,9 @@ PCRE;
                 } else {
                     // URI is a URN; continue processing
                 }
+            } elseif ($this->scheme === "file" && preg_match(self::WINDOWS_AUTHORITY_PATTERN, $authority)) {
+                $path = $authority.$path;
+                $authority = "//";
             }
             if ($authority) {
                 $authority = substr($authority, 2);
