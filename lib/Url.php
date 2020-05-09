@@ -360,10 +360,7 @@ PCRE;
 
     protected function setPath(string $value): void {
         if ($this->specialScheme) {
-            $value = str_replace("\\", "/", $value);
-        }
-        if ($this->scheme === "file" && preg_match(self::WINDOWS_PATH_PATTERN, $value, $match)) {
-            $value = "/".$match[1].":".$match[2];
+            $value = $this->collapsePath(str_replace("\\", "/", $value));
         }
         $this->path = $this->percentEncode($value, $this->isUrn() ? "C0" : "path");
     }
@@ -382,6 +379,35 @@ PCRE;
         } else {
             $this->fragment = $this->percentEncode($value, "fragment");
         }
+    }
+
+    protected function collapsePath(string $path): string {
+        if (preg_match("<^/?$>", $path)) {
+            return $path;
+        }
+        if ($this->scheme === "file" && preg_match(self::WINDOWS_PATH_PATTERN, $path, $match)) {
+            $path = "/".$match[1].":".$match[2];
+        }
+        $abs = $path[0] === "/";
+        $dir = $path[-1] === "/";
+        $term = $dir || preg_match("</(?:\.|%2E){1,2}$>i", $path);
+        $path = explode("/", substr($path, (int) $abs, strlen($path) - ($abs + $dir)));
+        $out = [];
+        foreach ($path as $s) {
+            if (preg_match('/^(?:\.|%2E)$/i', $s)) {
+                // current-directory segment; these should simply be omitted
+                continue;
+            } elseif (preg_match('/^(?:\.|%2E){2}$/i', $s)) {
+                // parent-directory segment; pop a directory off the output
+                array_pop($out);
+            } else {
+                $out[] = $s;
+            }
+        }
+        if (!$out) {
+            return $abs ? "/" : "";
+        }
+        return ($abs ? "/" : "").implode("/", $out).($term ? "/" : "");
     }
 
     protected function percentEncode(string $data, string $type): string {
@@ -455,6 +481,8 @@ PCRE;
             if ($host === false) {
                 throw new \InvalidArgumentException("Invalid host in URL");
             }
+        } elseif ($this->specialScheme && $this->scheme !== "file") {
+            throw new \InvalidArgumentException("Invalid host in URL");
         }
         return $host;
     }
