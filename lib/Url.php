@@ -32,16 +32,12 @@ use Psr\Http\Message\UriInterface;
 class Url implements UriInterface {
     protected const URI_PATTERN = <<<'PCRE'
 <^
-(?|
-    (?:
-        (ftp|file|https?|wss?):         # special scheme
-    )
-    ([/\\]{1,2}[^/\?\#\\]*)? |          # authority part, accepting backslashes with special schemes
+(?:
     (?:
         ([a-z][a-z0-9\.\-\+]*): |       # absolute URI
-        :?(?=//)                        # scheme-relative URI
+        :?(?=[\\/]{2})                  # scheme-relative URI
     )
-    (//?[^/\?\#]*)?                     # authority part
+    ([\\/]{1,2}[^/\?\#\\]*)?            # authority part
 )?
 ([^\?\#]*)                              # path part
 (\?[^\#]*)?                             # query part
@@ -100,7 +96,7 @@ PCRE;
         reprocess:
         if (preg_match(self::URI_PATTERN, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
-            if (!$base && $baseUrl && ($scheme || substr($authority, 0, 2) !== "//")) {
+            if (!$base && $baseUrl && (!$scheme || substr($authority, 0, 2) !== "//")) {
                 $base = new static($baseUrl);
             }
             $this->setScheme($scheme);
