@@ -277,23 +277,42 @@ PCRE;
     }
 
     public function __toString() {
-        $out = "";
-        $out .= strlen($this->scheme ?? "") ? $this->scheme.":" : "";
-        if (is_null($this->host)) {
-            $out .= $this->path;
-        } else {
+        return $this->serializeScheme().$this->serializeAuthority().$this->serializePath().$this->serializeQuery().$this->serializeFragment();
+    }
+
+    protected function serializeScheme(): string {
+        return $this->scheme ? $this->scheme.":" : "";
+    }
+
+    protected function serializeAuthority(): string {
+        if ($this->host !== null) {
             $auth = $this->host;
             $auth .= (strlen($auth) && !is_null($this->port)) ? ":".$this->port : "";
             $user = $this->user.(strlen($this->pass) ? ":".$this->pass : "");
             $auth = (strlen($auth) && strlen($user)) ? "$user@$auth" : $auth;
-            $out .= "//";
-            $out .= $auth;
-            $out .= ($this->path[0] ?? "") !== "/" && strlen($auth) ? "/" : "";
-            $out .= $this->specialScheme ? preg_replace("<^/{2,}/>", "/", $this->path) : $this->path;
+            return "//$auth";
         }
-        $out .= is_string($this->query) ? "?".$this->query : "";
-        $out .= is_string($this->fragment) ? "#".$this->fragment : "";
-        return $out;
+        return "";
+    }
+
+    protected function serializePath(): string {
+        if ($this->host !== null) {
+            $out = "";
+            if ((strlen($this->path) && $this->path[0] !== "/") || (!strlen($this->path) && $this->specialScheme)) {
+                $out .= "/";
+            }
+            $out .= $this->specialScheme ? preg_replace("<^/{2,}/>", "/", $this->path) : $this->path;
+            return $out;
+        }
+        return $this->path;
+    }
+
+    protected function serializeQuery(): string {
+        return is_string($this->query) ? "?".$this->query : "";
+    }
+
+    protected function serializeFragment(): string {
+        return is_string($this->fragment) ? "#".$this->fragment : "";
     }
 
     protected function setScheme(string $value): void {
@@ -314,7 +333,12 @@ PCRE;
     }
     
     protected function setHost(?string $value): void {
-        $this->host = $this->normalizeHost($value);
+        if ($this->scheme === "file" && strtolower($value) === "localhost") {
+            $this->host = "";
+        } else {
+            $this->host = $this->normalizeHost($value);
+        }
+        
     }
 
     protected function setPort(string $value): void {
