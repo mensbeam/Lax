@@ -386,6 +386,8 @@ PCRE;
             return $path;
         }
         if ($this->scheme === "file" && preg_match(self::WINDOWS_PATH_PATTERN, $path, $match)) {
+            // If a Windows drive letter is present, the host is implicitly localhost
+            $this->setHost("");
             $path = "/".$match[1].":".$match[2];
         }
         $abs = $path[0] === "/";
@@ -394,7 +396,10 @@ PCRE;
         $path = explode("/", substr($path, (int) $abs, strlen($path) - ($abs + $dir)));
         $out = [];
         foreach ($path as $s) {
-            if (preg_match('/^(?:\.|%2E)$/i', $s)) {
+            if ($s === "" && !$out && $this->scheme === "file") {
+                // empty segments before the first non-empty segment in a file: URL should be skipped
+                continue;
+            } elseif (preg_match('/^(?:\.|%2E)$/i', $s)) {
                 // current-directory segment; these should simply be omitted
                 continue;
             } elseif (preg_match('/^(?:\.|%2E){2}$/i', $s)) {
@@ -459,7 +464,6 @@ PCRE;
         }
     }
 
-    /** Normalizes a hostname per IDNA:2008 */
     protected function normalizeHost(?string $host): ?string {
         if (strlen($host ?? "")) {
             if ($host[0] === "[" && $host[-1] === "]") {
@@ -472,15 +476,14 @@ PCRE;
                 }
             }
             $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
-            if ($idn === false) {
-                throw new \InvalidArgumentException("Invalid host in URL");
-            } elseif (preg_match(self::FORBIDDEN_HOST_PATTERN, $idn)) {
-                throw new \InvalidArgumentException("Invalid host in URL");
-            }
-            $host = idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46);
-            if ($host === false) {
+            if (
+                $idn === false
+                || preg_match(self::FORBIDDEN_HOST_PATTERN, $idn)
+                || idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46) === false
+            ) {
                 throw new \InvalidArgumentException("Invalid host in URL");
             }
+            return $idn;
         } elseif ($this->specialScheme && $this->scheme !== "file") {
             throw new \InvalidArgumentException("Invalid host in URL");
         }
@@ -489,7 +492,7 @@ PCRE;
 
     protected function normalizeIPv6(string $input): ?string {
         // first parse the address; this is a literal implementation of https://url.spec.whatwg.org/#concept-ipv6-parser
-        $addr = array_fill(0, 16, 0);
+        $addr = array_fill(0, 8, 0);
         $pieceIndex = 0;
         $compress = null;
         $p = 0;
@@ -591,8 +594,8 @@ PCRE;
         $compress = ['index' => null, 'span' => 0];
         $candidate = null;
         $span = 0;
-        for ($a = 0; $a < sizeof($addr); $a++) {
-            if (!$addr[$a]) {
+        for ($a = 0; $a <= sizeof($addr); $a++) {
+            if (!($addr[$a] ?? 0x10000)) {
                 if (is_null($candidate)) {
                     $candidate = $a;
                 }
