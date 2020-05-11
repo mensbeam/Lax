@@ -50,6 +50,7 @@ PCRE;
     protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
+    protected const FORBIDDEN_OPAQUE_HOST_PATTERN = '/[\x{00}\t\n\r #\/:\?@\[\]\\\]/'; // forbidden host excluding %
     protected const WINDOWS_AUTHORITY_PATTERN = '/^[\/\\\\]{1,2}[a-zA-Z][:|]$/';
     protected const WINDOWS_PATH_PATTERN = '/(?:^|\/)([a-zA-Z])[:|]($|[\/#\?].*)/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
@@ -336,7 +337,7 @@ PCRE;
         if ($this->scheme === "file" && strtolower($value) === "localhost") {
             $this->host = "";
         } else {
-            $this->host = $this->normalizeHost($value);
+            $this->host = $this->parseHost($value);
         }
         
     }
@@ -464,18 +465,28 @@ PCRE;
         }
     }
 
-    protected function normalizeHost(?string $host): ?string {
+    protected function parseHost(?string $host): ?string {
         if (strlen($host ?? "")) {
-            if ($host[0] === "[" && $host[-1] === "]") {
+            if ($host[0] === "[") {
+                if ($host[-1] !== "]") {
+                    throw new \InvalidArgumentException("Invalid host in URL");
+                }
                 // normalize IPv6 addresses
-                $addr = $this->normalizeIPv6(substr($host, 1, strlen($host) - 2));
+                $addr = $this->parseIPv6(substr($host, 1, strlen($host) - 2));
                 if ($addr !== null) {
                     return "[".$addr."]";
                 } else {
                     throw new \InvalidArgumentException("Invalid host in URL");
                 }
+            } elseif (!$this->specialScheme) {
+                // simply apply percent-encoding where necessary to hosts for non-special schemes
+                if (preg_match(self::FORBIDDEN_OPAQUE_HOST_PATTERN, $host)) {
+                    throw new \InvalidArgumentException("Invalid host in URL");
+                }
+                return $this->percentEncode($host, "C0");
             }
-            $idn = idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
+            $host = rawurldecode($host);
+            $idn = $this->parseIPv4($host) ?? idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
             if (
                 $idn === false
                 || preg_match(self::FORBIDDEN_HOST_PATTERN, $idn)
@@ -483,14 +494,79 @@ PCRE;
             ) {
                 throw new \InvalidArgumentException("Invalid host in URL");
             }
-            return $idn;
+            return strtolower($idn);
         } elseif ($this->specialScheme && $this->scheme !== "file") {
             throw new \InvalidArgumentException("Invalid host in URL");
         }
         return $host;
     }
 
-    protected function normalizeIPv6(string $input): ?string {
+    protected function parseIPv4(string $input) {
+        // first parse the address; this is a literal implementation of https://url.spec.whatwg.org/#concept-ipv4-parser
+        assert(strlen($input));
+        $input = explode(".", $input);
+        if ($input[sizeof($input) - 1] === "" && sizeof($input) > 1) {
+            array_pop($input);
+        }
+        if (sizeof($input) > 4) {
+            return null;
+        }
+        $numbers = [];
+        foreach ($input as $p) {
+            if ($p === "") {
+                return null;
+            }
+            $result = $this->parseIPv4Number($p);
+            if (!is_int($result)) {
+                return null;
+            } else {
+                $numbers[] = $result;
+            }
+        }
+        $ipv4 = array_pop($numbers);
+        $counter = 0;
+        if ($ipv4 >= 256 ** (5 - (sizeof($numbers) + 1))) {
+            return false;
+        }
+        foreach ($numbers as $n) {
+            if ($n > 255) {
+                return false;
+            }
+            $ipv4 += $n * 256 ** (3 - $counter);
+            $counter++;
+        }
+        // now re-serialize the address
+        $out = [];
+        for ($a = 0; $a < 4; $a++) {
+            $out[] = $ipv4 % 256;
+            $ipv4 = floor($ipv4 / 256);
+        }
+        return implode(".", array_reverse($out));        
+    }
+
+    protected function parseIPv4Number(string $n): ?int {
+        if ($n === "") {
+            return 0;
+        } elseif (preg_match("/^0x/i", $n)) {
+            $n = substr($n, 2);
+            $r = 16;
+        } elseif ($n[0] === "0") {
+            $n = substr($n, 1);
+            $r = 8;
+        } else {
+            $r = 10;
+        }
+        if (
+            ($r === 10 && preg_match("/[^0-9]/", $n))
+            || ($r === 8 && preg_match("/[^0-7]/", $n))
+            || ($r === 16 && preg_match("/[^0-9a-fA-F]/", $n))
+        ) {
+            return null;
+        }
+        return (int) base_convert($n, $r, 10);
+    }
+
+    protected function parseIPv6(string $input): ?string {
         // first parse the address; this is a literal implementation of https://url.spec.whatwg.org/#concept-ipv6-parser
         $addr = array_fill(0, 8, 0);
         $pieceIndex = 0;

@@ -261,8 +261,8 @@ abstract class Psr7TestCase extends TestCase {
      */
     public function testToString($scheme, $user, $pass, $host, $port, $path, $query, $fragment, $expected) {
         $uri = $this->createUri()
-            ->withHost($host)
             ->withScheme($scheme)
+            ->withHost($host)
             ->withUserInfo($user, $pass)
             ->withPort($port)
             ->withPath($path)
