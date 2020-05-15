@@ -413,15 +413,11 @@ abstract class Psr7TestCase extends TestCase {
 
     public function withHostFailedProvider() {
         return [
-            'dot in front'                         => ['.example.com'],
             'hyphen suffix'                        => ['host.com-'],
-            'multiple dot'                         => ['.......'],
-            'one dot'                              => ['.'],
             'empty label'                          => ['tot.    .coucou.com'],
             'space in the label'                   => ['re view'],
             'underscore in label'                  => ['_bad.host.com'],
             'label too long'                       => [implode('', array_fill(0, 12, 'banana')).'.secure.example.com'],
-            'too many labels'                      => [implode('.', array_fill(0, 128, 'a'))],
             'Invalid IPv4 format'                  => ['[127.0.0.1]'],
             'Invalid IPv6 format'                  => ['[[::1]]'],
             'Invalid IPv6 format 2'                => ['[::1'],
