@@ -44,7 +44,7 @@ class Url implements UriInterface {
 (\#.*)?                                 # fragment part
 $>six
 PCRE;
-    protected const HOST_PATTERN = '/^(\[[a-f0-9:\.]*\]|[^:]*)(?::([^\/]*))?$/si';
+    protected const HOST_PATTERN = '/^(\[[a-f0-9:\.]*\]|[^:]*)(:[^\/]*)?$/si';
     protected const USER_PATTERN = '/^([^:]*)(?::(.*))?$/s';
     protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
     protected const IPV4_PATTERN = '/^[\.xX0-9a-fA-F\x{ff10}-\x{ff19}\x{ff21}-\x{ff26}\x{ff41}-\x{ff46}\x{ff38}\x{ff58}\x{ff0e}]*$/u'; // matches ASCII and fullwidth equivalents
@@ -154,11 +154,21 @@ PCRE;
                     }
                     if (preg_match(self::HOST_PATTERN, substr($auth, $cleft + 1), $match)) {
                         $this->setHost($match[1]);
-                        $this->setPort($match[2] ?? "");
+                        if ($match[2] ?? "") {
+                            $this->setPort(substr($match[2], 1));
+                        }
+                    }
+                    if (!$this->specialScheme && !strlen($match[1])) {
+                        throw new \InvalidArgumentException("Credentials with default host in URL");
                     }
                 } elseif (preg_match(self::HOST_PATTERN, $auth, $match)) {
                     $this->setHost($match[1]);
-                    $this->setPort($match[2] ?? "");
+                    if ($match[2] ?? "") {
+                        if (!$this->specialScheme && !strlen($match[1])) {
+                            throw new \InvalidArgumentException("Port with default host in URL");
+                        }
+                        $this->setPort(substr($match[2], 1));
+                    }
                 }
             }
             // resolve with the base, if necessary
@@ -404,7 +414,9 @@ PCRE;
 
     protected function collapsePath(string $path, string $base = ""): string {
         $winDrive = "";
-        if ($this->scheme === "file") {
+        if ($path === "") {
+            return $base;
+        } elseif ($this->scheme === "file") {
             if (preg_match(self::WINDOWS_PATH_PATTERN, $path, $match)) {
                 // If a Windows drive letter is present, the host is implicitly localhost
                 $this->setHost("");
@@ -414,16 +426,13 @@ PCRE;
                 $this->setHost("");
                 $winDrive = $match[1].":";
             }
-        }
-        if ($path === "/") {
+        } elseif ($path === "/") {
             return $path;
-        } elseif ($path === "") {
-            return $base;
         }
         $abs = $path[0] === "/";
         $dir = $path[-1] === "/";
         $term = $dir || preg_match("</(?:\.|%2E){1,2}$>i", $path);
-        $path = explode("/", substr($path, (int) $abs, strlen($path) - ($abs + $dir)));
+        $path = explode("/", (string) substr($path, (int) $abs, strlen($path) - ($abs + $dir)));
         if (!$abs && strlen($base)) {
             // also consider the base path, if appropriate
             $abs = $base[0] === "/";
@@ -451,8 +460,7 @@ PCRE;
                 $term = true;
             }
             array_unshift($out, $winDrive);
-        }
-        if (!$out) {
+        } elseif (!$out) {
             return $abs ? "/" : "";
         }
         return ($abs ? "/" : "").implode("/", $out).($term ? "/" : "");
