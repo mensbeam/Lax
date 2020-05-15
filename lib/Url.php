@@ -47,6 +47,7 @@ PCRE;
     protected const HOST_PATTERN = '/^(\[[a-f0-9:\.]*\]|[^:]*)(?::([^\/]*))?$/si';
     protected const USER_PATTERN = '/^([^:]*)(?::(.*))?$/s';
     protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
+    protected const IPV4_PATTERN = '/^[\.xX0-9a-fA-F\x{ff10}-\x{ff19}\x{ff21}-\x{ff26}\x{ff41}-\x{ff46}\x{ff38}\x{ff58}\x{ff0e}]*$/u'; // matches ASCII and fullwidth equivalents
     protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
     protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
@@ -54,6 +55,7 @@ PCRE;
     protected const WINDOWS_AUTHORITY_PATTERN = '/^[\/\\\\]{1,2}[a-zA-Z][:|]$/';
     protected const WINDOWS_PATH_PATTERN = '/(?:^|\/)([a-zA-Z])[:|]($|[\/#\?].*)/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
+    protected const FULLWIDTH_CHARS = ["\u{FF10}" => "0", "\u{FF11}" => "1", "\u{FF12}" => "2", "\u{FF13}" => "3", "\u{FF14}" => "4", "\u{FF15}" => "5", "\u{FF16}" => "6", "\u{FF17}" => "7", "\u{FF18}" => "8", "\u{FF19}" => "9", "\u{FF21}" => "A", "\u{FF22}" => "B", "\u{FF23}" => "C", "\u{FF24}" => "D", "\u{FF25}" => "E", "\u{FF26}" => "F", "\u{FF41}" => "a", "\u{FF42}" => "b", "\u{FF43}" => "c", "\u{FF44}" => "d", "\u{FF45}" => "e", "\u{FF46}" => "f", "\u{FF38}" => "X", "\u{FF58}" => "x", "\u{FF0E}" => "."];
     protected const PERCENT_ENCODE_SETS = [
         'C0'       => "",
         'fragment' => " \"<>`",
@@ -139,39 +141,56 @@ PCRE;
                     // URI is a URN; continue processing
                 }
             } elseif ($this->scheme === "file" && preg_match(self::WINDOWS_AUTHORITY_PATTERN, $authority)) {
+                // URI is something like file://C:/path
                 $path = $authority.$path;
                 $authority = "//";
             }
             if ($authority) {
-                $authority = substr($authority, 2);
-                if (($cleft = strrpos($authority, "@")) !== false) {
-                    if (preg_match(self::USER_PATTERN, substr($authority, 0, $cleft), $match)) {
+                $auth = substr($authority, 2);
+                if (($cleft = strrpos($auth, "@")) !== false) {
+                    if (preg_match(self::USER_PATTERN, substr($auth, 0, $cleft), $match)) {
                         $this->setUser($match[1]);
                         $this->setPass($match[2] ?? "");
                     }
-                    if (preg_match(self::HOST_PATTERN, substr($authority, $cleft + 1), $match)) {
+                    if (preg_match(self::HOST_PATTERN, substr($auth, $cleft + 1), $match)) {
                         $this->setHost($match[1]);
                         $this->setPort($match[2] ?? "");
                     }
-                } elseif (preg_match(self::HOST_PATTERN, $authority, $match)) {
+                } elseif (preg_match(self::HOST_PATTERN, $auth, $match)) {
                     $this->setHost($match[1]);
                     $this->setPort($match[2] ?? "");
                 }
             }
-            if (!$scheme && $base) {
-                // the effective URL scheme must be known to correctly process the path
-                $base = $base ?? new static($baseUrl);
-                $this->setScheme($base->scheme);
+            // resolve with the base, if necessary
+            if ($base) {
+                // if the base is a URN without a path-like path, this is invalid
+                if (!$scheme && !$authority && (strlen($path) || $query) && $base->isUrn() && ($base->path[0] ?? "") !== "/") {
+                    throw new \InvalidArgumentException("Base URI cannot be a URN");
+                }
+                if (!$authority && $this->scheme === $base->scheme) {
+                    if ($base->host !== null) {
+                        $this->host = $base->host;
+                        $this->port = $base->port;
+                        $this->user = $base->user;
+                        $this->pass = $base->pass;
+                    }
+                    $this->setPath($path, $base->path);
+                    if (!strlen($path)) {
+                        if (!$query) {
+                            $this->query = $base->query;
+                        }
+                    }
+                } else {
+                    $this->setPath($path);
+                }
+            } else {
+                $this->setPath($path);
             }
-            $this->setPath($path);
             if ($query) {
                 $this->setQuery(substr($query, 1));
             }
             if ($fragment) {
                 $this->setFragment(substr($fragment, 1));
-            }
-            if ((!$scheme || ($this->host === null && $this->specialScheme)) && strlen($baseUrl ?? "")) {
-                $this->resolve($base ?? new static($baseUrl));
             }
         } else {
             throw new \InvalidArgumentException("String is not a valid URI");
@@ -179,7 +198,7 @@ PCRE;
     }
 
     public function isUrn(): bool {
-        return $this->host === null && !$this->specialScheme;
+        return $this->scheme && $this->host === null && !$this->specialScheme;
     }
 
     public function getAuthority() {
@@ -359,10 +378,11 @@ PCRE;
         }
     }
 
-    protected function setPath(string $value): void {
+    protected function setPath(string $value, string $base = ""): void {
         if ($this->specialScheme) {
-            $value = $this->collapsePath(str_replace("\\", "/", $value));
+            $value = str_replace("\\", "/", $value);
         }
+        $value = $this->collapsePath($value, $base);
         $this->path = $this->percentEncode($value, $this->isUrn() ? "C0" : "path");
     }
 
@@ -382,19 +402,35 @@ PCRE;
         }
     }
 
-    protected function collapsePath(string $path): string {
-        if (preg_match("<^/?$>", $path)) {
-            return $path;
+    protected function collapsePath(string $path, string $base = ""): string {
+        $winDrive = "";
+        if ($this->scheme === "file") {
+            if (preg_match(self::WINDOWS_PATH_PATTERN, $path, $match)) {
+                // If a Windows drive letter is present, the host is implicitly localhost
+                $this->setHost("");
+                $path = "/".$match[1].":".$match[2];
+                $winDrive = $match[1].":";
+            } elseif (preg_match(self::WINDOWS_PATH_PATTERN, $base, $match)) {
+                $this->setHost("");
+                $winDrive = $match[1].":";
+            }
         }
-        if ($this->scheme === "file" && preg_match(self::WINDOWS_PATH_PATTERN, $path, $match)) {
-            // If a Windows drive letter is present, the host is implicitly localhost
-            $this->setHost("");
-            $path = "/".$match[1].":".$match[2];
+        if ($path === "/") {
+            return $path;
+        } elseif ($path === "") {
+            return $base;
         }
         $abs = $path[0] === "/";
         $dir = $path[-1] === "/";
         $term = $dir || preg_match("</(?:\.|%2E){1,2}$>i", $path);
         $path = explode("/", substr($path, (int) $abs, strlen($path) - ($abs + $dir)));
+        if (!$abs && strlen($base)) {
+            // also consider the base path, if appropriate
+            $abs = $base[0] === "/";
+            $base = explode("/", substr($base, (int) $abs));
+            array_pop($base);
+            $path = array_merge($base, $path);
+        }
         $out = [];
         foreach ($path as $s) {
             if ($s === "" && !$out && $this->scheme === "file") {
@@ -409,6 +445,12 @@ PCRE;
             } else {
                 $out[] = $s;
             }
+        }
+        if ($winDrive && ($out[0] ?? "") !== $winDrive) {
+            if (!$out) {
+                $term = true;
+            }
+            array_unshift($out, $winDrive);
         }
         if (!$out) {
             return $abs ? "/" : "";
@@ -432,39 +474,6 @@ PCRE;
         return $out;
     }
 
-    protected function resolve(self $base): void {
-        if ($base->isUrn()) {
-            throw new \InvalidArgumentException("URL base must not be a Uniform Resource Name");
-        }
-        [$scheme, $host, $user, $pass, $port, $path, $query, $fragment] = [$base->scheme, $base->host, $base->user, $base->pass, $base->port, $base->path, $base->query, $base->fragment];
-        $this->scheme = $this->scheme ?? $scheme;
-        if (is_null($this->host)) {
-            $this->host = $host;
-            $this->user = $user;
-            $this->pass = $pass;
-            $this->port = $port;
-            if (!strlen($this->path ?? "")) {
-                $this->path = $path;
-                if (is_null($this->query)) {
-                    $this->query = $query;
-                    if (is_null($this->fragment)) {
-                        $this->fragment = $fragment;
-                    }
-                }
-            } elseif (strlen($path)) {
-                if ($this->path[0] !== "/") {
-                    if ($path[-1] === "/") {
-                        $this->path = $path.$this->path;
-                    } else {
-                        $len = strrpos($path, "/");
-                        $len = ($len === false) ? 0 : $len + 1;
-                        $this->path = substr($path, 0, $len).$this->path;
-                    }
-                }
-            }
-        }
-    }
-
     protected function parseHost(?string $host): ?string {
         if (strlen($host ?? "")) {
             if ($host[0] === "[") {
@@ -486,15 +495,31 @@ PCRE;
                 return $this->percentEncode($host, "C0");
             }
             $host = rawurldecode($host);
-            $idn = $this->parseIPv4($host) ?? idn_to_ascii($host, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
-            if (
-                $idn === false
-                || preg_match(self::FORBIDDEN_HOST_PATTERN, $idn)
-                || idn_to_utf8($idn, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46) === false
-            ) {
+            $domain = null;
+            if (preg_match(self::IPV4_PATTERN, $host)) {
+                $domain = $this->parseIPv4($host);
+            }
+            if ($domain === null && function_exists("idn_to_ascii") && function_exists("idn_to_utf8")) {
+                $domain = [];
+                foreach (explode(".", $host) as $label) {
+                    if (!strlen($label)) {
+                        $domain[] = $label;
+                    } else {
+                        $label = idn_to_ascii($label, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
+                        if ($label === false || idn_to_utf8($label, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46) === false) {
+                            $domain = false;
+                            break;
+                        }
+                        $domain[] = $label;
+                    }
+                }
+                $domain = is_array($domain) ? implode(".", $domain) : $domain;
+            }
+            $domain = $domain ?? strtolower($host);
+            if ($domain === false || preg_match(self::FORBIDDEN_HOST_PATTERN, $domain)) {
                 throw new \InvalidArgumentException("Invalid host in URL");
             }
-            return strtolower($idn);
+            return $domain;
         } elseif ($this->specialScheme && $this->scheme !== "file") {
             throw new \InvalidArgumentException("Invalid host in URL");
         }
@@ -504,6 +529,7 @@ PCRE;
     protected function parseIPv4(string $input) {
         // first parse the address; this is a literal implementation of https://url.spec.whatwg.org/#concept-ipv4-parser
         assert(strlen($input));
+        $input = str_replace(array_keys(self::FULLWIDTH_CHARS), self::FULLWIDTH_CHARS, $input);
         $input = explode(".", $input);
         if ($input[sizeof($input) - 1] === "" && sizeof($input) > 1) {
             array_pop($input);
