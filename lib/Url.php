@@ -44,6 +44,20 @@ class Url implements UriInterface {
 (\#.*)?                                 # fragment part
 $>six
 PCRE;
+        protected const STRICT_URI_PATTERN = <<<'PCRE'
+<^
+(?:
+    (?:
+        ([a-z][a-z0-9\.\-\+]*): |       # absolute URI
+        :?(?=//)                        # scheme-relative URI
+    )
+    (//?[^/\?\#]*)?                     # authority part
+)?
+([^\?\#]*)                              # path part
+(\?[^\#]*)?                             # query part
+(\#.*)?                                 # fragment part
+$>six
+PCRE;
     protected const HOST_PATTERN = '/^(\[[a-f0-9:\.]*\]|[^:]*)(:[^\/]*)?$/si';
     protected const USER_PATTERN = '/^([^:]*)(?::(.*))?$/s';
     protected const SCHEME_PATTERN = '/^(?:[a-z][a-z0-9\.\-\+]*|)$/i';
@@ -97,8 +111,9 @@ PCRE;
     public function __construct(string $url, string $baseUrl = null) {
         $url = str_replace(["\t", "\n", "\r"], "", trim($url, self::WHITESPACE_CHARS));
         $base = null;
+        $pattern = self::URI_PATTERN;
         reprocess:
-        if (preg_match(self::URI_PATTERN, $url, $match)) {
+        if (preg_match($pattern, $url, $match)) {
             [$url, $scheme, $authority, $path, $query, $fragment] = array_pad($match, 6, "");
             // if the URI is not unambigously a URL, parse the base URI
             if (!$base && $baseUrl && (!$scheme || substr($authority, 0, 2) !== "//")) {
@@ -106,6 +121,11 @@ PCRE;
             }
             // set the scheme; use the base scheme if necessary
             $this->setScheme($scheme ?: ($base->scheme ?? ""));
+            // if the scheme is non-special, re-process with a stricter pattern
+            if (!$this->specialScheme && $pattern !== self::STRICT_URI_PATTERN) {
+                $pattern = self::STRICT_URI_PATTERN;
+                goto reprocess;
+            }
             // make various checks to see if the authority should actually be the starts of the path
             if ($authority && !in_array($authority[1] ?? "", ["/", "\\"])) {
                 // the URI is something like x:/example.com/
