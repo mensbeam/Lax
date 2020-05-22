@@ -443,7 +443,6 @@ abstract class Psr7TestCase extends TestCase {
      * @dataProvider invalidURI
      */
     public function testCreateFromInvalidUrlKO($uri) {
-        $this->markTestIncomplete();
         $this->expectException(InvalidArgumentException::class);
         $this->createUri($uri);
     }

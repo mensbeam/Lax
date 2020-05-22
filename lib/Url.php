@@ -64,8 +64,8 @@ PCRE;
     protected const IPV4_PATTERN = '/^[\.xX0-9a-fA-F\x{ff10}-\x{ff19}\x{ff21}-\x{ff26}\x{ff41}-\x{ff46}\x{ff38}\x{ff58}\x{ff0e}]*$/u'; // matches ASCII and fullwidth equivalents
     protected const IPV6_PATTERN = '/^\[[^\]]+\]$/i';
     protected const PORT_PATTERN = '/^\d*$/';
-    protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:\?@\[\]\\\]/';
-    protected const FORBIDDEN_OPAQUE_HOST_PATTERN = '/[\x{00}\t\n\r #\/:\?@\[\]\\\]/'; // forbidden host excluding %
+    protected const FORBIDDEN_HOST_PATTERN = '/[\x{00}\t\n\r #%\/:<>\?@\[\]\\\^]/';
+    protected const FORBIDDEN_OPAQUE_HOST_PATTERN = '/[\x{00}\t\n\r #\/:<>\?@\[\]\\\^]/'; // forbidden host excluding %
     protected const WINDOWS_AUTHORITY_PATTERN = '/^[\/\\\\]{1,2}[a-zA-Z][:|]$/';
     protected const WINDOWS_PATH_PATTERN = '/(?:^|\/)([a-zA-Z])[:|]($|[\/#\?].*)/';
     protected const WHITESPACE_CHARS = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x20";
@@ -178,7 +178,7 @@ PCRE;
                             $this->setPort(substr($match[2], 1));
                         }
                     }
-                    if (!$this->specialScheme && !strlen($match[1])) {
+                    if (!$this->specialScheme && !strlen((string) $this->host)) {
                         throw new \InvalidArgumentException("Credentials with default host in URL");
                     }
                 } elseif (preg_match(self::HOST_PATTERN, $auth, $match)) {
@@ -533,7 +533,7 @@ PCRE;
                     if (!strlen($label)) {
                         $domain[] = $label;
                     } else {
-                        $label = idn_to_ascii($label, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI | \IDNA_CHECK_CONTEXTJ, \INTL_IDNA_VARIANT_UTS46);
+                        $label = idn_to_ascii($label, \IDNA_NONTRANSITIONAL_TO_ASCII | \IDNA_CHECK_BIDI, \INTL_IDNA_VARIANT_UTS46);
                         if ($label === false || idn_to_utf8($label, \IDNA_NONTRANSITIONAL_TO_UNICODE | \IDNA_USE_STD3_RULES, \INTL_IDNA_VARIANT_UTS46) === false) {
                             $domain = false;
                             break;
