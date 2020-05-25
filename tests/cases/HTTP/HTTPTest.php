@@ -18,7 +18,7 @@ class HTTPTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
             $p->parse();
         } else {
             $act = $p->parse();
-            $this->assertEquals($exp, $act);
+            $this->assertEquals($exp->meta, $act);
         }
     }
 

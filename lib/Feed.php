@@ -84,10 +84,19 @@ class Feed {
      * @param string|null $url The URL used to retrieve the newsfeed, if applicable
      */
     public static function parse(string $data, ?string $contentType = null, ?string $url = null): self {
-        return Parser::parseIntoFeed(new self, $data, $contentType, $url);
+        return Parser::parseDataIntoFeed(new self, $data, $contentType, $url);
     }
 
+    /** Parses a PSR-7 HTTP message to produce a Feed object
+     *
+     * Most users will probably rather want the Feed::fetch() method
+     *
+     * @param \Psr\Http\Message\MessageInterface $msg The message to parse
+     * @param string|null $url The URL used to retrieve the newsfeed, if applicable
+     */
     public static function parseMessage(\Psr\Http\Message\MessageInterface $msg, ?string $url): self {
-        return new self;
+        $feed = new self;
+        Parser::parseMessageIntoMeta($feed->meta, $msg, $url);
+        return Parser::parseDataIntoFeed($feed, $msg->getBody()->getContents());
     }
 }

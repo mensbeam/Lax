@@ -9,7 +9,7 @@ namespace MensBeam\Lax\Parser\HTTP;
 use MensBeam\Lax\Date;
 use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Url;
-use MensBeam\Lax\Feed as FeedStruct;
+use MensBeam\Lax\Metadata as MetaStruct;
 use MensBeam\Lax\Link\Link;
 use MensBeam\Lax\Link\Collection as LinkCollection;
 use Psr\Http\Message\MessageInterface;
@@ -41,18 +41,18 @@ class Message {
         }
     }
 
-    public function parse(FeedStruct $feed = null): FeedStruct {
-        $feed = $feed ?? new FeedStruct;
-        $feed->meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
-        $feed->meta->type = $this->getContentType();
-        $feed->meta->date = $this->getDate();
-        $feed->meta->expires = $this->getExpires();
-        $feed->meta->lastModified = $this->getLastModified();
-        $feed->meta->etag = $this->getEtag();
-        $feed->meta->age = $this->getAge();
-        $feed->meta->maxAge = $this->getMaxAge();
-        $feed->meta->links = $this->getLinks();
-        return $feed;
+    public function parse(MetaStruct $meta = null): MetaStruct {
+        $meta = $meta ?? new MetaStruct;
+        $meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
+        $meta->type = $this->getContentType();
+        $meta->date = $this->getDate();
+        $meta->expires = $this->getExpires();
+        $meta->lastModified = $this->getLastModified();
+        $meta->etag = $this->getEtag();
+        $meta->age = $this->getAge();
+        $meta->maxAge = $this->getMaxAge();
+        $meta->links = $this->getLinks();
+        return $meta;
     }
 
     protected function parseHeader(string $name, string $pattern, bool $multi = false): ?array {
