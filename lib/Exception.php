@@ -20,10 +20,9 @@ abstract class Exception extends \Exception {
         'badRequest'                => [0x1201, "Client request was not accaptable to the server"],
         'notFound'                  => [0x1202, "Resource was not found on server"],
         'notAuthorized'             => [0x1203, "Supplied credentials are insufficient to access the resource"],
-        'tooManyRedirects'          => [0x1204, "The configured number of redirects was exceeded"],
+        'tooManyRedirects'          => [0x1204, "The configured number of redirects was exceeded while trying to access the resource"],
         'forbidden'                 => [0x1211, "Access to the resource is forbidden"],
-        'serverError'               => [0x1212, "The server returned an error"],
-        'networkError'              => [0x1213, "A transport error occurred"],
+        'serverError'               => [0x1212, "The server reported an error"],
     ];
 
     public function __construct(string $symbol, \Exception $e = null) {
