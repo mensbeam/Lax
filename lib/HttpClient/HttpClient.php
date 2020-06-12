@@ -35,8 +35,10 @@ class HttpClient implements RequestFactoryInterface, ClientInterface {
         for ($a = 0; $a <= $stop; $a++) {
             $response = $this->client->sendRequest($request);
             $code = $response->getStatusCode();
-            if ($code < 300 || $code >= 400 || $code === 304) {
+            if ($code < 300 || $code === 304) {
                 return $response;
+            } elseif ($code >= 400) {
+                throw new Exception("httpStatus".$code);
             } else {
                 $loc = $response->getHeader("Location");
                 for ($b = 0; $b < sizeof($loc); $b++) {
