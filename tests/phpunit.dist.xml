@@ -22,14 +22,8 @@
     <testsuite name="Util">
         <directory>cases/Util</directory>
     </testsuite>
-    <testsuite name="JSON">
-        <directory>cases/JSON</directory>
-    </testsuite>
-    <testsuite name="XML">
-        <directory>cases/XML</directory>
-    </testsuite>
-    <testsuite name="HTTP">
-        <directory>cases/HTTP</directory>
+    <testsuite name="Parser">
+        <directory>cases/Parser</directory>
     </testsuite>
 </testsuites>
 </phpunit>

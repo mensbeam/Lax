@@ -4,7 +4,7 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\TestCase;
+namespace MensBeam\Lax\TestCase\Parser;
 
 use MensBeam\Lax\Feed;
 use MensBeam\Lax\Date;

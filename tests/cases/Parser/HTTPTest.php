@@ -4,12 +4,12 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\TestCase\JSON;
+namespace MensBeam\Lax\TestCase\Parser;
 
 use GuzzleHttp\Psr7\Response;
 
 /** @covers MensBeam\Lax\Parser\HTTP\Message */
-class HTTPTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
+class HTTPTest extends AbstractParserTestCase {
     /** @dataProvider provideHTTPMessages */
     public function testParseAnHttpMessage(Response $input, ?string $url, $exp): void {
         $p = new \MensBeam\Lax\Parser\HTTP\Message($input, $url);
@@ -23,7 +23,7 @@ class HTTPTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
     }
 
     public function provideHTTPMessages(): iterable {
-        foreach ($this->provideParserTests(__DIR__."/*.yaml") as $k => $t) {
+        foreach ($this->provideParserTests(__DIR__."/HTTP/*.yaml") as $k => $t) {
             array_splice($t, 1, 1);
             yield $k => $t;
         }

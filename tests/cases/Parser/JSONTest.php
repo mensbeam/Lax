@@ -4,13 +4,13 @@
  * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
-namespace MensBeam\Lax\TestCase\JSON;
+namespace MensBeam\Lax\TestCase\Parser;
 
 /**
  * @covers MensBeam\Lax\Parser\JSON\Feed<extended>
  * @covers MensBeam\Lax\Parser\JSON\Entry<extended>
  */
-class JSONTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
+class JSONTest extends AbstractParserTestCase {
     /** @dataProvider provideJSONFeed */
     public function testParseAJsonFeed(string $input, string $type, ?string $url, $exp): void {
         $p = new \MensBeam\Lax\Parser\JSON\Feed($input, $type, $url);
@@ -24,6 +24,6 @@ class JSONTest extends \MensBeam\Lax\TestCase\AbstractParserTestCase {
     }
 
     public function provideJSONFeed(): iterable {
-        return $this->provideParserTests(__DIR__."/*.yaml");
+        return $this->provideParserTests(__DIR__."/JSON/*.yaml");
     }
 }
