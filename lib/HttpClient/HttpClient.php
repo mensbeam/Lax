@@ -55,4 +55,8 @@ class HttpClient implements RequestFactoryInterface, ClientInterface {
         }
         throw new Exception("tooManyRedirects");
     }
+
+    public function createRequest(string $method, $uri): RequestInterface {
+        return $this->requestFactory->createRequest($method, $uri);
+    }
 }
