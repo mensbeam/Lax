@@ -35,21 +35,21 @@ abstract class Parser {
             return "application/xml";
         } elseif (preg_match('/^\s*</s', $data)) {
             // distinguish between XML feeds and HTML; first skip any comments before the root element
-            $offset = preg_match('/^\s*(?:<!--(?:[^\-]|-(?!->)*-->\s*)*/s', $data, $match) ? strlen($match[0]) : 0;
+            $offset = preg_match('/^\s*(<!(?=--)([^-]|-(?!->))*-->\s*)*/s', $data, $match) ? strlen($match[0]) : 0;
             $prefix = substr($data, $offset, 100);
             if (preg_match('/^<(?:!DOCTYPE\s+html|html|body|head|table|div|title|p|link|meta)[\s>]/si', $prefix)) {
                 return "text/html";
             } elseif (preg_match('/^<rss[\s>\/]/', $prefix)) {
                 return "application/rss+xml";
-            } elseif (preg_match('/^<(?:[A-Za-z0-9\-\._]+:)?(feed|RDF)\s/', $prefix)) {
+            } elseif (preg_match('/^<(?:[A-Za-z0-9\-\._]+:)?(feed|RDF)\s/', $prefix, $match)) {
                 if ($match[1] === "feed") {
                     return "application/atom+xml";
                 } else {
-                    return "applicatiojn/rdf+xml";
+                    return "application/rdf+xml";
                 }
             } else {
                 // FIIXME: Is there a better fallback that could used here?
-                "application/xml";
+                return "application/xml";
             }
         } else {
             return "application/octet-stream";

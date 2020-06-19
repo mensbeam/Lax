@@ -46,8 +46,22 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
 
     public function provideDetectableContent(): iterable {
         return [
-            ['{""}',      "application/json"],
-            [" \n  {\"v", "application/json"],
+            ['{""}',                             "application/json"],
+            [" \n  {\"v",                        "application/json"],
+            ["<?xml",                            "application/xml"],
+            [" \n <?xml",                        "application/xml"],
+            ["<!DOCTYPE html>",                  "text/html"],
+            ["<!DOCTYPE html ",                  "text/html"],
+            [" \n <!DOCTYPE html>",              "text/html"],
+            [" \n <!DOCTYPE html\n",             "text/html"],
+            [" <!-- --> <!-- oops -->\n <rss>",  "application/rss+xml"],
+            [" <!--> <!-- oops -->\n <rss>",     "application/rss+xml"],
+            ["<feed ",                           "application/atom+xml"],
+            ["<atom:feed ",                      "application/atom+xml"],
+            ["<RDF ",                            "application/rdf+xml"],
+            ["<rdf:RDF ",                        "application/rdf+xml"],
+            ["<opml>",                           "application/xml"],
+            ["plain text",                       "application/octet-stream"],
         ];
     }
 }
