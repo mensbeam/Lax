@@ -53,7 +53,7 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
             }
             yield "httpStatus".$a => ["httpStatus".$a, $out];
         }
-        foreach ([600, 999, 1000, 1401] as $a) {
+        foreach ([600, 999, 1000, 2401] as $a) {
             yield "httpStatus".$a => ["httpStatus".$a, 500];
         }
         yield "httpStatus000401" => ["httpStatus000401", 401];
