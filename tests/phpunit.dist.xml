@@ -25,5 +25,8 @@
     <testsuite name="Parser">
         <directory>cases/Parser</directory>
     </testsuite>
+    <testsuite name="Client">
+        <file>cases/HttpClientTest.php</file>
+    </testsuite>
 </testsuites>
 </phpunit>
