@@ -93,12 +93,19 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
                 $this->assertSame($res, $c->sendRequest($req));    
             }
         } finally {
-            $redir = -1;
+            \Phake::verify($client, \Phake::times(min(sizeof($responses), $max + 1)))->sendRequest($this->identicalTo($req));
+            $redir = 0;
+            $checks = [];
             foreach ($responses as $url => [$code, $loc]) {
-                if  ($redir++ >= $max) {
+                if ($redir) {
+                    $checks[] = \Phake::verify($req)->withUri(new Url($url));
+                }
+                if  ($redir++ > $max) {
                     break;
                 }
-                \Phake::verify($client)->sendRequest($this->identicalTo($req));
+            }
+            if ($checks) {
+                \Phake::inOrder(...$checks);
             }
         }
     }
