@@ -53,7 +53,8 @@ class HttpClient implements RequestFactoryInterface, ClientInterface {
                     if ($url = Url::fromString($loc[$b], (string) $request->getUri()->withUserInfo("", ""))) {
                         $request = $request->withUri($url);
                         if ($code === 303 && !in_array($request->getMethod(), ["GET", "HEAD"])) {
-                            $request = $request->withMethod("GET");
+                            // this is merely for correctness; the client should not normally be using other methods
+                            $request = $request->withMethod("GET"); // @codeCoverageIgnore
                         }
                         continue 2;
                     }

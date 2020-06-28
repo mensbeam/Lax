@@ -77,11 +77,13 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
         \Phake::when($client)->sendRequest->thenReturn($res);
         \Phake::when($factory)->createRequest->thenReturn($req);
         \Phake::when($req)->withUri->thenReturn($req);
+        \Phake::when($req)->withMethod->thenReturn($req);
+        \Phake::when($req)->getMethod->thenReturn("GET");
         $mockCode = \Phake::when($res)->getStatusCode;
         $mockLoc = \Phake::when($res)->getHeader("Location");
         $mockUrl = \Phake::when($req)->getUri;
         foreach ($responses as $url => [$code, $loc]) {
-            $mockUrl->thenReturn(new Url($url));
+            $mockUrl = $mockUrl->thenReturn(new Url($url));
             $mockCode = $mockCode->thenReturn($code);
             $mockLoc = $mockLoc->thenReturn((array) $loc);
         }
@@ -94,6 +96,7 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
             }
         } finally {
             \Phake::verify($client, \Phake::times(min(sizeof($responses), $max + 1)))->sendRequest($this->identicalTo($req));
+            \Phake::verify($req, \Phake::times(0))->withMethod;
             $redir = 0;
             $checks = [];
             foreach ($responses as $url => [$code, $loc]) {
@@ -111,15 +114,34 @@ class ParserTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function provideRedirections(): iterable {
-        $err = new Exception("tooManyRedirects");
         return [
             [[
                 'http://example.com/' => [200, null],
             ], 0, null],
             [[
+                'http://example.com/' => [302, null],
+            ], 0, null],
+            [[
                 'http://example.com/'           => [302, "/index.html"],
                 'http://example.com/index.html' => [200, null],
-            ], 0, $err],
+            ], 0, new Exception("tooManyRedirects")],
+            [[
+                'http://example.com/'           => [302, "/index.html"],
+                'http://example.com/index.html' => [404, null],
+            ], 10, new Exception("httpStatus404")],
+            [[
+                'http://a:b@c/d/' => [300, "/"],
+                'http://c/'       => [200, null],
+            ], 10, null],
+            [[
+                'http://a/'   => [301, ["http://[/", "/b/"]],
+                'http://a/b/' => [200, null],
+            ], 10, null],
+            [[
+                'http://a/'           => [301, ["http://[/", "/b/"]],
+                'http://a/b/'         => [303, "http://example.com/"],
+                'http://example.com/' => [304, "//a:b@c"]
+            ], 10, null],
         ];
     }
 }
