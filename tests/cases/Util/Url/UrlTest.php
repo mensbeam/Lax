@@ -11,7 +11,7 @@ use MensBeam\Lax\Url;
 /** @covers MensBeam\Lax\Url<extended> */
 class UrlTest extends Psr7TestCase {
     private const INCOMPLETE_STD_INPUT = [
-        "http://\u{1F}!\"$&'()*+,-.;=_`{|}~/", // PHP's IDNA implementation fails here
+        "http://\u{1F}!\"$&'()*+,-.;=_`{|}~/" => "PHP's IDNA implementation fails here",
     ];
 
     protected function createUri($uri = '') {
@@ -20,8 +20,8 @@ class UrlTest extends Psr7TestCase {
 
     /** @dataProvider provideStandardParsingTests */
     public function testParsePerWhatwgRules(string $input, string $base, ?string $exp): void {
-        if (in_array($input, self::INCOMPLETE_STD_INPUT)) {
-            $this->markTestIncomplete();
+        if (isset(self::INCOMPLETE_STD_INPUT[$input])) {
+            $this->markTestIncomplete(self::INCOMPLETE_STD_INPUT[$input]);
         }
         $act = Url::fromString($input, $base);
         //var_export($act);
