@@ -18,6 +18,8 @@ use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
 class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
+    use \MensBeam\Lax\Parser\AbstractEntry;
+
     protected const ENCLOSURE_ATTR_INTEGERS = [
         'size'     => "@fileSize",
         'width'    => "@width",

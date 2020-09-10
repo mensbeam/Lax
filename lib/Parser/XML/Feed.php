@@ -19,6 +19,8 @@ use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
 class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
+    use \MensBeam\Lax\Parser\AbstractFeed;
+
     protected const LIBXML_OPTIONS = \LIBXML_BIGLINES | \LIBXML_COMPACT | \LIBXML_HTML_NODEFDTD | \LIBXML_NOCDATA | \LIBXML_NOENT | \LIBXML_NONET | \LIBXML_NOERROR | LIBXML_NOWARNING;
     public const MIME_TYPES = [
         "application/atom+xml",     // Atom
@@ -38,15 +40,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     protected $subject;
     /** @var \DOMXpath */
     protected $xpath;
-
-    /** Constructs a parsed feed */
-    public function __construct(string $data, string $contentType = null, string $url = null) {
-        $this->data = $data;
-        $this->contentType = $contentType;
-        if (strlen($url ?? "")) {
-            $this->url = $url;
-        }
-    }
 
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
@@ -89,26 +82,6 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             throw new Exception("notXMLFeed");
         }
         $feed->meta->url = $this->url;
-        return $feed;
-    }
-
-    /** Parses the feed to extract data */
-    public function parse(FeedStruct $feed = null): FeedStruct {
-        $feed = $this->init($feed ?? new FeedStruct);
-        $feed->meta->url = strlen($this->url ?? "") ? new Url($this->url) : null;
-        $feed->sched = $this->getSchedule();
-        $feed->id = $this->getId();
-        $feed->lang = $this->getLang();
-        $feed->url = $this->getUrl();
-        $feed->link = $this->getLink();
-        $feed->title = $this->getTitle();
-        $feed->summary = $this->getSummary();
-        $feed->dateModified = $this->getDateModified();
-        $feed->icon = $this->getIcon();
-        $feed->image = $this->getImage();
-        $feed->people = $this->getPeople();
-        $feed->categories = $this->getCategories();
-        $feed->entries = $this->getEntries($feed);
         return $feed;
     }
 

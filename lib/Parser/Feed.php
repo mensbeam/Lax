@@ -15,6 +15,9 @@ use MensBeam\Lax\Feed as FeedStruct;
 use MensBeam\Lax\Url;
 
 interface Feed {
+    /** Maximally populates a Feed object */
+    public function parse(FeedStruct $feed = null): FeedStruct;
+
     /** Returns the globally unique identifier of the newsfeed; this is usually a URI */
     public function getId(): ?string;
 

@@ -13,7 +13,7 @@ use MensBeam\Lax\Person\Collection as PersonCollection;
 use MensBeam\Lax\Person\Person;
 use MensBeam\Lax\Url;
 
-trait Construct {
+abstract class Construct {
     use \MensBeam\Lax\Parser\Construct;
 
     /** Returns an object member if the member exists and is of the expected type

@@ -17,8 +17,8 @@ use MensBeam\Lax\Enclosure\Enclosure;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
 
-class Entry implements \MensBeam\Lax\Parser\Entry {
-    use Construct;
+class Entry extends Construct implements \MensBeam\Lax\Parser\Entry {
+    use \MensBeam\Lax\Parser\AbstractEntry;
 
     protected $url;
     /** @var \MensBeam\Lax\Feed */
@@ -26,31 +26,7 @@ class Entry implements \MensBeam\Lax\Parser\Entry {
     /** @var \Mimey\MimeTypes */
     protected $mime;
 
-    public function __construct(\stdClass $data, FeedStruct $feed) {
-        $this->data = $data;
-        $this->feed = $feed;
-        $this->url = $feed->meta->url ? (string) $feed->meta->url : null;
-    }
-
     protected function init(EntryStruct $entry): EntryStruct {
-        return $entry;
-    }
-
-    public function parse(EntryStruct $entry = null): EntryStruct {
-        $entry = $this->init($entry ?? new EntryStruct);
-        $entry->lang = $this->getLang();
-        $entry->id = $this->getId();
-        $entry->link = $this->getLink();
-        $entry->relatedLink = $this->getRelatedLink();
-        $entry->title = $this->getTitle();
-        $entry->dateModified = $this->getDateModified();
-        $entry->dateCreated = $this->getDateCreated();
-        $entry->content = $this->getContent();
-        $entry->summary = $this->getSummary();
-        $entry->banner = $this->getBanner();
-        $entry->people = $this->getPeople();
-        $entry->categories = $this->getCategories();
-        $entry->enclosures = $this->getEnclosures();
         return $entry;
     }
 
