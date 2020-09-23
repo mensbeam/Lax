@@ -19,12 +19,13 @@ class XPath extends \DOMXpath {
         'media'    => "http://search.yahoo.com/mrss/",                     // Embedded media extension                 http://www.rssboard.org/media-rss
         'rss1file' => "http://purl.oclc.org/net/rss_2.0/enc#",             // RSS 1.0 enclosures                       https://foz.home.xs4all.nl/mod_enclosure.html
         'rdf'      => "http://www.w3.org/1999/02/22-rdf-syntax-ns#",       // Resource Description Framework           https://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/
-        'xhtml'    => "http://www.w3.org/1999/xhtml",                      // XHTML                                    https://html.spec.whatwg.org/
+        'html'     => "http://www.w3.org/1999/xhtml",                      // XHTML                                    https://html.spec.whatwg.org/
         'apple'    => "http://www.itunes.com/dtds/podcast-1.0.dtd",        // iTunes podcasts                          https://help.apple.com/itc/podcasts_connect/#/itcb54353390
         'gplay'    => "http://www.google.com/schemas/play-podcasts/1.0",   // Google Play podcasts                     https://support.google.com/googleplay/podcasts/answer/6260341
     ];
 
     public $rss2 = false;
+    public $html = false;
 
     /** Returns an XPath processor with various necessary namespace prefixes defined */
     public function __construct(\DOMDocument $doc) {
@@ -37,6 +38,7 @@ class XPath extends \DOMXpath {
     /** {@inheritDoc} */
     public function query($expression, $contextnode = null, $registerNS = true) {
         $expression = $this->rss2 ? str_replace("rss2:", "", $expression) : $expression;
+        $expression = $this->html ? str_replace("html:", "", $expression) : $expression;
         return parent::query($expression, $contextnode, $registerNS);
     }
 }

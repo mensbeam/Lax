@@ -12,10 +12,14 @@ abstract class Exception extends \Exception {
         'notSupportedType'          => [0x1101, "Document type is not supported"],
         'notJSONType'               => [0x1111, "Document Content-Type is not either that of JSON Feed or generic JSON"],
         'notXMLType'                => [0x1111, "Document Content-Type is not that of an XML newsfeed"],
+        'notHTMLType'               => [0x1111, "Document Content-Type is not that of an HTML newsfeed"],
         'notJSON'                   => [0x1112, "Document is not valid JSON"],
         'notXML'                    => [0x1112, "Document is not well-formed XML"],
+        'notHTML'                   => [0x1112, "Document is not well-formed HTML"], // this condition should be impossible
+        'notXHTML'                  => [0x1112, "Document is well-formed XML, but is not XHTML"],
         'notJSONFeed'               => [0x1113, "Document is not a JSON Feed document"],
         'notXMLFeed'                => [0x1113, "Document is not a newsfeed"],
+        'notHTMLFeed'               => [0x1113, "Document does not contain a newsfeed"],
         // Fetching: 0x1200
         'httpStatus400'             => [0x1201, "Client request was not acceptable to the server (code 400)"],
         'httpStatus401'             => [0x1202, "Supplied credentials are insufficient to access the resource (code 401)"],

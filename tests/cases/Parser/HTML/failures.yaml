@@ -1,0 +1,17 @@
+Content-Type mismatch:
+    type: text/xml
+    input: >
+        <html class="h-feed"></html>
+    exception: notHTMLType
+
+Not a feed:
+    type: text/html
+    input: >
+        <html></html>
+    exception: notHTMLFeed
+
+Not an XHTML document:
+    type: application/xhtml+xml
+    input: >
+        <html></html>
+    exception: notXHTML

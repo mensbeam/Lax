@@ -1,0 +1,53 @@
+Basic example 1:
+    input: >
+        <html class="h-feed"></html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+Basic example 2:
+    input: >
+        <html class="home h-feed"></html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+Basic example 3:
+    input: >
+        <html class="h-feed main"></html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+Basic example 4:
+    input: >
+        <html class="home h-feed main"></html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+
+Basic example 5:
+    input: >
+        <html class="main">
+            <body class="h-feed"></body>
+        </html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+Basic XHTML example:
+    type: application/xhtml+xml 
+    input: >
+        <html xmlns="http://www.w3.org/1999/xhtml" class="h-feed"></html>
+    output:
+        format: 'h-feed'
+        version: '1'
+
+Basic XHTML fallback example:
+    type: application/xhtml+xml 
+    input: >
+        <html class="h-feed">
+    output:
+        format: 'h-feed'
+        version: '1'

@@ -293,7 +293,7 @@ abstract class Construct {
                     }
                     break;
                 case "application/xhtml+xml":
-                    if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("xhtml:div", $node))) {
+                    if (is_null($out->xhtml) && ($xhtml = $this->fetchElement("html:div", $node))) {
                         $out->xhtml = $xhtml->ownerDocument->saveXML($xhtml);
                         $out->xhtmlBase = strlen($xhtml->baseURI) ? $xhtml->baseURI : null;
                     }
