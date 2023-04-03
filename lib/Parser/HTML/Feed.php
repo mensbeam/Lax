@@ -16,6 +16,7 @@ use MensBeam\Lax\Parser\Exception;
 use MensBeam\Lax\Parser\XML\XPath;
 use MensBeam\Lax\Category\Collection as CategoryCollection;
 use MensBeam\Lax\Person\Collection as PersonCollection;
+use MensBeam\HTML\DOMParser;
 
 class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     use \MensBeam\Lax\Parser\AbstractFeed;
@@ -39,13 +40,14 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
-        $type = MimeType::parse($this->contentType) ?? "";
+        $type = MimeType::parse($this->contentType);
         if ($type && !in_array($type->essence, self::MIME_TYPES)) {
             throw new Exception("notHTMLType");
         }
+        $parser = new DOMParser;
         if ($type && $type->essence === "application/xhtml+xml") {
-            $this->document = new \DOMDocument;
-            if (!$this->document->loadXML($this->data, self::LIBXML_OPTIONS)) {
+            $this->document = $parser->parseFromString($this->data, $this->contentType);
+            if ($this->document->documentElement->tagName === "parsererror" && $this->document->documentElement->namespaceURI === "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
                 // ignore XML parsing errors; we will reparse as HTML in this case
                 $this->document = null;
             } elseif ($this->document->documentElement->namespaceURI !== XPath::NS['html']) {
@@ -53,10 +55,7 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
             }
         }
         if (!$this->document) {
-            $this->document = new \DOMDocument;
-            if (!$this->document->loadHTML($this->data, self::LIBXML_OPTIONS)) {
-                throw new Exception("notHTML"); // @codeCoverageIgnore
-            }
+            $this->document = $parser->parseFromString($this->data, "text/html;charset=".($type->params['charset'] ?? ""));
         }
         $this->document->documentURI = $this->url;
         $this->xpath = new \DOMXPath($this->document);

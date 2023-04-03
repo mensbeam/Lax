@@ -36,6 +36,7 @@ class XPath extends \DOMXpath {
     }
 
     /** {@inheritDoc} */
+    #[\ReturnTypeWillChange]
     public function query($expression, $contextnode = null, $registerNS = true) {
         $expression = $this->rss2 ? str_replace("rss2:", "", $expression) : $expression;
         $expression = $this->html ? str_replace("html:", "", $expression) : $expression;

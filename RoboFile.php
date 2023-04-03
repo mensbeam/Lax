@@ -6,6 +6,8 @@ const BASE = __DIR__.\DIRECTORY_SEPARATOR;
 const BASE_TEST = BASE."tests".\DIRECTORY_SEPARATOR;
 define("IS_WIN", defined("PHP_WINDOWS_VERSION_MAJOR"));
 define("IS_MAC", php_uname("s") === "Darwin");
+define("IS_LINUX", !IS_WIN && !IS_MAC);
+error_reporting(0);
 
 function norm(string $path): string {
     $out = realpath($path);
@@ -53,8 +55,8 @@ class RoboFile extends \Robo\Tasks {
      * tests/coverage/. Additional reports may be produced by passing
      * arguments to this task as one would to PHPUnit.
      *
-     * Robo first tries to use pcov and will fall back first to xdebug then
-     * phpdbg. Neither pcov nor xdebug need to be enabled to be used; they
+     * Robo first tries to use pcov and will fall back to xdebug.
+     * Neither pcov nor xdebug need to be enabled to be used; they
      * only need to be present in the extension load path to be used.
      */
     public function coverage(array $args): Result {
@@ -78,7 +80,7 @@ class RoboFile extends \Robo\Tasks {
         return $this->runTests($exec, "typical", array_merge(["--coverage-html", BASE_TEST."coverage"], $args));
     }
 
-    /** Runs the coding standards fixer */
+    /** Runs the coding-style fixer */
     public function clean($opts = ['demo|d' => false]): Result {
         $t = $this->taskExec(norm(BASE."vendor/bin/php-cs-fixer"));
         $t->arg("fix");
@@ -88,39 +90,42 @@ class RoboFile extends \Robo\Tasks {
         return $t->run();
     }
 
+    /** Finds the first suitable means of computing code coverage, either pcov or xdebug. */
     protected function findCoverageEngine(): string {
         $dir = rtrim(ini_get("extension_dir"), "/").\DIRECTORY_SEPARATOR;
-        $ext = IS_WIN ? "dll" : (IS_MAC ? "dylib" : "so");
+        $ext = IS_WIN ? "dll" : "so";
         $php = escapeshellarg(\PHP_BINARY);
         $code = escapeshellarg(BASE."lib");
         if (extension_loaded("pcov")) {
             return "$php -d pcov.enabled=1 -d pcov.directory=$code";
         } elseif (extension_loaded("xdebug")) {
-            return $php;
+            return "$php -d xdebug.mode=coverage";
         } elseif (file_exists($dir."pcov.$ext")) {
             return "$php -d extension=pcov.$ext -d pcov.enabled=1 -d pcov.directory=$code";
-        } elseif (file_exists($dir."pcov.$ext")) {
-            return "$php -d zend_extension=xdebug.$ext";
+        } elseif (file_exists($dir."xdebug.$ext")) {
+            return "$php -d zend_extension=xdebug.$ext -d xdebug.mode=coverage";
         } else {
-            if (IS_WIN) {
-                $dbg = dirname(\PHP_BINARY)."\\phpdbg.exe";
-                $dbg = file_exists($dbg) ? $dbg : "";
-            } else {
-                $dbg = trim(`which phpdbg 2>/dev/null`);
-            }
-            if ($dbg) {
-                return escapeshellarg($dbg)." -qrr";
-            } else {
-                return $php;
-            }
+            return $php;
         }
     }
 
+    /** Returns the necessary shell arguments to print error output or all output to the bitbucket
+     *
+     * @param bool $all Whether all output (true) or only error output (false) should be suppressed
+     */
     protected function blackhole(bool $all = false): string {
         $hole = IS_WIN ? "nul" : "/dev/null";
         return $all ? ">$hole 2>&1" : "2>$hole";
     }
 
+    /** Executes PHPUnit, used by the test and coverage tasks.
+     *
+     * This also executes the built-in PHP Web server, which is required to fetch some newsfeeds during tests
+     *
+     * @param string $executor The path to the PHP binary to execute with any required extra arguments. Normally this is either "php" or the result of findCoverageEngine()
+     * @param string $set The set of tests to run, either "typical" (excludes redundant tests), "quick" (excludes redundant and slow tests), "coverage" (excludes tests not needed for coverage), or "full" (all tests)
+     * @param array $args Extra arguments passed by Robo from the command line
+     */
     protected function runTests(string $executor, string $set, array $args): Result {
         switch ($set) {
             case "typical":
@@ -140,7 +145,6 @@ class RoboFile extends \Robo\Tasks {
         }
         $execpath = norm(BASE."vendor-bin/phpunit/vendor/phpunit/phpunit/phpunit");
         $confpath = realpath(BASE_TEST."phpunit.dist.xml") ?: norm(BASE_TEST."phpunit.xml");
-        //$this->taskServer(8000)->host("localhost")->dir(BASE_TEST."docroot")->rawArg("-n")->arg(BASE_TEST."server.php")->rawArg($this->blackhole())->background()->run();
         return $this->taskExec($executor)->option("-d", "zend.assertions=1")->arg($execpath)->option("-c", $confpath)->args(array_merge($set, $args))->run();
     }
 }

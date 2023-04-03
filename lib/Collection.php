@@ -15,6 +15,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
     }
 
     /** Implementation for JsonSerializable */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         return $this->data;
     }
@@ -30,11 +31,13 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
     }
 
     /** Implementation for ArrayAccess */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset) {
         return $this->data[$offset];
     }
 
     /** Implementation for ArrayAccess */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             $this->data[] = $value;
@@ -44,6 +47,7 @@ abstract class Collection implements \IteratorAggregate, \ArrayAccess, \Countabl
     }
 
     /** Implementation for ArrayAccess */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset) {
         unset($this->data[$offset]);
     }

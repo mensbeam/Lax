@@ -1,4 +1,7 @@
 <?php
+/** @license MIT
+ * Copyright 2017 J. King, Dustin Wilson et al.
+ * See LICENSE and AUTHORS files for details */
 
 declare(strict_types=1);
 
@@ -19,6 +22,7 @@ $rules = [
         'operators' => ['=>' => "align_single_space"],
     ],
     'cast_spaces'                               => ['space' => "single"],
+    'concat_space'                              => ['spacing' => "none"],
     'list_syntax'                               => ['syntax' => "short"],
     'magic_constant_casing'                     => true,
     'magic_method_casing'                       => true,
@@ -29,6 +33,7 @@ $rules = [
     'no_blank_lines_after_phpdoc'               => true,
     'no_empty_comment'                          => true,
     'no_empty_phpdoc'                           => true,
+    'no_empty_statement'                        => true,
     'no_extra_blank_lines'                      => true, // this could probably use more configuration
     'no_mixed_echo_print'                       => ['use' => "echo"],
     'no_short_bool_cast'                        => true,
@@ -42,32 +47,14 @@ $rules = [
     'pow_to_exponentiation'                     => true,
     'set_type_to_cast'                          => true,
     'standardize_not_equals'                    => true,
-    'trailing_comma_in_multiline_array'         => true,
+    'trailing_comma_in_multiline'               => ['elements' => ["arrays"]],
     'unary_operator_spaces'                     => true,
     'yoda_style'                                => false,
     // PSR standard to apply
-    '@PSR2' => true,
-    // PSR-12 rules; php-cs-fixer does not yet support PSR-12 natively
-    'blank_line_after_opening_tag'              => true,
-    'compact_nullable_typehint'                 => true,
-    'declare_equal_normalize'                   => ['space' => "none"],
-    'function_typehint_space'                   => true,
-    'lowercase_cast'                            => true,
-    'lowercase_static_reference'                => true,
-    'method_argument_space'                     => ['on_multiline' => 'ensure_fully_multiline'],
-    'no_alternative_syntax'                     => true,
-    'no_empty_statement'                        => true,
-    'no_leading_import_slash'                   => true,
-    'no_leading_namespace_whitespace'           => true,
-    'no_whitespace_in_blank_line'               => true,
-    'return_type_declaration'                   => ['space_before' => "none"],
-    'single_trait_insert_per_statement'         => true,
-    'short_scalar_cast'                         => true,
-    'visibility_required'                       => ['elements' => ["const", "property", "method"]],
+    '@PSR12' => true,
     // house exceptions to PSR rules
     'braces'                                    => ['position_after_functions_and_oop_constructs' => "same"],
     'function_declaration'                      => ['closure_function_spacing' => "none"],
-    'concat_space'                              => ['spacing' => "none"],
     'new_with_braces'                           => false, // no option to specify absence of braces
 ];
 
@@ -79,4 +66,4 @@ foreach ($paths as $path) {
         $finder = $finder->in($path);
     }
 }
-return \PhpCsFixer\Config::create()->setRiskyAllowed(true)->setRules($rules)->setFinder($finder);
+return (new \PhpCsFixer\Config)->setRiskyAllowed(true)->setRules($rules)->setFinder($finder);

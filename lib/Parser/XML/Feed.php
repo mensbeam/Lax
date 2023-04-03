@@ -17,6 +17,7 @@ use MensBeam\Lax\MimeType;
 use MensBeam\Lax\Schedule;
 use MensBeam\Lax\Text;
 use MensBeam\Lax\Url;
+use MensBeam\HTML\DOMParser;
 
 class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
     use \MensBeam\Lax\Parser\AbstractFeed;
@@ -43,12 +44,12 @@ class Feed extends Construct implements \MensBeam\Lax\Parser\Feed {
 
     /** Performs initialization of the instance */
     protected function init(FeedStruct $feed): FeedStruct {
-        $type = MimeType::parse($this->contentType) ?? "";
+        $type = MimeType::parse($this->contentType) ?? null;
         if ($type && !in_array($type->essence, self::MIME_TYPES)) {
             throw new Exception("notXMLType");
         }
-        $this->document = new \DOMDocument();
-        if (!$this->document->loadXML($this->data, self::LIBXML_OPTIONS)) {
+        $this->document = (new DOMParser)->parseFromString($this->data, $type ?? "text/xml");
+        if ($this->document->documentElement->tagName === "parsererror" && $this->document->documentElement->namespaceURI === "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
             throw new Exception("notXML");
         }
         $this->document->documentURI = $this->url;

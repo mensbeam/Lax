@@ -10,6 +10,9 @@ use MensBeam\Lax\Feed as FeedStruct;
 use MensBeam\Lax\Entry as EntryStruct;
 
 trait AbstractEntry {
+    protected $data;
+    protected $feed;
+    
     public function __construct($data, FeedStruct $feed) {
         $this->data = $data;
         $this->feed = $feed;

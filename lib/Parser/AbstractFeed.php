@@ -10,6 +10,8 @@ use MensBeam\Lax\Url;
 use MensBeam\Lax\Feed as FeedStruct;
 
 trait AbstractFeed {
+    protected $version;
+
     /** Constructs a feed parser */
     public function __construct(string $data, string $contentType = null, string $url = null) {
         $this->data = $data;

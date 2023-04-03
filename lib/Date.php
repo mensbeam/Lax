@@ -174,11 +174,13 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
         return $time;
     }
 
+    #[\ReturnTypeWillChange]
     public static function createFromFormat($format, $time, $timezone = null): ?self {
         $temp = parent::createFromFormat("!".$format, $time, $timezone);
         return $temp ? static::create($temp) : null;
     }
 
+    #[\ReturnTypeWillChange]
     public static function createFromMutable($datetime): ?self {
         $temp = parent::createFromMutable($datetime);
         return $temp ? static::create($temp) : null;
@@ -202,6 +204,7 @@ class Date extends \DateTimeImmutable implements \JsonSerializable {
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize() {
         return $this->__toString();
     }

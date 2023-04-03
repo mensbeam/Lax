@@ -47,6 +47,7 @@ class Enclosure implements \IteratorAggregate, \ArrayAccess, \Countable {
         return isset($this->data[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset) {
         return $this->data[$offset];
     }
