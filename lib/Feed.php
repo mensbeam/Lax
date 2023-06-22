@@ -21,7 +21,7 @@ class Feed {
      * - `rdf` for RSS 1.0
      * - `atom` for Atom feeds
      * - `json` for JSON Feed
-     * - `hfeed` for a microformat h-feeds
+     * - `hfeed` for a microformat h-feed
      *
      * The format is largely advisory, but may be used when converting between formats
      */

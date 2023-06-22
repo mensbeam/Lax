@@ -74,7 +74,7 @@ abstract class Parser {
     /** Parses an HTTP message's metadata into a metadata object
      *
      * @param \MensBeam\Lax\Feed $feed The newfeed object to populate
-     * @param string $data The HTTP message to parse
+     * @param \Psr\Http\Message\MessageInterface $data The HTTP message to parse
      * @param string|null $url The URL used to retrieve the newsfeed, if applicable
      */
     public static function parseMessageIntoMeta(Metadata $meta, MessageInterface $data, ?string $url = null): Metadata {
